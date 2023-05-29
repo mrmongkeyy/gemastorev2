@@ -4,7 +4,7 @@ module.exports = {
 			<!doctype html>
 			<html>
 				<head>
-					<title>GemaStore: better solution for your problem.</title>
+					<title>GemaStore: Just Forget How To Sleep!</title>
 					<meta name=viewport content=width=device-width,initial-scale=1>
 					<style>
 						@font-face{
