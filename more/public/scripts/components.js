@@ -865,7 +865,13 @@ const getPulsaInfo = function(filtered,op,el){
 									"
 									>
 										<span>Nama Barang</span>
-										<span>${this.data.pulsa_op+' '+this.data.pulsa_nominal}</span>
+										<span
+										style="
+											width:50%;
+											overflow:auto;
+											text-align:right;
+										"
+										>${this.data.pulsa_op+' '+this.data.pulsa_nominal}</span>
 									</div>
 									<div
 									style="
@@ -1057,7 +1063,12 @@ const getPlnInfo = function(filtered,op,el){
 									"
 									>
 										<span>Nama Barang</span>
-										<span>${this.data.pulsa_op+' '+this.data.pulsa_nominal}</span>
+										<span
+										style="
+											width:50%;
+											overflow:auto;
+											text-align:right;
+										">${this.data.pulsa_op+' '+this.data.pulsa_nominal}</span>
 									</div>
 									<div
 									style="
@@ -1249,7 +1260,12 @@ const getDataInfo = function(filtered,op,el){
 									"
 									>
 										<span>Nama Barang</span>
-										<span>${this.data.pulsa_op+' '+this.data.pulsa_nominal}</span>
+										<span
+										style="
+											width:50%;
+											overflow:auto;
+											text-align:right;
+										">${this.data.pulsa_op+' '+this.data.pulsa_nominal}</span>
 									</div>
 									<div
 									style="
@@ -1450,7 +1466,12 @@ const getGamesVouceherInfo = function(filtered,op,el){
 									"
 									>
 										<span>Nama Barang</span>
-										<span>${this.data.pulsa_op+' '+this.data.pulsa_nominal}</span>
+										<span
+										style="
+											width:50%;
+											overflow:auto;
+											text-align:right;
+										">${this.data.pulsa_op+' '+this.data.pulsa_nominal}</span>
 									</div>
 									<div
 									style="
