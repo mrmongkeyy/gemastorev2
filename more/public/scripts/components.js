@@ -199,6 +199,7 @@ const category = makeElement('div',{
 				})
 				c.style.color = 'white';
 				c.querySelector('img').style.background = 'white';
+				header.state = i;
 			}
 		})
 		this.cs = cs;
@@ -828,7 +829,7 @@ const getPulsaInfo = function(filtered,op,el){
 									el.remove();
 								},
 								processBuyying(el){
-									reqTrx(dts.goalNumber,dts.pulsa_code);
+									reqTrx(dts.goalNumber,dts.pulsa_code,el);
 								}
 							}
 							this.findall('#buttons span').forEach(button=>{
@@ -1003,6 +1004,8 @@ const getPlnInfo = function(filtered,op,el){
 						recheckvalue(goalNumber,2000);
 						return;
 					}
+					const dts = this.data;
+					dts.goalNumber = goalNumber.value;
 					content.find('#contentcontainer').addChild(makeElement('div',{
 						style:`
 							position:absolute;
@@ -1014,11 +1017,17 @@ const getPlnInfo = function(filtered,op,el){
 							background:RGB(255,255,255,0.5);
 						`,
 						initButtons(){
+							const buttonsMap = {
+								closepayment(el){
+									el.remove();
+								},
+								processBuyying(el){
+									reqTrx(dts.goalNumber,dts.pulsa_code,el);
+								}
+							}
 							this.findall('#buttons span').forEach(button=>{
 								button.onclick = ()=>{
-									if(button.id==='closepayment'){
-										this.remove();
-									}
+									buttonsMap[button.id](this);
 								}
 							})
 						},
@@ -1094,6 +1103,7 @@ const getPlnInfo = function(filtered,op,el){
 											border-radius: 10px;
 											box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 									"
+									id=processBuyying
 									>Bayar</span>
 									<span
 									id=closepayment
@@ -1187,6 +1197,8 @@ const getDataInfo = function(filtered,op,el){
 						recheckvalue(goalNumber,2000);
 						return;
 					}
+					const dts = this.data;
+					dts.goalNumber = goalNumber.value;
 					content.find('#contentcontainer').addChild(makeElement('div',{
 						style:`
 							position:absolute;
@@ -1198,11 +1210,17 @@ const getDataInfo = function(filtered,op,el){
 							background:RGB(255,255,255,0.5);
 						`,
 						initButtons(){
+							const buttonsMap = {
+								closepayment(el){
+									el.remove();
+								},
+								processBuyying(el){
+									reqTrx(dts.goalNumber,dts.pulsa_code,el);
+								}
+							}
 							this.findall('#buttons span').forEach(button=>{
 								button.onclick = ()=>{
-									if(button.id==='closepayment'){
-										this.remove();
-									}
+									buttonsMap[button.id](this);
 								}
 							})
 						},
@@ -1278,6 +1296,7 @@ const getDataInfo = function(filtered,op,el){
 											border-radius: 10px;
 											box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 									"
+									id=processBuyying
 									>Bayar</span>
 									<span
 									id=closepayment
@@ -1371,6 +1390,8 @@ const getGamesVouceherInfo = function(filtered,op,el){
 						recheckvalue(gameId,500);
 						return;
 					}
+					const dts = this.data;
+					dts.gameId = gameId.value;
 					content.find('#contentcontainer').addChild(makeElement('div',{
 						style:`
 							position:absolute;
@@ -1382,11 +1403,17 @@ const getGamesVouceherInfo = function(filtered,op,el){
 							background:RGB(255,255,255,0.5);
 						`,
 						initButtons(){
+							const buttonsMap = {
+								closepayment(el){
+									el.remove();
+								},
+								processBuyying(el){
+									reqTrx(dts.gameId,dts.pulsa_code,el);
+								}
+							}
 							this.findall('#buttons span').forEach(button=>{
 								button.onclick = ()=>{
-									if(button.id==='closepayment'){
-										this.remove();
-									}
+									buttonsMap[button.id](this);
 								}
 							})
 						},
@@ -1462,6 +1489,7 @@ const getGamesVouceherInfo = function(filtered,op,el){
 											border-radius: 10px;
 											box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 									"
+									id=processBuyying
 									>Bayar</span>
 									<span
 									id=closepayment
@@ -1559,9 +1587,10 @@ const header = makeElement('header',{
 						background:#1cd219;
 						color:white;
 						border-radius:0 20px 0 20px;
+						box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 					"
 					>G</span>
-					<span>emaStore</span>
+					<span>Store</span>
 				</div>
 				<div
 				style="
@@ -1585,25 +1614,75 @@ const header = makeElement('header',{
 	}
 })
 
-const reqTrx = function(hp,pulsa_code){
+const reqTrx = function(hp,pulsa_code,pop){
 	const ref_id = String(new Date().getTime());
 	const username = "0895605801484";
-	cOn.post({
-		url:'https://testprepaid.mobilepulsa.net/v1/legacy/index',
-		someSetting:[
-			['setRequestHeader','content-type','application/json']
-		],
-		data:JSON.stringify({
-			username,
-			sign:md5(username+"63764243965e5e29"+ref_id),
-			commands:'topup',
-			pulsa_code,hp,
-			ref_id
-		}),
-		onload(){
-			console.log(this.response);
-		}
-	})
+	pop.parentNode.addChild(openLoading('Loading...',(loading)=>{
+		cOn.post({
+			url:'https://testprepaid.mobilepulsa.net/v1/legacy/index',
+			someSetting:[
+				['setRequestHeader','content-type','application/json']
+			],
+			data:JSON.stringify({
+				username,
+				sign:md5(username+"63764243965e5e29"+ref_id),
+				commands:'topup',
+				pulsa_code,hp,
+				ref_id
+			}),
+			onload(){
+				this.openDisplay();
+				loading.remove();
+			},
+			openDisplay(){
+				const whitebox = pop.find('#whitebox');
+				whitebox.clear();
+				whitebox.addChild(makeElement('div',{
+					innerHTML:`
+						<div>
+							<span>Pesanan Dalam Proses</span>
+						</div>
+						<div>
+							<div>
+								<span>Salin ID Pesanan Anda!</span>
+							</div>
+							<div>
+								<input placeholder="Salin ID Pesanan Anda!"
+								style="
+									width:94%;
+								"
+								>
+							</div>
+						</div>
+						<div
+						style="
+							margin-top:20px;
+							margin-bottom:10px;
+						"
+						>
+							<span
+							style="
+								background:#fb8c00;
+								color:white;
+								padding:10px 20px;
+								cursor:pointer;
+								border-radius:10px;
+								box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+							"
+							id=closebutton
+							>Tutup</span>
+						</div>
+					`,
+					onadded(){
+						this.find('input').value = ref_id;
+						this.find('#closebutton').onclick = ()=>{
+							category.cs[header.state].click();
+						}
+					}
+				}))
+			}
+		})
+	}))
 }
 const statusGet = function(ref_id){
 	const username = "0895605801484";
