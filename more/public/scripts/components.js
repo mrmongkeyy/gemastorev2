@@ -238,7 +238,7 @@ const actions = {
 						<div
 						style="font-size:18px;"
 						>
-							<span>Masukan Id Transaksi Anda</span>
+							<span>Masukan Id Pesanan Anda</span>
 						</div>
 						<div>
 							<input type=number id=ref_id placeholder="Pastikan ID Benar!"
@@ -1738,7 +1738,7 @@ const statusGet = function(ref_id,parent){
 							justify-content:space-between;
 						"
 						>
-							<span>Transaction Id</span>
+							<span>Id Pesanan</span>
 							<span>${ref_id}</span>
 						</div>
 						<div
@@ -1746,7 +1746,7 @@ const statusGet = function(ref_id,parent){
 							display:flex;
 							justify-content:space-between;
 						">
-							<span>Transaction Status</span>
+							<span>Status Pesanan</span>
 							<span>${JSON.parse(this.response).data.message}</span>
 						</div>
 					`
