@@ -1,0 +1,18 @@
+{
+  "name": "gemastorev2",
+  "version": "1.0.0",
+  "description": "simple one hahaha",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/mrmongkeyy/gemastorev2"
+  },
+  "keywords": [
+    "gemastore"
+  ],
+  "author": "gema",
+  "license": "MIT"
+}
