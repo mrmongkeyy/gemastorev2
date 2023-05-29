@@ -279,7 +279,7 @@ const actions = {
 							recheckvalue(ref_id);
 							return;
 						}
-						statusGet(String(ref_id.value));
+						statusGet(String(ref_id.value),this.parentNode);
 					}
 				}
 			}))
@@ -574,7 +574,6 @@ const actions = {
 				inputEventSetup(){
 					const input = this.find('input');
 					input.oninput = ()=>{
-						console.log(input.value);
 					}
 				},
 				onadded(){
@@ -966,7 +965,6 @@ const getPulsaInfo = function(filtered,op,el){
 				type:'pulsa',operator:op
 			}),
 			onload(){
-				console.log(JSON.parse(this.response).data);
 				displayData(JSON.parse(this.response).data);
 				el.parentNode.gamesData = JSON.parse(this.response).data;
 				loading.remove();
@@ -1159,7 +1157,6 @@ const getPlnInfo = function(filtered,op,el){
 				type:'pln',operator:'pln'
 			}),
 			onload(){
-				console.log(JSON.parse(this.response).data);
 				displayData(JSON.parse(this.response).data);
 				el.parentNode.gamesData = JSON.parse(this.response).data;
 				loading.remove();
@@ -1352,7 +1349,6 @@ const getDataInfo = function(filtered,op,el){
 				type:'data',operator:op
 			}),
 			onload(){
-				console.log(JSON.parse(this.response).data);
 				displayData(JSON.parse(this.response).data);
 				el.parentNode.gamesData = JSON.parse(this.response).data;
 				loading.remove();
@@ -1545,7 +1541,6 @@ const getGamesVouceherInfo = function(filtered,op,el){
 				type:'game',operator:op
 			}),
 			onload(){
-				console.log(JSON.parse(this.response).data);
 				displayData(JSON.parse(this.response).data);
 				el.parentNode.gamesData = JSON.parse(this.response).data;
 				loading.remove();
@@ -1635,15 +1630,16 @@ const reqTrx = function(hp,pulsa_code,pop){
 				loading.remove();
 			},
 			openDisplay(){
+				const databack = JSON.parse(this.response);
 				const whitebox = pop.find('#whitebox');
 				whitebox.clear();
 				whitebox.addChild(makeElement('div',{
 					innerHTML:`
 						<div>
-							<span>Pesanan Dalam Proses</span>
+							<span>${databack.data.rc==='16'?'Nomor Yang Anda Masukan Tidak Valid!':'Pesanan Dalam Proses'}</span>
 						</div>
 						<div>
-							<div>
+							<div style="margin-bottom:10px;">
 								<span>Salin ID Pesanan Anda!</span>
 							</div>
 							<div>
@@ -1658,6 +1654,7 @@ const reqTrx = function(hp,pulsa_code,pop){
 						style="
 							margin-top:20px;
 							margin-bottom:10px;
+							text-align:right;
 						"
 						>
 							<span
@@ -1674,7 +1671,7 @@ const reqTrx = function(hp,pulsa_code,pop){
 						</div>
 					`,
 					onadded(){
-						this.find('input').value = ref_id;
+						this.find('input').value = databack.data.rc==='16'?'Tidak Valid':ref_id;
 						this.find('#closebutton').onclick = ()=>{
 							category.cs[header.state].click();
 						}
@@ -1684,23 +1681,58 @@ const reqTrx = function(hp,pulsa_code,pop){
 		})
 	}))
 }
-const statusGet = function(ref_id){
+const statusGet = function(ref_id,parent){
 	const username = "0895605801484";
-	cOn.post({
-		url:'https://testprepaid.mobilepulsa.net/v1/legacy/index',
-		someSetting:[
-			['setRequestHeader','content-type','application/json']
-		],
-		data:JSON.stringify({
-			username,
-			sign:md5(username+"63764243965e5e29"+ref_id),
-			commands:'inquiry',
-			ref_id
-		}),
-		onload(){
-			console.log(this.response);
-		}
-	})
+	parent.addChild(openLoading('Mengambil Data...',(loading)=>{
+		cOn.post({
+			url:'https://testprepaid.mobilepulsa.net/v1/legacy/index',
+			someSetting:[
+				['setRequestHeader','content-type','application/json']
+			],
+			data:JSON.stringify({
+				username,
+				sign:md5(username+"63764243965e5e29"+ref_id),
+				commands:'inquiry',
+				ref_id
+			}),
+			onload(){
+				this.displayData();
+				loading.remove();
+			},
+			displayData(){
+				parent.saveRemove('#orderCheckResponse');
+				parent.addChild(makeElement('div',{
+					id:'orderCheckResponse',
+					style:`
+						margin: 2%;
+						padding: 2%;
+						background: white;
+						border-radius: 10px;
+						box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 5px, rgba(0, 0, 0, 0.14) 0px 2px 2px, rgba(0, 0, 0, 0.12) 0px 3px 1px -2px;
+					`,
+					innerHTML:`
+						<div
+						style="
+							display:flex;
+							justify-content:space-between;
+						"
+						>
+							<span>Transaction Id</span>
+							<span>${ref_id}</span>
+						</div>
+						<div
+						style="
+							display:flex;
+							justify-content:space-between;
+						">
+							<span>Transaction Status</span>
+							<span>${JSON.parse(this.response).data.message}</span>
+						</div>
+					`
+				}))
+			}
+		})
+	}))
 }
 
 
