@@ -72,6 +72,8 @@ const category = makeElement('div',{
 		<div
 		id=whitebox
 		style="
+			position:sticky;
+			top:0;
 			background:#1976d2;
 			display:flex;
 			justify-content:space-around;
@@ -345,19 +347,19 @@ const actions = {
 					box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 					display:flex;
 					flex-direction:column;
-					height:350px;
+					height:50%;
 				`,
 				innerHTML:`
 					<div
 					style="
 						margin-bottom:10px;
 						display:flex;
-						justify-content:space-between;
+						flex-direction:column;
 					"
 					>
 						<div
 						style="
-							width:50%;
+							width:100%;
 							display:flex;
 							align-items:center;
 						"
@@ -366,12 +368,13 @@ const actions = {
 						</div>
 						<div
 						style="
-							width:50%;
+							width:100%;
 							text-align:right;
 						">
 							<input placeholder="Telusuri Produk..."
 							style="
 								border-radius:10px;
+								width:94%;
 							"
 							id=filtering
 							>
@@ -472,19 +475,19 @@ const actions = {
 					box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 					display:flex;
 					flex-direction:column;
-					height:350px;
+					height:50%;
 				`,
 				innerHTML:`
 					<div
 					style="
 						margin-bottom:10px;
 						display:flex;
-						justify-content:space-between;
+						flex-direction:column;
 					"
 					>
 						<div
 						style="
-							width:50%;
+							width:100%;
 							display:flex;
 							align-items:center;
 						"
@@ -493,12 +496,13 @@ const actions = {
 						</div>
 						<div
 						style="
-							width:50%;
+							width:100%;
 							text-align:right;
 						">
 							<input placeholder="Telusuri Produk..."
 							style="
 								border-radius:10px;
+								width:94%;
 							"
 							id=filtering
 							>
@@ -580,19 +584,19 @@ const actions = {
 					box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 					display:flex;
 					flex-direction:column;
-					height:350px;
+					height:50%;
 				`,
 				innerHTML:`
 					<div
 					style="
 						margin-bottom:10px;
 						display:flex;
-						justify-content:space-between;
+						flex-direction:column;
 					"
 					>
 						<div
 						style="
-							width:50%;
+							width:100%;
 							display:flex;
 							align-items:center;
 						"
@@ -601,12 +605,13 @@ const actions = {
 						</div>
 						<div
 						style="
-							width:50%;
+							width:100%;
 							text-align:right;
 						">
 							<input placeholder="Telusuri Produk..."
 							style="
 								border-radius:10px;
+								width:94%;
 							"
 							id=filtering
 							>
@@ -709,19 +714,19 @@ const actions = {
 					box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 					display:flex;
 					flex-direction:column;
-					height:350px;
+					height:50%;
 				`,
 				innerHTML:`
 					<div
 					style="
 						margin-bottom:10px;
 						display:flex;
-						justify-content:space-between;
+						flex-direction:column;
 					"
 					>
 						<div
 						style="
-							width:50%;
+							width:100%;
 							display:flex;
 							align-items:center;
 						"
@@ -730,12 +735,12 @@ const actions = {
 						</div>
 						<div
 						style="
-							width:50%;
-							text-align:right;
+							width:100%;
 						">
 							<input placeholder="Telusuri Produk..."
 							style="
 								border-radius:10px;
+								width:94%;
 							"
 							id=filtering
 							>
@@ -1837,7 +1842,7 @@ const openMenuPreview = function(data){
 					style="
 						font-size:16px;
 						margin-top:10px;
-						height:300px;
+						height:50%;
 						overflow:auto;
 						scrollbar-width:thin;
 						padding:5px;
