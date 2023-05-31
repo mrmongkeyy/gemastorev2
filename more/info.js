@@ -112,7 +112,7 @@ module.exports = function(type,req,res){
 		
 	}
 	//handling blocking host.
-	if(req.header.Host==='localhost:8080'){
+	if(req.header.Host==='localhost:8080'||req.header.Host==='gemastore.cyclic.app'){
 		if(schema[type][req.query.type]){
 			//handling 'spaces'.
 			if(req.query.operator)req.query.operator = filterString(req.query.operator,'%20',' ');
