@@ -785,158 +785,161 @@ const getPulsaInfo = function(filtered,op,el){
 	const displayData = (data)=>{
 		find('#spaceproducts').clear();
 		data.forEach(d=>{
-			find('#spaceproducts').addChild(makeElement('div',{
-				data:d,
-				style:`
-					margin:2%;
-					padding:2%;
-					display:flex;
-					justify-content:space-between;
-					border-radius:10px;
-					cursor:pointer;
-					box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
-				`,
-				innerHTML:`
-					<div>
-						<span>${d.pulsa_op+' '+getPrice(d.pulsa_nominal)}</span>
-					</div>
-					<div>
-						<span>RP ${getPrice(d.pulsa_price)}</span>
-					</div>
-				`,
-				onclick(){
-					const goalNumber = find('#goalnumber');
-					if(String(goalNumber.value).length===0){
-						recheckvalue(goalNumber,2000);
-						return;
-					}
-					const dts = this.data;
-					dts.goalNumber = goalNumber.value;
-					content.find('#contentcontainer').addChild(makeElement('div',{
-						style:`
-							position:absolute;
-							width:100%;
-							height:100%;
-							display:flex;
-							align-items:flex-start;
-							justify-content:center;
-							background:RGB(255,255,255,0.5);
-						`,
-						initButtons(){
-							const buttonsMap = {
-								closepayment(el){
-									el.remove();
-								},
-								processBuyying(el){
-									reqTrx(dts.goalNumber,dts.pulsa_code,el);
+			//filter the price.
+			if(d.pulsa_price>5000){
+				find('#spaceproducts').addChild(makeElement('div',{
+					data:d,
+					style:`
+						margin:2%;
+						padding:2%;
+						display:flex;
+						justify-content:space-between;
+						border-radius:10px;
+						cursor:pointer;
+						box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+					`,
+					innerHTML:`
+						<div>
+							<span>${d.pulsa_op+' '+getPrice(d.pulsa_nominal)}</span>
+						</div>
+						<div>
+							<span>RP ${getPrice(d.pulsa_price)}</span>
+						</div>
+					`,
+					onclick(){
+						const goalNumber = find('#goalnumber');
+						if(String(goalNumber.value).length===0){
+							recheckvalue(goalNumber,2000);
+							return;
+						}
+						const dts = this.data;
+						dts.goalNumber = goalNumber.value;
+						content.find('#contentcontainer').addChild(makeElement('div',{
+							style:`
+								position:absolute;
+								width:100%;
+								height:100%;
+								display:flex;
+								align-items:flex-start;
+								justify-content:center;
+								background:RGB(255,255,255,0.5);
+							`,
+							initButtons(){
+								const buttonsMap = {
+									closepayment(el){
+										el.remove();
+									},
+									processBuyying(el){
+										reqTrx(dts.goalNumber,'Paket Pulsa '+dts.pulsa_nominal,dts.pulsa_price,el);
+									}
 								}
-							}
-							this.findall('#buttons span').forEach(button=>{
-								button.onclick = ()=>{
-									buttonsMap[button.id](this);
-								}
-							})
-						},
-						innerHTML:`
-							<div
-							style="
-								background:white;
-								border-radius:0 0 10px 10px;
-								padding:20px;
-								box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
-							"
-							id=whitebox
-							>
-								<div>
-									<span>Informasi Barang</span>
-								</div>
+								this.findall('#buttons span').forEach(button=>{
+									button.onclick = ()=>{
+										buttonsMap[button.id](this);
+									}
+								})
+							},
+							innerHTML:`
 								<div
 								style="
-									margin-top:5px;
+									background:white;
+									border-radius:0 0 10px 10px;
 									padding:20px;
-									border-radius:10px;
-									box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+									box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 								"
+								id=whitebox
 								>
+									<div>
+										<span>Informasi Barang</span>
+									</div>
 									<div
 									style="
-										display:flex;
-										justify-content:space-between;
+										margin-top:5px;
+										padding:20px;
+										border-radius:10px;
+										box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 									"
 									>
-										<span>Nama Barang</span>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										"
+										>
+											<span>Nama Barang</span>
+											<span
+											style="
+												width:50%;
+												overflow:auto;
+												text-align:right;
+											"
+											>${this.data.pulsa_op+' '+this.data.pulsa_nominal}</span>
+										</div>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										">
+											<span>Tipe Barang</span>
+											<span>${this.data.pulsa_type}</span>
+										</div>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										"
+										>
+											<span>Nomor Tujuan</span>
+											<span>${goalNumber.value}</span>
+										</div>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										">
+											<span>Harga Barang</span>
+											<span>RP ${getPrice(this.data.pulsa_price)}</span>
+										</div>
+									</div>
+									<div
+									style="
+										margin:20px 0 10px 0;
+										text-align:right;
+									"
+									id=buttons
+									>
 										<span
 										style="
-											width:50%;
-											overflow:auto;
-											text-align:right;
+												background: #fb8c00;
+												color: white;
+												padding: 2% 3%;
+												cursor: pointer;
+												border-radius: 10px;
+												box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 										"
-										>${this.data.pulsa_op+' '+this.data.pulsa_nominal}</span>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-									">
-										<span>Tipe Barang</span>
-										<span>${this.data.pulsa_type}</span>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-									"
-									>
-										<span>Nomor Tujuan</span>
-										<span>${goalNumber.value}</span>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-									">
-										<span>Harga Barang</span>
-										<span>RP ${getPrice(this.data.pulsa_price)}</span>
+										id=processBuyying
+										>Bayar</span>
+										<span
+										id=closepayment
+										style="
+												background: #fb8c00;
+												color: white;
+												padding: 2% 3%;
+												cursor: pointer;
+												border-radius: 10px;
+												box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+										"
+										>Batal</span>
 									</div>
 								</div>
-								<div
-								style="
-									margin:20px 0 10px 0;
-									text-align:right;
-								"
-								id=buttons
-								>
-									<span
-									style="
-										  background: #fb8c00;
-											color: white;
-											padding: 2% 3%;
-											cursor: pointer;
-											border-radius: 10px;
-											box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
-									"
-									id=processBuyying
-									>Bayar</span>
-									<span
-									id=closepayment
-									style="
-										  background: #fb8c00;
-											color: white;
-											padding: 2% 3%;
-											cursor: pointer;
-											border-radius: 10px;
-											box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
-									"
-									>Batal</span>
-								</div>
-							</div>
-						`,
-						onadded(){
-							this.initButtons();
-						}
-					}))
-				}
-			}))
+							`,
+							onadded(){
+								this.initButtons();
+							}
+						}))
+					}
+				}))
+			}
 		})
 		if(data.length===0){
 			find('#spaceproducts').addChild(makeElement('div',{
@@ -960,16 +963,8 @@ const getPulsaInfo = function(filtered,op,el){
 		return;
 	}
 	find('#spaceproducts').addChild(openLoading('Memuat Data!',(loading)=>{
-		cOn.post({
-			url:'https://testprepaid.mobilepulsa.net/v1/legacy/index/',
-			someSetting:[['setRequestHeader','content-type','application/json']],
-			data:JSON.stringify({
-				commands:'pricelist',
-				username:'0895605801484',
-				sign:'7ad0dabf608f08ace635ece4d5393b3d',
-				status:'active',
-				type:'pulsa',operator:op
-			}),
+		cOn.get({
+			url:`/info?type=pulsa&&operator=${op}`,
 			onload(){
 				displayData(JSON.parse(this.response).data);
 				el.parentNode.gamesData = JSON.parse(this.response).data;
@@ -983,157 +978,159 @@ const getPlnInfo = function(filtered,op,el){
 	const displayData = (data)=>{
 		find('#spaceproducts').clear();
 		data.forEach(d=>{
-			find('#spaceproducts').addChild(makeElement('div',{
-				data:d,
-				style:`
-					margin:2%;
-					padding:2%;
-					display:flex;
-					justify-content:space-between;
-					border-radius:10px;
-					cursor:pointer;
-					box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
-				`,
-				innerHTML:`
-					<div>
-						<span>${d.pulsa_op+' '+getPrice(d.pulsa_nominal)}</span>
-					</div>
-					<div>
-						<span>RP ${getPrice(d.pulsa_price)}</span>
-					</div>
-				`,
-				onclick(){
-					const goalNumber = find('#goalnumber');
-					if(String(goalNumber.value).length===0){
-						recheckvalue(goalNumber,2000);
-						return;
-					}
-					const dts = this.data;
-					dts.goalNumber = goalNumber.value;
-					content.find('#contentcontainer').addChild(makeElement('div',{
-						style:`
-							position:absolute;
-							width:100%;
-							height:100%;
-							display:flex;
-							align-items:flex-start;
-							justify-content:center;
-							background:RGB(255,255,255,0.5);
-						`,
-						initButtons(){
-							const buttonsMap = {
-								closepayment(el){
-									el.remove();
-								},
-								processBuyying(el){
-									reqTrx(dts.goalNumber,dts.pulsa_code,el);
+			if(d.pulsa_price>5000){
+				find('#spaceproducts').addChild(makeElement('div',{
+					data:d,
+					style:`
+						margin:2%;
+						padding:2%;
+						display:flex;
+						justify-content:space-between;
+						border-radius:10px;
+						cursor:pointer;
+						box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+					`,
+					innerHTML:`
+						<div>
+							<span>${d.pulsa_op+' '+getPrice(d.pulsa_nominal)}</span>
+						</div>
+						<div>
+							<span>RP ${getPrice(d.pulsa_price)}</span>
+						</div>
+					`,
+					onclick(){
+						const goalNumber = find('#goalnumber');
+						if(String(goalNumber.value).length===0){
+							recheckvalue(goalNumber,2000);
+							return;
+						}
+						const dts = this.data;
+						dts.goalNumber = goalNumber.value;
+						content.find('#contentcontainer').addChild(makeElement('div',{
+							style:`
+								position:absolute;
+								width:100%;
+								height:100%;
+								display:flex;
+								align-items:flex-start;
+								justify-content:center;
+								background:RGB(255,255,255,0.5);
+							`,
+							initButtons(){
+								const buttonsMap = {
+									closepayment(el){
+										el.remove();
+									},
+									processBuyying(el){
+										reqTrx(dts.goalNumber,'Pln Voucher '+dts.pulsa_nominal,dts.pulsa_price,el);
+									}
 								}
-							}
-							this.findall('#buttons span').forEach(button=>{
-								button.onclick = ()=>{
-									buttonsMap[button.id](this);
-								}
-							})
-						},
-						innerHTML:`
-							<div
-							style="
-								background:white;
-								border-radius:0 0 10px 10px;
-								padding:20px;
-								box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
-							"
-							id=whitebox
-							>
-								<div>
-									<span>Informasi Barang</span>
-								</div>
+								this.findall('#buttons span').forEach(button=>{
+									button.onclick = ()=>{
+										buttonsMap[button.id](this);
+									}
+								})
+							},
+							innerHTML:`
 								<div
 								style="
-									margin-top:5px;
+									background:white;
+									border-radius:0 0 10px 10px;
 									padding:20px;
-									border-radius:10px;
-									box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+									box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 								"
+								id=whitebox
 								>
+									<div>
+										<span>Informasi Barang</span>
+									</div>
 									<div
 									style="
-										display:flex;
-										justify-content:space-between;
+										margin-top:5px;
+										padding:20px;
+										border-radius:10px;
+										box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 									"
 									>
-										<span>Nama Barang</span>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										"
+										>
+											<span>Nama Barang</span>
+											<span
+											style="
+												width:50%;
+												overflow:auto;
+												text-align:right;
+											">${this.data.pulsa_op+' '+this.data.pulsa_nominal}</span>
+										</div>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										">
+											<span>Tipe Barang</span>
+											<span>${this.data.pulsa_type}</span>
+										</div>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										"
+										>
+											<span>Nomor Tujuan</span>
+											<span>${goalNumber.value}</span>
+										</div>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										">
+											<span>Harga Barang</span>
+											<span>RP ${getPrice(this.data.pulsa_price)}</span>
+										</div>
+									</div>
+									<div
+									style="
+										margin:20px 0 10px 0;
+										text-align:right;
+									"
+									id=buttons
+									>
 										<span
 										style="
-											width:50%;
-											overflow:auto;
-											text-align:right;
-										">${this.data.pulsa_op+' '+this.data.pulsa_nominal}</span>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-									">
-										<span>Tipe Barang</span>
-										<span>${this.data.pulsa_type}</span>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-									"
-									>
-										<span>Nomor Tujuan</span>
-										<span>${goalNumber.value}</span>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-									">
-										<span>Harga Barang</span>
-										<span>RP ${getPrice(this.data.pulsa_price)}</span>
+												background: #fb8c00;
+												color: white;
+												padding: 2% 3%;
+												cursor: pointer;
+												border-radius: 10px;
+												box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+										"
+										id=processBuyying
+										>Bayar</span>
+										<span
+										id=closepayment
+										style="
+												background: #fb8c00;
+												color: white;
+												padding: 2% 3%;
+												cursor: pointer;
+												border-radius: 10px;
+												box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+										"
+										>Batal</span>
 									</div>
 								</div>
-								<div
-								style="
-									margin:20px 0 10px 0;
-									text-align:right;
-								"
-								id=buttons
-								>
-									<span
-									style="
-										  background: #fb8c00;
-											color: white;
-											padding: 2% 3%;
-											cursor: pointer;
-											border-radius: 10px;
-											box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
-									"
-									id=processBuyying
-									>Bayar</span>
-									<span
-									id=closepayment
-									style="
-										  background: #fb8c00;
-											color: white;
-											padding: 2% 3%;
-											cursor: pointer;
-											border-radius: 10px;
-											box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
-									"
-									>Batal</span>
-								</div>
-							</div>
-						`,
-						onadded(){
-							this.initButtons();
-						}
-					}))
-				}
-			}))
+							`,
+							onadded(){
+								this.initButtons();
+							}
+						}))
+					}
+				}))
+			}
 		})
 		if(data.length===0){
 			find('#spaceproducts').addChild(makeElement('div',{
@@ -1157,16 +1154,8 @@ const getPlnInfo = function(filtered,op,el){
 		return;
 	}
 	find('#spaceproducts').addChild(openLoading('Memuat Data!',(loading)=>{
-		cOn.post({
-			url:'https://testprepaid.mobilepulsa.net/v1/legacy/index/',
-			someSetting:[['setRequestHeader','content-type','application/json']],
-			data:JSON.stringify({
-				commands:'pricelist',
-				username:'0895605801484',
-				sign:'7ad0dabf608f08ace635ece4d5393b3d',
-				status:'active',
-				type:'pln',operator:'pln'
-			}),
+		cOn.get({
+			url:`/info?type=pln&&operator=${op}`,
 			onload(){
 				displayData(JSON.parse(this.response).data);
 				el.parentNode.gamesData = JSON.parse(this.response).data;
@@ -1180,157 +1169,159 @@ const getDataInfo = function(filtered,op,el){
 	const displayData = (data)=>{
 		find('#spaceproducts').clear();
 		data.forEach(d=>{
-			find('#spaceproducts').addChild(makeElement('div',{
-				data:d,
-				style:`
-					margin:2%;
-					padding:2%;
-					display:flex;
-					justify-content:space-between;
-					border-radius:10px;
-					cursor:pointer;
-					box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
-				`,
-				innerHTML:`
-					<div>
-						<span>${d.pulsa_op+' '+d.pulsa_nominal}</span>
-					</div>
-					<div>
-						<span>RP ${getPrice(d.pulsa_price)}</span>
-					</div>
-				`,
-				onclick(){
-					const goalNumber = find('#goalnumber');
-					if(String(goalNumber.value).length===0){
-						recheckvalue(goalNumber,2000);
-						return;
-					}
-					const dts = this.data;
-					dts.goalNumber = goalNumber.value;
-					content.find('#contentcontainer').addChild(makeElement('div',{
-						style:`
-							position:absolute;
-							width:100%;
-							height:100%;
-							display:flex;
-							align-items:flex-start;
-							justify-content:center;
-							background:RGB(255,255,255,0.5);
-						`,
-						initButtons(){
-							const buttonsMap = {
-								closepayment(el){
-									el.remove();
-								},
-								processBuyying(el){
-									reqTrx(dts.goalNumber,dts.pulsa_code,el);
+			if(d.pulsa_price>5000){
+				find('#spaceproducts').addChild(makeElement('div',{
+					data:d,
+					style:`
+						margin:2%;
+						padding:2%;
+						display:flex;
+						justify-content:space-between;
+						border-radius:10px;
+						cursor:pointer;
+						box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+					`,
+					innerHTML:`
+						<div>
+							<span>${d.pulsa_op+' '+d.pulsa_nominal}</span>
+						</div>
+						<div>
+							<span>RP ${getPrice(d.pulsa_price)}</span>
+						</div>
+					`,
+					onclick(){
+						const goalNumber = find('#goalnumber');
+						if(String(goalNumber.value).length===0){
+							recheckvalue(goalNumber,2000);
+							return;
+						}
+						const dts = this.data;
+						dts.goalNumber = goalNumber.value;
+						content.find('#contentcontainer').addChild(makeElement('div',{
+							style:`
+								position:absolute;
+								width:100%;
+								height:100%;
+								display:flex;
+								align-items:flex-start;
+								justify-content:center;
+								background:RGB(255,255,255,0.5);
+							`,
+							initButtons(){
+								const buttonsMap = {
+									closepayment(el){
+										el.remove();
+									},
+									processBuyying(el){
+										reqTrx(dts.goalNumber,'Paket Data '+dts.pulsa_nominal,dts.pulsa_price,el);
+									}
 								}
-							}
-							this.findall('#buttons span').forEach(button=>{
-								button.onclick = ()=>{
-									buttonsMap[button.id](this);
-								}
-							})
-						},
-						innerHTML:`
-							<div
-							style="
-								background:white;
-								border-radius:0 0 10px 10px;
-								padding:20px;
-								box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
-							"
-							id=whitebox
-							>
-								<div>
-									<span>Informasi Barang</span>
-								</div>
+								this.findall('#buttons span').forEach(button=>{
+									button.onclick = ()=>{
+										buttonsMap[button.id](this);
+									}
+								})
+							},
+							innerHTML:`
 								<div
 								style="
-									margin-top:5px;
+									background:white;
+									border-radius:0 0 10px 10px;
 									padding:20px;
-									border-radius:10px;
-									box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+									box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 								"
+								id=whitebox
 								>
+									<div>
+										<span>Informasi Barang</span>
+									</div>
 									<div
 									style="
-										display:flex;
-										justify-content:space-between;
+										margin-top:5px;
+										padding:20px;
+										border-radius:10px;
+										box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 									"
 									>
-										<span>Nama Barang</span>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										"
+										>
+											<span>Nama Barang</span>
+											<span
+											style="
+												width:50%;
+												overflow:auto;
+												text-align:right;
+											">${this.data.pulsa_op+' '+this.data.pulsa_nominal}</span>
+										</div>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										">
+											<span>Tipe Barang</span>
+											<span>${this.data.pulsa_type}</span>
+										</div>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										"
+										>
+											<span>Nomor Tujuan</span>
+											<span>${goalNumber.value}</span>
+										</div>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										">
+											<span>Harga Barang</span>
+											<span>RP ${getPrice(this.data.pulsa_price)}</span>
+										</div>
+									</div>
+									<div
+									style="
+										margin:20px 0 10px 0;
+										text-align:right;
+									"
+									id=buttons
+									>
 										<span
 										style="
-											width:50%;
-											overflow:auto;
-											text-align:right;
-										">${this.data.pulsa_op+' '+this.data.pulsa_nominal}</span>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-									">
-										<span>Tipe Barang</span>
-										<span>${this.data.pulsa_type}</span>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-									"
-									>
-										<span>Nomor Tujuan</span>
-										<span>${goalNumber.value}</span>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-									">
-										<span>Harga Barang</span>
-										<span>RP ${getPrice(this.data.pulsa_price)}</span>
+												background: #fb8c00;
+												color: white;
+												padding: 2% 3%;
+												cursor: pointer;
+												border-radius: 10px;
+												box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+										"
+										id=processBuyying
+										>Bayar</span>
+										<span
+										id=closepayment
+										style="
+												background: #fb8c00;
+												color: white;
+												padding: 2% 3%;
+												cursor: pointer;
+												border-radius: 10px;
+												box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+										"
+										>Batal</span>
 									</div>
 								</div>
-								<div
-								style="
-									margin:20px 0 10px 0;
-									text-align:right;
-								"
-								id=buttons
-								>
-									<span
-									style="
-										  background: #fb8c00;
-											color: white;
-											padding: 2% 3%;
-											cursor: pointer;
-											border-radius: 10px;
-											box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
-									"
-									id=processBuyying
-									>Bayar</span>
-									<span
-									id=closepayment
-									style="
-										  background: #fb8c00;
-											color: white;
-											padding: 2% 3%;
-											cursor: pointer;
-											border-radius: 10px;
-											box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
-									"
-									>Batal</span>
-								</div>
-							</div>
-						`,
-						onadded(){
-							this.initButtons();
-						}
-					}))
-				}
-			}))
+							`,
+							onadded(){
+								this.initButtons();
+							}
+						}))
+					}
+				}))
+			}
 		})
 		if(data.length===0){
 			find('#spaceproducts').addChild(makeElement('div',{
@@ -1354,16 +1345,8 @@ const getDataInfo = function(filtered,op,el){
 		return;
 	}
 	find('#spaceproducts').addChild(openLoading('Memuat Data!',(loading)=>{
-		cOn.post({
-			url:'https://testprepaid.mobilepulsa.net/v1/legacy/index/',
-			someSetting:[['setRequestHeader','content-type','application/json']],
-			data:JSON.stringify({
-				commands:'pricelist',
-				username:'0895605801484',
-				sign:'7ad0dabf608f08ace635ece4d5393b3d',
-				status:'active',
-				type:'data',operator:op
-			}),
+		cOn.get({
+			url:`/info?type=data&&operator=${op}`,
 			onload(){
 				displayData(JSON.parse(this.response).data);
 				el.parentNode.gamesData = JSON.parse(this.response).data;
@@ -1377,157 +1360,159 @@ const getGamesVouceherInfo = function(filtered,op,el){
 	const displayData = (data)=>{
 		find('#spaceproducts').clear();
 		data.forEach(d=>{
-			find('#spaceproducts').addChild(makeElement('div',{
-				data:d,
-				style:`
-					margin:2%;
-					padding:2%;
-					display:flex;
-					justify-content:space-between;
-					border-radius:10px;
-					cursor:pointer;
-					box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
-				`,
-				innerHTML:`
-					<div>
-						<span>${d.pulsa_nominal}</span>
-					</div>
-					<div>
-						<span>RP ${getPrice(d.pulsa_price)}</span>
-					</div>
-				`,
-				onclick(){
-					const gameId = find('#gameId');
-					if(gameId.value.length===0){
-						recheckvalue(gameId,500);
-						return;
-					}
-					const dts = this.data;
-					dts.gameId = gameId.value;
-					content.find('#contentcontainer').addChild(makeElement('div',{
-						style:`
-							position:absolute;
-							width:100%;
-							height:100%;
-							display:flex;
-							align-items:flex-start;
-							justify-content:center;
-							background:RGB(255,255,255,0.5);
-						`,
-						initButtons(){
-							const buttonsMap = {
-								closepayment(el){
-									el.remove();
-								},
-								processBuyying(el){
-									reqTrx(dts.gameId,dts.pulsa_code,el);
+			if(d.pulsa_price>5000){
+				find('#spaceproducts').addChild(makeElement('div',{
+					data:d,
+					style:`
+						margin:2%;
+						padding:2%;
+						display:flex;
+						justify-content:space-between;
+						border-radius:10px;
+						cursor:pointer;
+						box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+					`,
+					innerHTML:`
+						<div>
+							<span>${d.pulsa_nominal}</span>
+						</div>
+						<div>
+							<span>RP ${getPrice(d.pulsa_price)}</span>
+						</div>
+					`,
+					onclick(){
+						const gameId = find('#gameId');
+						if(gameId.value.length===0){
+							recheckvalue(gameId,500);
+							return;
+						}
+						const dts = this.data;
+						dts.gameId = gameId.value;
+						content.find('#contentcontainer').addChild(makeElement('div',{
+							style:`
+								position:absolute;
+								width:100%;
+								height:100%;
+								display:flex;
+								align-items:flex-start;
+								justify-content:center;
+								background:RGB(255,255,255,0.5);
+							`,
+							initButtons(){
+								const buttonsMap = {
+									closepayment(el){
+										el.remove();
+									},
+									processBuyying(el){
+										reqTrx(dts.gameId,"Game Voucher "+dts.pulsa_nominal,dts.pulsa_price,el);
+									}
 								}
-							}
-							this.findall('#buttons span').forEach(button=>{
-								button.onclick = ()=>{
-									buttonsMap[button.id](this);
-								}
-							})
-						},
-						innerHTML:`
-							<div
-							style="
-								background:white;
-								border-radius:0 0 10px 10px;
-								padding:20px;
-								box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
-							"
-							id=whitebox
-							>
-								<div>
-									<span>Informasi Barang</span>
-								</div>
+								this.findall('#buttons span').forEach(button=>{
+									button.onclick = ()=>{
+										buttonsMap[button.id](this);
+									}
+								})
+							},
+							innerHTML:`
 								<div
 								style="
-									margin-top:5px;
+									background:white;
+									border-radius:0 0 10px 10px;
 									padding:20px;
-									border-radius:10px;
-									box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+									box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 								"
+								id=whitebox
 								>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-									"
-									>
-										<span>Game ID</span>
-										<span>${gameId.value}</span>
+									<div>
+										<span>Informasi Barang</span>
 									</div>
 									<div
 									style="
-										display:flex;
-										justify-content:space-between;
+										margin-top:5px;
+										padding:20px;
+										border-radius:10px;
+										box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 									"
 									>
-										<span>Nama Barang</span>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										"
+										>
+											<span>Game ID</span>
+											<span>${gameId.value}</span>
+										</div>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										"
+										>
+											<span>Nama Barang</span>
+											<span
+											style="
+												width:50%;
+												overflow:auto;
+												text-align:right;
+											">${this.data.pulsa_op+' '+this.data.pulsa_nominal}</span>
+										</div>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										">
+											<span>Tipe Barang</span>
+											<span>${this.data.pulsa_type}</span>
+										</div>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										">
+											<span>Harga Barang</span>
+											<span>RP ${getPrice(this.data.pulsa_price)}</span>
+										</div>
+									</div>
+									<div
+									style="
+										margin:20px 0 10px 0;
+										text-align:right;
+									"
+									id=buttons
+									>
 										<span
 										style="
-											width:50%;
-											overflow:auto;
-											text-align:right;
-										">${this.data.pulsa_op+' '+this.data.pulsa_nominal}</span>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-									">
-										<span>Tipe Barang</span>
-										<span>${this.data.pulsa_type}</span>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-									">
-										<span>Harga Barang</span>
-										<span>RP ${getPrice(this.data.pulsa_price)}</span>
+												background: #fb8c00;
+												color: white;
+												padding: 2% 3%;
+												cursor: pointer;
+												border-radius: 10px;
+												box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+										"
+										id=processBuyying
+										>Bayar</span>
+										<span
+										id=closepayment
+										style="
+												background: #fb8c00;
+												color: white;
+												padding: 2% 3%;
+												cursor: pointer;
+												border-radius: 10px;
+												box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+										"
+										>Batal</span>
 									</div>
 								</div>
-								<div
-								style="
-									margin:20px 0 10px 0;
-									text-align:right;
-								"
-								id=buttons
-								>
-									<span
-									style="
-										  background: #fb8c00;
-											color: white;
-											padding: 2% 3%;
-											cursor: pointer;
-											border-radius: 10px;
-											box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
-									"
-									id=processBuyying
-									>Bayar</span>
-									<span
-									id=closepayment
-									style="
-										  background: #fb8c00;
-											color: white;
-											padding: 2% 3%;
-											cursor: pointer;
-											border-radius: 10px;
-											box-shadow: 0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
-									"
-									>Batal</span>
-								</div>
-							</div>
-						`,
-						onadded(){
-							this.initButtons();
-						}
-					}))
-				}
-			}))
+							`,
+							onadded(){
+								this.initButtons();
+							}
+						}))
+					}
+				}))
+			}
 		})
 		if(data.length===0){
 			find('#spaceproducts').addChild(makeElement('div',{
@@ -1551,16 +1536,8 @@ const getGamesVouceherInfo = function(filtered,op,el){
 		return;
 	}
 	find('#spaceproducts').addChild(openLoading('Memuat Data!',(loading)=>{
-		cOn.post({
-			url:'https://testprepaid.mobilepulsa.net/v1/legacy/index/',
-			someSetting:[['setRequestHeader','content-type','application/json']],
-			data:JSON.stringify({
-				commands:'pricelist',
-				username:'0895605801484',
-				sign:'7ad0dabf608f08ace635ece4d5393b3d',
-				status:'active',
-				type:'game',operator:op
-			}),
+		cOn.get({
+			url:`/info?type=games&&operator=${op}`,
 			onload(){
 				displayData(JSON.parse(this.response).data);
 				el.parentNode.gamesData = JSON.parse(this.response).data;
@@ -1630,21 +1607,15 @@ const header = makeElement('header',{
 	}
 })
 
-const reqTrx = function(hp,pulsa_code,pop){
+const reqTrx = function(hp,pulsa_code,pulsa_price,pop){
 	const ref_id = String(new Date().getTime());
-	const username = "0895605801484";
 	pop.parentNode.addChild(openLoading('Loading...',(loading)=>{
 		cOn.post({
-			url:'https://testprepaid.mobilepulsa.net/v1/legacy/index',
-			someSetting:[
-				['setRequestHeader','content-type','application/json']
-			],
+			url:'/order?type=orderPay',
 			data:JSON.stringify({
-				username,
-				sign:md5(username+"63764243965e5e29"+ref_id),
-				commands:'topup',
-				pulsa_code,hp,
-				ref_id
+				product:{pulsa_code,hp,ref_id,pulsa_price},
+				payment:{product:[pulsa_code],qty:['1'],price:[String(pulsa_price)],referenceId:ref_id},
+				timestamp:getTimestamp()
 			}),
 			onload(){
 				this.openDisplay();
@@ -1652,6 +1623,9 @@ const reqTrx = function(hp,pulsa_code,pop){
 			},
 			openDisplay(){
 				const databack = JSON.parse(this.response);
+				loading.remove();
+				location.href = databack.Data.Url;
+				return;
 				const whitebox = pop.find('#whitebox');
 				whitebox.clear();
 				whitebox.addChild(makeElement('div',{
@@ -1703,19 +1677,9 @@ const reqTrx = function(hp,pulsa_code,pop){
 	}))
 }
 const statusGet = function(ref_id,parent){
-	const username = "0895605801484";
 	parent.addChild(openLoading('Mengambil Data...',(loading)=>{
-		cOn.post({
-			url:'https://testprepaid.mobilepulsa.net/v1/legacy/index',
-			someSetting:[
-				['setRequestHeader','content-type','application/json']
-			],
-			data:JSON.stringify({
-				username,
-				sign:md5(username+"63764243965e5e29"+ref_id),
-				commands:'inquiry',
-				ref_id
-			}),
+		cOn.get({
+			url:`/check?trxid=${ref_id}&&type=check`,
 			onload(){
 				this.displayData();
 				loading.remove();
@@ -1747,7 +1711,7 @@ const statusGet = function(ref_id,parent){
 							justify-content:space-between;
 						">
 							<span>Status Pesanan</span>
-							<span>${JSON.parse(this.response).data.message}</span>
+							<span>${JSON.parse(this.response).data.rc==='06'?'Pesanan Tidak Ditemukan':'Sedang Diprocess'}</span>
 						</div>
 					`
 				}))

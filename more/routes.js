@@ -23,13 +23,25 @@ module.exports = [
 	{
 		mM:'get',
 		'/info'(req,res){
-			moreinfo(req,res);
+			moreinfo('pricelist',req,res);
 		}
 	},
 	{
 		mM:'get',
 		'/bananastore'(req,res){
 			view.go('bananastore',req,res);
+		}
+	},
+	{
+		mM:'post',
+		'/order'(req,res){
+			moreinfo('order',req,res);
+		}
+	},
+	{
+		mM:'get',
+		'/check'(req,res){
+			moreinfo('orderCheck',req,res);
 		}
 	}
 ];

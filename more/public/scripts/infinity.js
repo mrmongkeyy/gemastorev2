@@ -16,6 +16,24 @@ const recheckvalue = function(el,time=1000){
 	el.style.borderColor = 'red';
 	setTimeout(()=>{el.style.borderColor = borderColorBefore},time);
 }
+const getTimestamp = function(){
+	let time = new Date().toLocaleTimeString();
+	let date = new Date().toLocaleDateString();
+	while(time.indexOf('.')!=-1){
+		time = time.replace('.','');
+	}
+	
+	const metadate = date.split('/');
+	date = '';
+	metadate.reverse();
+	metadate.forEach(d=>{
+		if(d.length===1){
+			d = 0+d;
+		}
+		date += d;
+	})
+	return(date+time);
+}
 //Object.prototype.len = function(){
 //	let x = 0;
 //	for(let i in this){x++}
