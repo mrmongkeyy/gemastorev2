@@ -326,7 +326,8 @@ const app = {
 					<div id=buymenuwhitebox
 					style="
 						background:white;
-						height:80%;
+						height:100%;
+						width:100%;
 						display:flex;
 						flex-direction:column;
 					"
@@ -335,7 +336,6 @@ const app = {
 						style="
 							display:flex;
 							justify-content:space-between;
-							background:#111340;
 							padding:10px;
 						"
 						>
@@ -345,7 +345,6 @@ const app = {
 								height:16px;
 								display:flex;
 								align-items:center;
-								justify-content:center;
 								padding:5px;
 								font-size:16px;
 							"
@@ -362,7 +361,7 @@ const app = {
 								padding:5px;
 							"
 							>
-								<img src=/file?fn=closex.png
+								<img src=/file?fn=blackclose.png
 								style="
 									width:14px;
 									height:14px;
@@ -628,8 +627,8 @@ const app = {
 									width:100%;
 									display:flex;
 									flex-wrap:wrap;
-									justify-content:space-around;
-									gap:10px;
+									justify-content:center;
+									gap:16px;
 									font-size:12px;
 								"
 								>
@@ -731,7 +730,7 @@ const app = {
 							justify-content: flex-end;
 							align-items: center;
 							padding: 20px;
-							border: 1px solid;
+							border-top: 1px solid;
 						"
 						>
 							<div id=totaldisplay
@@ -795,6 +794,11 @@ const app = {
 								justify-content:center;
 							`,
 							innerHTML:`
+								<img src=${app.thumbnailpath[data[1]]}
+								style="
+									width:32px;height:32px;border-radius:50%;
+								"
+								>
 								<div>${product.nama_produk}</div>
 								<div>RP. ${getPrice(product.price)}</div>
 							`,
@@ -810,6 +814,7 @@ const app = {
 									}else{
 										delete parentBox.userData.products[this.data.code];
 										this.classList.remove('selectedprice');
+										this.selected = false;
 									}
 									parentBox.showTotal();
 								}
@@ -843,7 +848,7 @@ const app = {
 							activediv.classList.remove('activecc');
 							itemactive.classList.remove('active');
 							div.classList.add('activecc');
-							rootboxcontentitems[div.id].classList.add('active')
+							rootboxcontentitems[div.id].classList.add('active');
 							itemactive = rootboxcontentitems[div.id];
 							activediv = div;
 						}
@@ -876,6 +881,12 @@ const app = {
     const imgbox = find('#imglabel');
     imgbox.onmouseover = ()=>{canMove=false}
     imgbox.onmouseleave = ()=>{canMove=true}
+		imgbox.ontouchstart = ()=>{
+			canMove = false;
+		}
+		imgbox.ontouchend = ()=>{
+			canMove = true;
+		}
     //animation frame.
     const scroll = ()=>{
       if(!ontimeout){

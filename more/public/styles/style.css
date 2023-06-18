@@ -200,13 +200,12 @@ footer div.active{
 #rootboxcontent #priceList div{
   cursor: pointer;
 }
-#rootboxcontent #priceList div div:hover{
-  background: #111340;
-  color: white;
+#rootboxcontent #priceList div div{
+  border-radius:15px; 
 }
 .selectedprice{
-  background:#111340;
-  color: white;
+  background: #dfdfe6;
+  color: black;
 }
 #rootboxcontent #priceList .item{
 
