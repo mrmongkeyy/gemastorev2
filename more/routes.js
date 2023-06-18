@@ -5,12 +5,18 @@ module.exports = [
 	{
 		mM:'get',
 		'/'(req,res){
-			view.go('app',req,res);
+			view.go('index',req,res);
 		}
 	},
 	{
 		mM:'get',
 		'/scripts'(req,res){
+			fm.do(req,res);
+		}
+	},
+	{
+		mM:'get',
+		'/styles'(req,res){
 			fm.do(req,res);
 		}
 	},

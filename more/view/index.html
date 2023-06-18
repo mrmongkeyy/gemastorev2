@@ -1,0 +1,291 @@
+<!doctype HTML>
+<html>
+  <head>
+    <title>Gema Store</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="/styles?fn=style">
+  </head>
+  <body>
+     <main>
+        <div
+        style="
+          position:absolute;
+          top:0;left:0;
+          height:100%;
+          width:100%;
+          z-index: 1;
+          display: none;
+        "
+        >
+          <div id="moremenu"
+          style="
+            height:100%;
+            display: flex;
+            gap:30px;
+            color:white;
+            flex-direction:column;
+            width:50%;
+            background:#111340;
+          "
+          >
+            <div
+            style="
+              padding:10%;
+              height:100%;
+              overflow:auto;
+              padding-top:0;
+              "
+              >
+              <div
+              style="
+                margin-bottom:30%;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                position:sticky;
+                top:0;
+                padding:20px 0;
+                background:#111340;
+              "
+              >
+                <img src=/file?fn=closex.png
+                style="
+                  width:16px;
+                  height:16px;
+                  cursor:pointer;
+                "
+                id=closemoremenu
+                >
+              </div>
+              <div id=moremenuitem>
+                <div class="gnavbutton">
+                  <div>
+                    <img src=/file?fn=house.png>
+                  </div>
+                  Beranda
+                </div>
+                <div class="gnavbutton">
+                  <div>
+                    <img src=/file?fn=user.png>
+                  </div>
+                  Login / Register
+                </div>
+                <div class="gnavbutton">
+                  <div>
+                    <img src=/file?fn=ticket.png>
+                  </div>
+                  Promo & News
+                </div>
+                <div class="gnavbutton">
+                  <div>
+                    <img src=/file?fn=price.png>
+                  </div>
+                  Price List
+                </div>
+                <div class="gnavbutton">
+                  <div>
+                    <img src=/file?fn=voucher.png>
+                  </div>
+                  Klaim Voucher
+                </div>
+                <div class="gnavbutton">
+                  <div>
+                    <img src=/file?fn=coin.png>
+                  </div>
+                  Tukar Poin
+                </div>
+                <div class="gnavbutton">
+                  <div>
+                    <img src=/file?fn=callme.png>
+                  </div>
+                  Contact Us
+                </div>
+                <div class="gnavbutton">
+                  <div>
+                    <img src=/file?fn=aboutme.png>
+                  </div>
+                  About Us
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+          style="
+            width:50%;
+            background:#00000080;
+          "
+          ></div>
+        </div>
+        
+      <header>
+        <div
+        style="
+          color:#738598;
+          height:100%;
+          display:flex;
+          align-items: center;
+          justify-content: center;
+          font-size:48px;
+          cursor: pointer;
+		      margin-left:15px;
+        "
+        >
+          <img src=/file?fn=hmenu.png id=openmoremenu
+          style="
+            width:32px;
+            height: 32px;
+            padding:5px;
+          ">
+        </div>
+        <div
+        style="
+          color:white;
+          height:100%;
+          display:flex;
+          align-items: center;
+          justify-content: center;
+          font-size:48px;
+          font-style: italic;
+        "
+        >
+			<div>
+				G<span style=font-size:16px>Market</span>
+			</div>
+        </div>
+        <div class="gnavbutton"
+        style="
+          color:white;
+          height:100%;
+          display:flex;
+          align-items: center;
+          justify-content: center;
+          font-size:48px;
+		  margin-right:15px;
+          cursor: pointer;
+        "
+        >
+          <img src="/file?fn=whitefinder.png"
+          style="
+            width:32px;
+            height: 32px;
+            padding:5px;
+          "
+          >
+        </div>
+      </header>
+      <content>
+        <div id="imglabel"
+        style="
+          width:96%;
+          padding:2%;
+        "
+        >
+          <img src="/file?fn=64cf4e3842fe8cbbfa8207c30859e0cf.png">
+          <img src="/file?fn=1e55766bd29e3e7c85a60d9d4887c870.png">
+          <img src="/file?fn=5ec17e06f73f92b117ebf18654d85c08.png">
+          <img src="/file?fn=61181b434d4118b566c0b6b1a3de6eab.png">
+        </div>
+        <div id="category"
+        style="
+          width:98%;
+          padding:0 1%;
+          background:#edeef1;
+          display: flex;
+          justify-content: flex-start;
+          gap:10px;
+          align-items: center;
+          height:20%;
+          overflow:auto;
+        "
+        >
+          <div class="activecc" id="Topup Game">
+            Topup
+          </div>
+          <div id="Voucher Game">
+            VoucherGame
+          </div>
+          <div id="Voucher Data">
+            VoucherData
+          </div>
+          <div id=Pulsa>
+            Pulsa
+          </div>
+          <div id="Paket Data">
+            PaketData
+          </div>
+          <div id=PLN>
+            TokenListrik
+          </div>
+          <div id="E-Money">
+            Ewallet
+          </div>
+					<div id="TV">
+            Tv
+          </div>
+          <div id="Telpon & SMS">Telpon&SMS</div>
+          <div id="Masa Aktif">MasaAktif</div>
+          <div id="Injek Voucher Kosong">VoucherKosong</div>
+          <div id="Hiburan">Hiburan</div>
+        </div>
+        <div id="contentbox"
+        style="
+          height: 100%;
+          width: 100%;
+          display: flex;
+          overflow: auto;
+        "
+        >
+          <div id="box-div"
+          style="
+            display: flex;
+            align-items: flex-start;
+            width: 100%;
+            flex-wrap: wrap;
+            gap: 32px;
+            justify-content: center;
+            overflow:auto;
+            padding:20px 0;
+						background:whitesmoke;
+          "
+          >
+            
+          </div>
+        </div>
+      </content>
+      <footer>
+        <div class="finactive factive gnavbutton">
+          <img
+          src="/file?fn=house.png"
+          style="
+            width:16px;
+            height:16px;
+          "
+          >
+          Home
+        </div>
+        <div class="finactive gnavbutton">
+          <img
+          src="/file?fn=icons8-deposit-50.png"
+          style="
+            width:16px;
+            height:16px;
+          "
+          >
+          Deposit
+        </div>
+        <div class="finactive gnavbutton">
+          <img
+          src="/file?fn=user.png"
+          style="
+            width:16px;
+            height:16px;
+          "
+          >
+          Account
+        </div>
+      </footer>
+     </main>
+    <script src=/scripts?fn=infinity></script>
+    <script src=/scripts?fn=app></script>
+  </body>
+</html>

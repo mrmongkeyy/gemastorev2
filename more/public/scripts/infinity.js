@@ -1,6 +1,13 @@
 Array.prototype.getRandom = function(){
 	return this[Math.floor(Math.random()*this.length)];
 }
+//Object.prototype.forEach = function(callback){
+//	let i = 0;
+//	for(let key in this){
+//		callback(this[key],i);
+//		i++;
+//	}
+//}
 JSON.toEncoded = function(obj){
 	let string = '';
 	for(let i in obj){
@@ -10,6 +17,12 @@ JSON.toEncoded = function(obj){
 }
 const jsonstr = function(obj){
 	return JSON.stringify(obj);
+}
+const filterString = function(string,char,newchar){
+	while(string.indexOf(char)!=-1){
+		string = string.replace(char,newchar);
+	}
+	return string;
 }
 const recheckvalue = function(el,time=1000){
 	const borderColorBefore = el.style.borderColor;
@@ -80,9 +93,9 @@ const getTimestamp = function(){
 //		return false;
 //	}
 //}
-Object.prototype.update = function(obj){
-	Object.assign(this,obj);
-}
+//Object.prototype.update = function(obj){
+//	Object.assign(this,obj);
+//}
 const vector2 = function(x=0,y=0){
 	return {x,y};
 }
@@ -121,7 +134,7 @@ const toInject = {
 			return Object.assign(this.querySelector(p),this);
 		},
 		findall(p){
-			const els = document.querySelectorAll(p);
+			const els = this.querySelectorAll(p);
 			for(let i=0;i<els.length;i++){
 				Object.assign(els[i],toInject);
 			}
@@ -325,7 +338,7 @@ const imgErrHandler = function(){
 const is_null = function(arr){
 	return arr.length === 0;
 }
-const openLoading = function(loadingmsg,added){
+const openLoading = function(loadingmsg,added,imgSrc){
 	return makeElement('div',{
 		id:'loadingDiv',
 		style:`
@@ -334,10 +347,11 @@ const openLoading = function(loadingmsg,added){
 			left:0;
 			width:100%;
 			height:100%;
-			background:rgb(255,255,255,0.5);
+			background:RGB(255,255,255,.7);
 			display:flex;
 			align-items:center;
 			justify-content:center;
+			index:1;
 		`,
 		innerHTML:`
 			<div
@@ -351,7 +365,7 @@ const openLoading = function(loadingmsg,added){
 				box-shadow:0 1px 5px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
 			"
 			>
-				<img src=/file?fn=loadingscreen.gif
+				<img src=${imgSrc||'/file?fn=loadingscreen.gif'}
 				style="
 					width:200px;
 				"

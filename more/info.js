@@ -16,6 +16,9 @@ const filterString = require('./stringfilter');
 module.exports = function(type,req,res){
 	const schema = {
 		pricelist:{
+			all(req,res){
+				this.request(res,sign,'','');
+			},
 			pulsa(req,res){
 				this.request(res,sign,'pulsa',req.query.operator);
 			},
@@ -28,20 +31,11 @@ module.exports = function(type,req,res){
 			games(req,res){
 				this.request(res,sign,'game',req.query.operator);
 			},
+			voucher(req,res){
+				this.request(res,sign,'voucher',req.query.operator);
+			},
 			request(res,sign,type,operator=''){
-				axios.post('https://testprepaid.mobilepulsa.net//v1/legacy/index/',
-					{
-						commands:'pricelist',sign,
-						username:'0895605801484',
-						status:'active',
-						type,operator
-					},
-					{
-						headers:{
-							"content-type":"application/json"
-						}
-					}
-					
+				axios.get('https://api.tokovoucher.id/produk/code?member_code=M230618KCLS1906XT&signature=f61bf1a2a98739e2110613d2ccb765ff&'
 				).then(resp=>{
 					res.json(resp.data);
 				})

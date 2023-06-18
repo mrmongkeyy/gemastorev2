@@ -1,7 +1,7 @@
-const iModule = require('./iModule');
-const template = require('./template');
+const vc = require('./viewconfig');
+const fm = require('./fileH');
 module.exports = {
 	go(scene,req,res){
-		res.string(template[scene]());
+		fm['/file'](vc[scene],res,`view`,{'content-type':'text/html'})
 	}
 }
