@@ -1050,12 +1050,18 @@ const app = {
 			showElement(scb,'flex');
 			scb.find('input').focus();
 			if(!scb.find('input').onkeydown){
-				scb.find('input').onkeydown = (e)=>{
-					if(e.code==='Enter' && scb.find('input').value.length>0){
-						this.doFilteringData(scb.find('input').value);
-					}
+				// scb.find('input').onkeydown = (e)=>{
+				// 	if(e.code==='Enter' && scb.find('input').value.length>0){
+				// 		this.doFilteringData(scb.find('input').value);
+				// 	}
+				// }
+			}
+			if(!scb.find('input').oninput){
+				scb.find('input').oninput = (e)=>{
+					this.doFilteringData(scb.find('input').value);
 				}
 			}
+			
 			hideElement(imglabel);
 			this.scbopened = true;
 			button.find('img').src = '/file?fn=closex.png';
