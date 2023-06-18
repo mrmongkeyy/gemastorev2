@@ -647,7 +647,7 @@ const app = {
 									<div
 									style="margin-bottom:5px;"
 									>Gmarket Saldo</div>
-									<div id=valist
+									<div id=valist class=notvalid
 									style="
 										display:flex;
 										gap:10px;
@@ -655,7 +655,7 @@ const app = {
 										background:#ededed;
 									"
 									>
-										<div>G Market Saldo</div>
+										<div id=gmarketsaldo>G Market Saldo</div>
 									</div>
 								</div>
 								<div
@@ -673,11 +673,11 @@ const app = {
 										background:#ededed;
 									"
 									>
-										<div>BRI</div>
-										<div>BCA</div>
-										<div>MANDIRI</div>
-										<div>SYARIAH</div>
-										<div>BNI</div>
+										<div id=vabri>BRI</div>
+										<div id=vabca>BCA</div>
+										<div id=vamandiri>MANDIRI</div>
+										<div id=vasyariah>SYARIAH</div>
+										<div id=vabni>BNI</div>
 									</div>
 								</div>
 								<div
@@ -697,8 +697,8 @@ const app = {
 										background:#ededed;
 									"
 									>
-										<div>Indomaret</div>
-										<div>Alfamart</div>
+										<div id=csindomaret>Indomaret</div>
+										<div id=csalfamart>Alfamart</div>
 									</div>
 								</div>
 								<div
@@ -718,7 +718,7 @@ const app = {
 										background:#ededed;
 									"
 									>
-										<div>Qris all payment</div>
+										<div id=qris>Qris all payment</div>
 									</div>
 								</div>
 							</div>
@@ -829,11 +829,24 @@ const app = {
 						total += this.userData.products[i].price;
 						itemlen += 1;
 					}
-					this.find('#totaldisplay').innerHTML = itemlen+' Item, Total Rp. '+getPrice(total);
+					this.find('#totaldisplay').innerHTML = `${itemlen} Item, Total Tagihan Rp. ${getPrice(total)}. Akan dibayar melalui ${this.userData.payment||'Belum Diset'}.`;
 				},
 				openPaymentMethod(){
-					this.find('#rootboxcontent').clear();
-
+					const pm = this.findall('#valist div');
+					const parent = this;
+					let selected = null;
+					pm.forEach(button=>{
+						button.onclick = ()=>{
+							if(objlen(parent.userData.products)===0 || button.parentElement.classList.contains('notvalid'))return;
+							if(selected){
+								selected.classList.remove('selectedprice');
+							}
+							selected = button;
+							selected.classList.add('selectedprice');
+							parent.userData.payment = button.id;
+							parent.showTotal();
+						}
+					})
 				},
 				setCcEvent(){
 					const buttons = this.find('#paymentboxcategory').findall('div');
@@ -861,6 +874,7 @@ const app = {
 					this.setCcEvent();
 					this.openProdukInfo();
 					this.openPriceList();
+					this.openPaymentMethod();
 				}
 			})
 		}
@@ -996,11 +1010,19 @@ const app = {
 		this.content.addChild(this.template.buyMenu(info));
 	},
 	setupGlobalNav(){
+		const actionmap = {
+			searchBar:'openSearchBar'
+		}
 		this.main.findall('.gnavbutton').forEach(button=>{
 			button.onclick = ()=>{
-				this.underDevelopmentFase();
+				if(actionmap[button.id]){
+					this[actionmap[button.id]]();
+				}else this.underDevelopmentFase();
 			}
 		})
+	},
+	openSearchBar(){
+		
 	}
 }
 app.init();

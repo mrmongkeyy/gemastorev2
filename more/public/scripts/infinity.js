@@ -129,6 +129,14 @@ const flex = {
 	components:[]	
 }
 
+const objlen = function(obj){
+	let i = 0;
+	for(let x in obj){
+		i += 1;
+	}
+	return i;
+}
+
 const toInject = {
 		find(p){
 			return Object.assign(this.querySelector(p),this);
