@@ -241,9 +241,10 @@ const app = {
 				}
 			})
 		},
-    boxItem(data,info){
+    boxItem(data,info,displayOption='operator_produk'){
 			const imgsrc = app.thumbnailpath[data.operator_produk]?app.thumbnailpath[data.operator_produk]:'/file?fn=hg.png';
       return makeElement('div',{
+				dataid:data.id,
 				info:info,
         id:'box-in',
         innerHTML:`
@@ -264,7 +265,7 @@ const app = {
 					text-align: center;
         "
         >
-          ${data.operator_produk}
+          ${data[displayOption].slice(0,20)}
         </div>
         `
       })
@@ -284,22 +285,8 @@ const app = {
 				`
 			})
 		},
-		buyMenu(info){
+		buyMenu(info,filterBase){
 			const data = info.split(',');
-			const xyz = {
-				topup(){
-					return `<div>Helloworld</div>`;
-				},
-				pulsa(){
-					
-				},
-				datapaket(){
-				
-				},
-				voucher(){
-					
-				}
-			}
 			return makeElement('div',{
 				userData:{
 					products:{},
@@ -818,6 +805,8 @@ const app = {
 									}
 									parentBox.showTotal();
 								}
+
+								if(filterBase && this.data.id === filterBase)this.click();
 							}
 						})
 						this.find('#priceList div').addChild(item);
@@ -1001,13 +990,15 @@ const app = {
 				button.classList.add('activecc');
 				activecc = button;
 				state = button.id;
+				this.categoryState = state;
 				this.displayContent(state);
 			}
 		})
+		this.categoryState = state;
 		this.displayContent(state);
 	},
-	openCashier(info){
-		this.content.addChild(this.template.buyMenu(info));
+	openCashier(info,filterBase=false){
+		this.content.addChild(this.template.buyMenu(info,filterBase));
 	},
 	setupGlobalNav(){
 		const actionmap = {
@@ -1016,13 +1007,59 @@ const app = {
 		this.main.findall('.gnavbutton').forEach(button=>{
 			button.onclick = ()=>{
 				if(actionmap[button.id]){
-					this[actionmap[button.id]]();
+					this[actionmap[button.id]](button);
 				}else this.underDevelopmentFase();
 			}
 		})
 	},
-	openSearchBar(){
-		
+	doFilteringData(value){
+		const validdata = {};
+		for(let i in this.db[this.categoryState]){
+			if(typeof this.db[this.categoryState][i] != 'object')continue;
+			if(i.toLowerCase().indexOf(value.toLowerCase())!=-1){
+				validdata[i] = this.db[this.categoryState][i];
+			}
+		}
+		const boxdiv = find('#box-div');
+		boxdiv.clear();
+		let datalen = 0;
+    for(let i in validdata){
+			validdata[i].forEach(data=>{
+				const boxin = this.template.boxItem(data,this.categoryState+','+data.operator_produk,'nama_produk');
+				boxin.onclick = ()=>{
+					this.openCashier(boxin.info,boxin.dataid);
+				}
+				boxdiv.addChild(boxin);
+				datalen += 1;
+			})
+    }
+		if(datalen===0){
+			boxdiv.addChild(this.template.noData());
+		}
+	},
+	openSearchBar(button){
+		const scb = this.content.find('#searchBarInput');
+		const imglabel = this.content.find('#imglabel');
+		if(this.scbopened){
+			hideElement(scb);
+			showElement(imglabel,'flex');
+			this.scbopened = false;
+			button.find('img').src = '/file?fn=whitefinder.png';
+			scb.find('input').value = '';
+		}else{
+			showElement(scb,'flex');
+			scb.find('input').focus();
+			if(!scb.find('input').onkeydown){
+				scb.find('input').onkeydown = (e)=>{
+					if(e.code==='Enter' && scb.find('input').value.length>0){
+						this.doFilteringData(scb.find('input').value);
+					}
+				}
+			}
+			hideElement(imglabel);
+			this.scbopened = true;
+			button.find('img').src = '/file?fn=closex.png';
+		}
 	}
 }
 app.init();
