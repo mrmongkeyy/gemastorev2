@@ -35,8 +35,22 @@ module.exports = function(type,req,res){
 				this.request(res,sign,'voucher',req.query.operator);
 			},
 			request(res,sign,type,operator=''){
-				axios.get('https://api.tokovoucher.id/produk/code?member_code=M230618KCLS1906XT&signature=f61bf1a2a98739e2110613d2ccb765ff&'
-				).then(resp=>{
+				// axios.get('https://api.tokovoucher.id/produk/code?member_code=M230618KCLS1906XT&signature=f61bf1a2a98739e2110613d2ccb765ff&'
+				// ).then(resp=>{
+				// 	res.json(resp.data);
+				// })
+				const devkey = 'dev-da2994f0-0eb9-11ee-af39-e78992aaf8f1';
+				const username = 'gesawegwMkJD';
+				const data = {
+					cmd:'prepaid',
+					username,
+					sign:md5(username+devkey+'pricelist')
+				}
+				axios.post('https://api.digiflazz.com/v1/price-list',data,{
+					headers:{
+						"content-type":"application/json"
+					}
+				}).then(resp=>{
 					res.json(resp.data);
 				})
 			}

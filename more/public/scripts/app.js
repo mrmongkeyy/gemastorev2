@@ -1,14 +1,13 @@
-
 const app = {
 	db:{},
 	thumbnailpath:{
-		"Free Fire":"/file?fn=ff.png",
-		"Mobile Legend":"/file?fn=ml.png",
+		"FREE FIRE":"/file?fn=ff.png",
+		"MOBILE LEGENDS":"/file?fn=ml.png",
 		"Higgs Domino":"/file?fn=hd.png",
 		"Lords Mobile":"/file?fn=lordsmobile.png",
 		"Call Of Duty Mobile":"/file?fn=codm.png",
-		"Arena Of Valor":"/file?fn=aov.png",
-		"Point Blank":"/file?fn=pointblank.png",
+		"ARENA OF VALOR":"/file?fn=aov.png",
+		"POINT BLANK":"/file?fn=pointblank.png",
 		"Light Of Thel":"/file?fn=lot.png",
 		"Dragon Raja":"/file?fn=dragonraja.png",
 		"Genshin Impact":"/file?fn=gi.png",
@@ -17,7 +16,7 @@ const app = {
 		"PUBG Mobile":"/file?fn=pm.png",
 		"Apex Legend":"/file?fn=apexlegend.png",
 		"Super SUS":"/file?fn=sussuper.png",
-		"Hago Diamond ID":"/file?fn=hg.png",
+		"HAGO":"/file?fn=hg.png",
 		"Valorant":"/file?fn=valo.png",
 		"Be The King":"/file?fn=btk.png",
 		"Honkai Impact 3":"/file?fn=honkaiimpact.png",
@@ -49,7 +48,7 @@ const app = {
 		"Laplace M":"/file?fn=laplacem.png",
 		"Heroes Evolved":"/file?fn=heroesevolved.png",
 		"Eudemons Online":"/file?fn=eudemonsonline.png",
-		"Ludo Club":"/file?fn=ludoclub.png",
+		"LUDO CLUB":"/file?fn=ludoclub.png",
 		"Revelation: Infinite Journey":"/file?fn=revalation.png",
 		"Ace Racer":"/file?fn=aceracer.png",
 		"Marvel Snap":"/file?fn=marvelsnap.png",
@@ -67,12 +66,12 @@ const app = {
 		"Lokapala":"/file?fn=lokapala.png",
 		"Hay Day":"/file?fn=hayday.png",
 		"Clash Royale":"/file?fn=cr.png",
-		"Token PLN":"/file?fn=pln.png",
+		"PLN":"/file?fn=pln.png",
 		"Pulsa Telkomsel":"/file?fn=/data/telkom.png",
 		"Pulsa AXIS":"/file?fn=/data/axis.png",
 		"Pulsa INDOSAT":"/file?fn=/data/indosatooredo.png",
 		"Pulsa XL":"/file?fn=/data/xl.png",
-		"Pulsa SMARTFREN":"/file?fn=/data/smartfren.png",
+		"SMARTFREN":"/file?fn=/data/smartfren.png",
 		"Pulsa TRI":"/file?fn=/data/tri.png",
 		"Razer Gold":"/file?fn=razergold.png",
 		"Unipin Voucher":"/file?fn=unipin.png",
@@ -106,24 +105,25 @@ const app = {
 		"DATA XL":"/file?fn=/data/xl.png",
 		"DATA INDOSAT":"/file?fn=/data/indosatooredo.png",
 		"DATA SMARTFREN":"/file?fn=/data/smartfren.png",
-		"DATA TRI":"/file?fn=/data/tri.png",
+		"TRI":"/file?fn=/data/tri.png",
 		"TELKOMSEL":"/file?fn=/data/telkom.png",
 		"AXIS":"/file?fn=/data/axis.png",
 		"XL":"/file?fn=/data/xl.png",
 		"INDOSAT":"/file?fn=/data/indosatooredo.png",
-		"Dana":"/file?fn=/wallet/dana.png",
+		"DANA":"/file?fn=/wallet/dana.png",
 		//"Ovo":"/file?fn=/wallet/ovo.png",
-		"Gopay":"/file?fn=/wallet/gopay.png",
-		"Shopee Pay":"/file?fn=/wallet/shopeepay.png",
+		"GO PAY":"/file?fn=/wallet/gopay.png",
+		"SHOPEE PAY":"/file?fn=/wallet/shopeepay.png",
 		"Maxim":"/file?fn=/wallet/maxim.png",
 		"Grab":"/file?fn=/wallet/grab.png",
-		//"LinkAja":"/file?fn=/wallet/linkaja.png",
-		//"i.Saku":"/file?fn=/wallet/isaku.png",
+		"LinkAja":"/file?fn=/wallet/linkaja.png",
+		"Sakuku":"/file?fn=/wallet/sakuku.png",
 		"Injek V.Telkomsel":"/file?fn=/data/telkom.png",
 		"Injek V.Axis":"/file?fn=/data/axis.png",
 		"Injek V.XL":"/file?fn=/data/xl.png",
 		"Nex Parabola":"/file?fn=nexparabola.png",
-		"Telkomsell":"/file?fn=/data/telkom.png"
+		"Telkomsell":"/file?fn=/data/telkom.png",
+		"by.U":'/file?fn=/wallet/byu.png'
 	},
 	template:{
 		underDevelopment(){
@@ -240,10 +240,10 @@ const app = {
 				}
 			})
 		},
-    boxItem(data,info,displayOption='operator_produk'){
-			const imgsrc = app.thumbnailpath[data.operator_produk]?app.thumbnailpath[data.operator_produk]:'/file?fn=hg.png';
+    boxItem(data,info,displayOption){
+			const imgsrc = app.thumbnailpath[data.brand]?app.thumbnailpath[data.brand]:'/file?fn=hg.png';
       return makeElement('div',{
-				dataid:data.id,
+				dataid:data.buyer_sku_code,
 				info:info,
         id:'box-in',
         innerHTML:`
@@ -264,7 +264,7 @@ const app = {
 					text-align: center;
         "
         >
-          ${data[displayOption].slice(0,20)}
+          ${displayOption?data[displayOption]:data.brand}
         </div>
         `
       })
@@ -778,6 +778,7 @@ const app = {
 				},
 				openPriceList(){
 					//this.find('#rootboxcontent').clear();
+					console.log(data);
 					const parentBox = this;
 					const products = app.db[data[0]][data[1]];
 					products.forEach(product=>{
@@ -799,7 +800,8 @@ const app = {
 									width:32px;height:32px;border-radius:50%;
 								"
 								>
-								<div>${product.nama_produk}</div>
+								<div>${product.product_name}</div>
+								<div>${product.desc}</div>
 								<div>RP. ${getPrice(product.price)}</div>
 							`,
 							onadded(){
@@ -819,7 +821,7 @@ const app = {
 									parentBox.showTotal();
 								}
 
-								if(filterBase && this.data.id === filterBase)this.click();
+								if(filterBase && this.data.buyer_sku_code === filterBase)this.click();
 							}
 						})
 						this.find('#priceList div').addChild(item);
@@ -1533,7 +1535,7 @@ const app = {
 		boxdiv.clear();
 		let datalen = 0;
     for(let i in this.db[typedata]){
-			if(typeof this.db[typedata][i]!=='object' || !app.thumbnailpath[i])continue;
+			//if(typeof this.db[typedata][i]!=='object' || !app.thumbnailpath[i])continue;
 			const boxin = app.template.boxItem(app.db[typedata][i][0],typedata+','+i);
 			boxin.onclick = ()=>{
 				this.openCashier(boxin.info);
@@ -1551,17 +1553,30 @@ const app = {
 		this.requestData();
   },
 	processDb(){
-		this.basedata.forEach(data=>{
-			if(this.db[data.category_name]){
-				if(this.db[data.category_name][data.operator_produk]){
-					this.db[data.category_name][data.operator_produk].push(data);
+		// this.basedata.forEach(data=>{
+		// 	if(this.db[data.category_name]){
+		// 		if(this.db[data.category_name][data.operator_produk]){
+		// 			this.db[data.category_name][data.operator_produk].push(data);
+		// 		}else{
+		// 			this.db[data.category_name][data.operator_produk] = [data];
+		// 		}
+		// 	}else{
+		// 		const obj = {};
+		// 		obj[data.operator_produk] = [data];
+		// 		this.db[data.category_name] = data;
+		// 	}
+		// })
+		this.basedata.forEach(item=>{
+			if(this.db[item.category]){
+				if(this.db[item.category][item.brand]){
+					this.db[item.category][item.brand].push(item);
 				}else{
-					this.db[data.category_name][data.operator_produk] = [data];
+					this.db[item.category][item.brand] = [item];
 				}
 			}else{
 				const obj = {};
-				obj[data.operator_produk] = [data];
-				this.db[data.category_name] = data;
+				obj[item.brand] = [item];
+				this.db[item.category] = obj;
 			}
 		})
 	},
@@ -1601,8 +1616,21 @@ const app = {
 	main:find('main'),
 	category:find('#category'),
 	setCategory(){
-		let state = 'Topup Game';
+		//generating the categories.
+		for(let i in this.db){
+			this.category.addChild(makeElement('div',{
+				id:i,
+				onadded(){
+					let text = i;
+					text = filterString(text,'-','');
+					text = filterString(text,'&','');
+					text = filterString(text,' ','');
+					this.innerHTML = text;
+				}
+			}))
+		}
 		const categorybuttons = this.category.findall('div');
+		let state = categorybuttons[0].id;
 		let activecc = categorybuttons[0];
 		categorybuttons.forEach(button=>{
 			button.onclick = ()=>{
@@ -1614,6 +1642,7 @@ const app = {
 				this.displayContent(state);
 			}
 		})
+		activecc.click();
 		this.categoryState = state;
 		this.displayContent(state);
 	},
@@ -1655,8 +1684,9 @@ const app = {
 		let datalen = 0;
     for(let i in validdata){
 			validdata[i].forEach(data=>{
-				const boxin = this.template.boxItem(data,this.categoryState+','+data.operator_produk,'nama_produk');
+				const boxin = this.template.boxItem(data,this.categoryState+','+data.brand,'product_name');
 				boxin.onclick = ()=>{
+					console.log(boxin.dataid);
 					this.openCashier(boxin.info,boxin.dataid);
 				}
 				boxdiv.addChild(boxin);
