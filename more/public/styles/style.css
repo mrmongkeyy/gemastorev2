@@ -241,6 +241,12 @@ input{
 .getborder:hover{
   border-radius:20px;
 }
+#profileupperbuttons div{
+  padding:10px;
+  border:1px solid #edeef1;
+  border-radius:10px;
+  cursor: pointer;
+}
 @media only screen and (max-width: 700px) {
   main{
     width:100%;

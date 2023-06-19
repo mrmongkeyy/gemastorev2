@@ -2,6 +2,9 @@ const view = require('./view');
 const fm = require('./fileH');
 const db = require('./firebase');
 const moreinfo = require('./info');
+const handleRegis = require('./newuserhandler')
+const emailVerifier = require('./emailVerifier');
+const loginhandler = require('./loginhandler');
 module.exports = [
 	{
 		mM:'get',
@@ -54,19 +57,19 @@ module.exports = [
 	{
 		mM:'post',
 		'/login'(req,res){
-			
+			loginhandler(req,res,db);
 		}
 	},
 	{
 		mM:'post',
-		'/regis'(req,res){
-
+		'/newfriendscome'(req,res){
+			handleRegis(req,res,db);
 		}
 	},
 	{
 		mM:'get',
-		'verifyAccount'(req,res){
-
+		'/verifymyaccount'(req,res){
+			emailVerifier(req,res,db);
 		}
 	}
 ];

@@ -393,3 +393,23 @@ const compareSet = function(src,c1,c2){
 		src = c1;
 	}
 }
+const forceRecheck = function(el,msg){
+	el.addChild(makeElement('div',{
+		style:`
+			position:absolute;
+			background:white;
+			padding:10px;
+			color:red;
+			z-index:1;
+			right:0;
+			margin:10px;
+			font-size:16px;
+		`,
+		innerHTML:msg,
+		onadded(){
+			setTimeout(()=>{
+				this.remove()
+			},2000);
+		}
+	}))
+}

@@ -934,6 +934,7 @@ const app = {
 							display: flex;
 							align-items: center;
 							justify-content: center;
+							position:relative;
 						"
 						>
 						</div>
@@ -960,7 +961,9 @@ const app = {
 					</div>
 				`,
 				putLogin(){
+					this.find('#canvas').clear();
 					this.find('#canvas').addChild(makeElement('div',{
+						parent:this,
 						style:`
 							height: 100%;
 							display: flex;
@@ -978,13 +981,13 @@ const app = {
 							</div>
 							<div>
 								<div>Email</div>
-								<div>
+								<div id=email>
 									<input placeholder="Masukan Email Anda..." type=email>
 								</div>
 							</div>
 							<div>
 								<div>Password</div>
-								<div>
+								<div id=password>
 									<input placeholder="Masukan Password Anda..." type=password>
 								</div>
 							</div>
@@ -997,7 +1000,7 @@ const app = {
 								style="cursor:pointer;"
 								>Lupa Pasword?</div>
 							</div>
-							<div
+							<div id=submit
 							style="
 								margin-top:10px;
 								padding:10px;
@@ -1011,11 +1014,92 @@ const app = {
 							>
 								Login
 							</div>
-						`
+						`,
+						dataUser:{
+							email:null,
+							password:null
+						},
+						notEmpty(){
+							let valid = true;
+							for(let i in this.dataUser){
+								if(!this.dataUser[i])valid = false;
+							}
+							return valid;
+						},
+						validCheck(){
+
+						},
+						userInputEvent(){
+							this.findall('input').forEach(input=>{
+								input.oninput = ()=>{
+									this.dataUser[input.parentElement.id] = input.value;
+								}
+							})
+						},
+						checkMyData(){
+							const responseHandle = (resp)=>{
+								if(resp.valid){
+									forceRecheck(app.main,'Login Berhasil!');
+									app.userProfileData = resp.msg;
+									this.parent.remove();
+								}else{
+									forceRecheck(app.main,resp.msg);
+									this.parent.putLogin();
+								}
+							}
+							cOn.post({
+								url:'/login',
+								someSettings:[
+									['setRequestHeader','content-type','application/json']
+								],
+								data:jsonstr(this.dataUser),
+								onload(){
+									const resp = this.getJSONResponse();
+									responseHandle(resp);
+								}
+							})
+						},
+						onadded(){
+							this.userInputEvent();
+							this.submitEvent();
+						},
+						submitEvent(){
+							this.find('#submit').onclick = ()=>{
+								if(this.notEmpty()){
+									this.showLoading();
+									this.checkMyData();
+								}else forceRecheck(app.main,'Tolong diperiksa kembali!');
+							}
+						},
+						onadded(){
+							this.userInputEvent();
+							this.submitEvent();
+						},
+						showLoading(){
+							this.parentElement.addChild(makeElement('div',{
+								id:'loading',
+								style:`
+									position:absolute;
+									width:100%;
+									height:100%;
+									background:white;
+									display:flex;
+									align-items:center;
+									justify-content:center;
+								`,
+								innerHTML:`
+									<div>
+										Tunggu Sebentar...
+									</div>
+								`
+							}))
+						}
 					}))
 				},
 				putNewAcount(){
+					this.find('#canvas').clear();
 					this.find('#canvas').addChild(makeElement('div',{
+						parent:this,
 						style:`
 							height: 100%;
 							display: flex;
@@ -1033,29 +1117,29 @@ const app = {
 							</div>
 							<div>
 								<div>Email</div>
-								<div>
+								<div id=email>
 									<input placeholder="Masukan Email Anda..." type=email>
 								</div>
 							</div>
 							<div>
 								<div>No. Hp</div>
-								<div>
+								<div id=hp>
 									<input placeholder="Masukan No Hp Anda..." type=number>
 								</div>
 							</div>
 							<div>
 								<div>Nama Anda</div>
-								<div>
+								<div id=name>
 									<input placeholder="Masukan Nama Anda..." type=email>
 								</div>
 							</div>
 							<div>
 								<div>Password</div>
-								<div>
+								<div id=password>
 									<input placeholder="Masukan Password Anda..." type=password>
 								</div>
 							</div>
-							<div
+							<div id=submit
 							style="
 								margin-top:10px;
 								padding:10px;
@@ -1069,7 +1153,86 @@ const app = {
 							>
 								Buat Akun
 							</div>
-						`
+						`,
+						dataUser:{
+							email:null,
+							hp:null,
+							name:null,
+							password:null
+						},
+						notEmpty(){
+							let valid = true;
+							for(let i in this.dataUser){
+								if(!this.dataUser[i])valid = false;
+							}
+							return valid;
+						},
+						validCheck(){
+
+						},
+						userInputEvent(){
+							this.findall('input').forEach(input=>{
+								input.oninput = ()=>{
+									this.dataUser[input.parentElement.id] = input.value;
+								}
+							})
+						},
+						saveDataRegis(){
+							this.dataUser.origin = origin;
+							this.dataUser.timeStamp = getTime();
+							const processResponse = (resp)=>{
+								if(resp.valid){
+									forceRecheck(app.main,'Prosess Registrasi Berhasil Dilakukan! Silahkan Cek Email Anda!');
+									this.parent.putLogin();
+								}else{
+									forceRecheck(app.main,`Prosess Registrasi Mengalami Masalah, ${resp.msg}`);
+									this.parent.putNewAcount();
+								}
+							}
+							cOn.post({
+								url:'/newfriendscome',
+								someSettings:[
+									['setRequestHeader','content-type','application/json']
+								],
+								data:jsonstr(this.dataUser),
+								onload(){
+									const response = this.getJSONResponse();
+									processResponse(response);
+								}
+							})
+						},
+						submitEvent(){
+							this.find('#submit').onclick = ()=>{
+								if(this.notEmpty()){
+									this.showLoading();
+									this.saveDataRegis();
+								}else forceRecheck(app.main,'Tolong diperiksa kembali!');
+								
+							}
+						},
+						onadded(){
+							this.userInputEvent();
+							this.submitEvent();
+						},
+						showLoading(){
+							this.parentElement.addChild(makeElement('div',{
+								id:'loading',
+								style:`
+									position:absolute;
+									width:100%;
+									height:100%;
+									background:white;
+									display:flex;
+									align-items:center;
+									justify-content:center;
+								`,
+								innerHTML:`
+									<div>
+										Tunggu Sebentar...
+									</div>
+								`
+							}))
+						}
 					}))
 				},
 				setupCc(){
@@ -1082,7 +1245,6 @@ const app = {
 							}
 							div.classList.add('active');
 							activecc = div;
-							this.find('#canvas').clear();
 							this[div.id]();
 						}
 					})
@@ -1093,6 +1255,234 @@ const app = {
 					this.find('#continuewithnoaccount').onclick = ()=>{
 						this.remove();
 					}
+				}
+			})
+		},
+		myProfilePage(){
+			return makeElement('div',{
+				style:`
+					position:absolute;
+					width:100%;
+					height:100%;
+					background:white;
+					display:flex;
+					align-items:center;
+					justify-content:center;
+				`,
+				innerHTML:`
+					<div
+					style="
+						width:90%;
+						height:90%;
+						display:flex;
+						flex-direction:column;
+						gap:15px;
+					"
+					>
+						<div id=profileupperbuttons
+						style="
+							height:10%;
+							width:100%;
+							display:flex;
+							justify-content:flex-end;
+							gap:10px;
+							align-items:center;
+							font-size:16px;
+						"
+						>
+							<div id=makedepo>
+								Deposit
+							</div>
+							<div id=logout>
+								Keluar
+							</div>
+						</div>
+						<div
+						style="
+							width:100%;
+							height:40%;
+							display:flex;
+							gap:15px;
+						"
+						>
+							<div
+							style="
+								height:100%;
+								width:40%;
+								display:flex;
+								align-items:center;
+								justify-content:center;
+								border:1px solid #edeef1;
+								border-radius:20px;
+								overflow:hidden;
+							"
+							>
+								<div
+								style="
+									width:100%;
+									height:100%;
+									background:#edeef1;
+									overflow:hidden;
+									display:flex;
+									align-items:center;
+									justify-content:center;
+								"
+								>
+									<div
+									style="
+										font-size:64px;
+									"
+									>${app.userProfileData.name[0]}</div>
+								</div>
+							</div>
+							<div
+							style="
+								width:60%;
+								height:100%;
+								display:flex;
+								justify-content:center;
+								flex-direction:column;
+								border:1px solid #edeef1;
+								align-items:center;
+								border-radius:20px;
+							">
+								<div
+								style="
+									display:flex;
+									flex-direction:column;
+									font-size:14px;
+									width:100%;
+									height:90%;
+									gap:10px;
+									align-items:center;
+									font-weight:bold;
+								"
+								>
+									<div
+									style="
+										width:90%;
+										font-size:32px;
+									"
+									>Hi, ${app.userProfileData.name}</div>
+									<div
+									style="
+										height:100%;
+										width:90%;
+										display:flex;
+										flex-direction:column;
+										justify-content:center;
+										gap:5px;
+									"
+									>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										"
+										>
+											<div>Ballance</div>
+											<div>Rp. ${getPrice(app.userProfileData.ballance)}</div>
+										</div>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										"
+										>
+											<div>G Points</div>
+											<div>${app.userProfileData.points} G</div>
+										</div>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										"
+										>
+											<div>Email</div>
+											<div
+											style="
+												width:50%;
+												display:flex;
+											"
+											>
+												<input value=${app.userProfileData.email} style="width:100%;">
+											</div>
+										</div>
+										<div
+										style="
+											display:flex;
+											justify-content:space-between;
+										"
+										>
+											<div>Hp</div>
+											<div
+											>${app.userProfileData.hp}</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div
+						style="
+							width:100%;
+							height:60%;
+							border:1px solid #edeef1;
+							border-radius:20px;
+							display:flex;
+							flex-direction:column;
+						"
+						>
+							<div
+							style="
+								height:20%;
+								width:100%;
+								display:flex;
+								border-bottom:1px solid #edeef1;
+								font-size:16px;
+								align-items:center;
+								justify-content:space-around;
+								gap:2px;
+								background:#edeef1;
+								border-radius:20px 20px 0 0;
+							"
+							>
+								<div class=activecc
+								style="
+									background:none;
+								"
+								>History</div>
+								<div>Voucher</div>
+							</div>
+							<div
+							style="
+								display:flex;
+								align-items:center;
+								justify-content:center;
+								height:100%;
+							"
+							>
+								<div>Belum ada data!</div>
+							</div>
+						</div>
+					</div>
+				`,
+				makedepo(){
+					forceRecheck(app.main,'Maaf fitur ini sedang dikerjakan!');
+				},
+				logout(){
+					app.userProfileData = null;
+					app.givemehome();
+					forceRecheck(app.main,'Logout berhasil!');
+				},
+				topButtonsSetup(){
+					this.findall('#profileupperbuttons div').forEach(button=>{
+						button.onclick= ()=>{
+							this[button.id]();
+						}
+					})
+				},
+				onadded(){
+					this.topButtonsSetup();
 				}
 			})
 		}
@@ -1157,6 +1547,7 @@ const app = {
   },
 	content:find('content'),
   init(){
+		//this.forceLoginSystem();
 		this.requestData();
   },
 	processDb(){
@@ -1203,7 +1594,6 @@ const app = {
 				})
 			}
 		}
-		console.log(this.thumbnailpath);
 	},
 	underDevelopmentFase(){
 		this.main.addChild(app.template.underDevelopment());
@@ -1228,12 +1618,21 @@ const app = {
 		this.displayContent(state);
 	},
 	openCashier(info,filterBase=false){
-		this.content.addChild(this.template.buyMenu(info,filterBase));
+		let el = this.template.buyMenu(info,filterBase);
+		this.hometodelete.push(el);
+		this.content.addChild(el);
+	},
+	hometodelete:[],
+	givemehome(){
+		this.hometodelete.forEach(el=>{
+			el.remove();
+		})
 	},
 	setupGlobalNav(){
 		const actionmap = {
 			searchBar:'openSearchBar',
-			account:'forceLoginSystem'
+			account:'forceLoginSystem',
+			home:'givemehome'
 		}
 		this.main.findall('.gnavbutton').forEach(button=>{
 			button.onclick = ()=>{
@@ -1300,7 +1699,13 @@ const app = {
 		}
 	},
 	forceLoginSystem(){
-		this.main.addChild(app.template.loginSystem());
+		if(!this.userProfileData)this.main.addChild(app.template.loginSystem());
+		else this.generateMyProfile();
+	},
+	generateMyProfile(){
+		const el = app.template.myProfilePage();
+		this.hometodelete.push(el);
+		this.content.addChild(el);
 	}
 }
 
