@@ -386,3 +386,10 @@ const openLoading = function(loadingmsg,added,imgSrc){
 		}
 	})
 }
+const compareSet = function(src,c1,c2){
+	if(src===c1){
+		src = c2;
+	}else if(src===c2){
+		src = c1;
+	}
+}

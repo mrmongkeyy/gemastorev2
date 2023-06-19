@@ -173,8 +173,7 @@ footer div.active{
 }
 #rootboxcontent .active{
   display: flex;
-  display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   height: 100%;
 }
@@ -197,11 +196,9 @@ footer div.active{
   margin: 10%;
   width: 80%;
 }
-#rootboxcontent #priceList div{
-  cursor: pointer;
-}
 #rootboxcontent #priceList div div{
-  border-radius:15px; 
+  border-radius:15px;
+  cursor: pointer;
 }
 .selectedprice{
   background: #dfdfe6;
@@ -235,8 +232,14 @@ input{
   background:black;
   border-radius: 30px;
 }
+#loginlabelhead .active{
+  color:black;
+}
 .notvalid{
   cursor: not-allowed;
+}
+.getborder:hover{
+  border-radius:20px;
 }
 @media only screen and (max-width: 700px) {
   main{

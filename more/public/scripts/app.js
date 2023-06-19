@@ -204,7 +204,6 @@ const app = {
 				style:`
 					padding:32px;
 					width:70%;
-					background:aliceblue;
 				`,
 				data,
 				innerHTML:`
@@ -754,7 +753,21 @@ const app = {
 					this.find('#rootboxcontent #productInfo').addChild(app.template.rootboxcontent([
 						{key:'Tipe Produk',value:data[0]},
 						{key:'Nama Produk',value:data[1]},
-						{key:'Catatan',value:'Masukan data dengan benar, kesalahan data ditanggung sendiri.'}
+						{key:'Catatan',value:'Masukan data dengan benar, kesalahan data ditanggung sendiri.'},
+						{
+							key:'Cara Membeli',
+							value:`
+								1. Klik Tab UserInput, Kemudian Isi Data Dengan Benar.<p>
+								2. Pindah kebagian PriceList, Silahkan Pilih Produk Yang Anda Inginkan.
+									 Anda Dapat Memilih Lebih Dari Satu, sistem akan menghandlenya.<p>
+								3. Setelah Memilih Produk anda dapat pergi ke tab pembayaran.<p>
+								4. Anda Bisa mengecek Ulang setiap data yang anda masukan.<p>
+								5. Anda bisa menekan tombol beli, kemudian anda akan diberikan detail pembayaran.<p>
+								6. Pesanan anda kami simpan terlebih dahulu, dan akan kami proses setelah sistem menerima
+									 notifikasi pembayaran berhasil Anda lakukan oleh Payment Gateway yang anda pilih.<p>
+								7. Selamat Berbelanja!
+							`
+						}
 					]))
 				},
 				openUserInput(){
@@ -818,7 +831,7 @@ const app = {
 						total += this.userData.products[i].price;
 						itemlen += 1;
 					}
-					this.find('#totaldisplay').innerHTML = `${itemlen} Item, Total Tagihan Rp. ${getPrice(total)}. Akan dibayar melalui ${this.userData.payment||'Belum Diset'}.`;
+					this.find('#totaldisplay').innerHTML = `${itemlen} Item, Total Tagihan Rp. ${getPrice(total)}. ${this.userData.payment?`Akan dibayar melalui ${this.userData.payment}.`:'Silahkan pilih metode pembayaran!'}`;
 				},
 				openPaymentMethod(){
 					const pm = this.findall('#valist div');
@@ -864,6 +877,222 @@ const app = {
 					this.openProdukInfo();
 					this.openPriceList();
 					this.openPaymentMethod();
+				}
+			})
+		},
+		loginSystem(){
+			return makeElement('div',{
+				style:`
+					position:absolute;
+					width:100%;
+					height:100%;
+					background:RGB(0,0,0,.5);
+					display:flex;
+					align-items:center;
+					justify-content:center;
+					z-index:1;
+				`,
+				innerHTML:`
+					<div
+					style="
+						background:white;
+						display:flex;
+						flex-direction:column;
+						padding:0 50px;
+						border-radius:20px;
+					"
+					>
+						<div id=loginlabelhead
+						style="
+							height:64px;
+							display:flex;
+							align-items:center;
+							font-size:18px;
+							cursor:pointer;
+						"
+						>
+							<div class=active id=putLogin
+							style="
+								width:100%;
+								text-align:center;
+							"
+							>
+								Masuk
+							</div>
+							<div id=putNewAcount
+							style="
+								width:100%;
+								text-align:center;
+							"
+							>
+								Buat Akun
+							</div>
+						</div>
+						<div id=canvas
+						style="
+							padding: 5%;
+							display: flex;
+							align-items: center;
+							justify-content: center;
+						"
+						>
+						</div>
+						<div
+						style="
+							padding:10px 0;
+							display:flex;
+							align-items:center;
+							display:flex;
+							justify-content:center;
+						"
+						>
+							<div class="active getborder" id=continuewithnoaccount
+							style="
+								text-align:center;
+								font-size:18px;
+								padding:10px;
+								cursor:pointer;
+							"
+							>
+								Lanjutkan Tanpa Akun
+							</div>
+						</div>
+					</div>
+				`,
+				putLogin(){
+					this.find('#canvas').addChild(makeElement('div',{
+						style:`
+							height: 100%;
+							display: flex;
+							flex-direction: column;
+							padding: 20px;
+						`,
+						innerHTML:`
+							<div
+							style="
+								font-size:18px;
+								margin-bottom:10px;
+							"
+							>
+								Masukan Data Anda!
+							</div>
+							<div>
+								<div>Email</div>
+								<div>
+									<input placeholder="Masukan Email Anda..." type=email>
+								</div>
+							</div>
+							<div>
+								<div>Password</div>
+								<div>
+									<input placeholder="Masukan Password Anda..." type=password>
+								</div>
+							</div>
+							<div
+							style="
+								margin-top:10px;
+							"
+							>
+								<div id=lupapass
+								style="cursor:pointer;"
+								>Lupa Pasword?</div>
+							</div>
+							<div
+							style="
+								margin-top:10px;
+								padding:10px;
+								background:orange;
+								font-size:18px;
+								color:white;
+								text-align:center;
+								border-radius:20px;
+								cursor:pointer;
+							"
+							>
+								Login
+							</div>
+						`
+					}))
+				},
+				putNewAcount(){
+					this.find('#canvas').addChild(makeElement('div',{
+						style:`
+							height: 100%;
+							display: flex;
+							flex-direction: column;
+							padding: 20px;
+						`,
+						innerHTML:`
+							<div
+							style="
+								font-size:18px;
+								margin-bottom:10px;
+							"
+							>
+								Masukan Data Anda!
+							</div>
+							<div>
+								<div>Email</div>
+								<div>
+									<input placeholder="Masukan Email Anda..." type=email>
+								</div>
+							</div>
+							<div>
+								<div>No. Hp</div>
+								<div>
+									<input placeholder="Masukan No Hp Anda..." type=number>
+								</div>
+							</div>
+							<div>
+								<div>Nama Anda</div>
+								<div>
+									<input placeholder="Masukan Nama Anda..." type=email>
+								</div>
+							</div>
+							<div>
+								<div>Password</div>
+								<div>
+									<input placeholder="Masukan Password Anda..." type=password>
+								</div>
+							</div>
+							<div
+							style="
+								margin-top:10px;
+								padding:10px;
+								background:orange;
+								font-size:18px;
+								color:white;
+								text-align:center;
+								border-radius:20px;
+								cursor:pointer;
+							"
+							>
+								Buat Akun
+							</div>
+						`
+					}))
+				},
+				setupCc(){
+					const ccs = this.findall('#loginlabelhead div')
+					let activecc = ccs[0];
+					ccs.forEach(div=>{
+						div.onclick = ()=>{
+							if(activecc){
+								activecc.classList.remove('active');
+							}
+							div.classList.add('active');
+							activecc = div;
+							this.find('#canvas').clear();
+							this[div.id]();
+						}
+					})
+					ccs[0].click();
+				},
+				onadded(){
+					this.setupCc();
+					this.find('#continuewithnoaccount').onclick = ()=>{
+						this.remove();
+					}
 				}
 			})
 		}
@@ -955,6 +1184,7 @@ const app = {
 				app.setMoremenu();
 				app.scrollTheImg();
 				app.setCategory();
+				app.forceLoginSystem();
 			}
 		})
 	},
@@ -1002,7 +1232,8 @@ const app = {
 	},
 	setupGlobalNav(){
 		const actionmap = {
-			searchBar:'openSearchBar'
+			searchBar:'openSearchBar',
+			account:'forceLoginSystem'
 		}
 		this.main.findall('.gnavbutton').forEach(button=>{
 			button.onclick = ()=>{
@@ -1067,6 +1298,11 @@ const app = {
 			this.scbopened = true;
 			button.find('img').src = '/file?fn=closex.png';
 		}
+	},
+	forceLoginSystem(){
+		this.main.addChild(app.template.loginSystem());
 	}
 }
-app.init();
+
+//iamtheonlyonepersonhere.
+app.init();  

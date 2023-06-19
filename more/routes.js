@@ -1,5 +1,6 @@
 const view = require('./view');
 const fm = require('./fileH');
+const db = require('./firebase');
 const moreinfo = require('./info');
 module.exports = [
 	{
@@ -48,6 +49,24 @@ module.exports = [
 		mM:'get',
 		'/check'(req,res){
 			moreinfo('orderCheck',req,res);
+		}
+	},
+	{
+		mM:'post',
+		'/login'(req,res){
+			
+		}
+	},
+	{
+		mM:'post',
+		'/regis'(req,res){
+
+		}
+	},
+	{
+		mM:'get',
+		'verifyAccount'(req,res){
+
 		}
 	}
 ];
