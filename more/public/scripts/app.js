@@ -288,16 +288,20 @@ const app = {
 			const data = info.split(',');
 			return makeElement('div',{
 				userData:{
-					products:{},
+					products:{
+						ammount:0
+					},
 					validationData:{
 						email:null,
-						phone:null
+						phone:null,
+						name:null
 					},
 					targetData:{
 						hp:null,
 						gameid:null,
 						serverid:null
-					}
+					},
+					payment:null
 				},
 				style:`
 					position:absolute;
@@ -385,14 +389,35 @@ const app = {
 							<div class="item"
 							id=userInput
 							>
-								<div
-								id=topup
-								style=${data[0]!='Topup Game'?'display:none;':''}padding:10px 0;
-								>
+								<div id=topup>
 									<div
 									style=margin-bottom:10px;
 									>
 										<b>Validation Data</b>
+									</div>
+									<div
+									style="
+										display:flex;
+										justify-content:space-between;
+										width:100%;
+										align-items:center;
+										margin-bottom:10px;
+									"
+									>
+										<div
+										style="
+											width:30%;
+										"
+										>Nama</div>
+										<div
+										style="
+											width:70%;
+											display: flex;
+											justify-content: flex-end;
+										"
+										>
+											<input id=validationData.name placeholder="Masukan Nama Kamu...">
+										</div>
 									</div>
 									<div
 									style="
@@ -415,7 +440,7 @@ const app = {
 											justify-content: flex-end;
 										"
 										>
-											<input id=gameid placeholder="Masukan Email">
+											<input id=validationData.email placeholder="Masukan Email" type=email>
 										</div>
 									</div>
 									<div
@@ -439,7 +464,7 @@ const app = {
 											justify-content: flex-end;
 										"
 										>
-											<input id=gameid placeholder="Masukan No. Hp">
+											<input id=validationData.phone placeholder="Masukan No. Hp">
 										</div>
 									</div>
 									<div
@@ -468,7 +493,7 @@ const app = {
     									justify-content: flex-end;
 										"
 										>
-											<input id=gameid placeholder="Masukan Game Id">
+											<input id=targetData.gameid placeholder="Masukan Game Id">
 										</div>
 									</div>
 									<div
@@ -491,7 +516,7 @@ const app = {
     									justify-content: flex-end;
 										"
 										>
-											<input id=gameid placeholder="Masukan Server Id">
+											<input id=targetData.serverid placeholder="Masukan Server Id">
 										</div>
 									</div>
 									<div
@@ -516,13 +541,35 @@ const app = {
 									</div>
 								</div>
 								<div
-								id=pulsa
-								style=${data[0]==='Topup Game'?'display:none':''};
-								>
+								id=pulsa>
 									<div
 									style=margin-bottom:10px;
 									>
 										<b>Validation Data</b>
+									</div>
+									<div
+									style="
+										display:flex;
+										justify-content:space-between;
+										width:100%;
+										align-items:center;
+										margin-bottom:10px;
+									"
+									>
+										<div
+										style="
+											width:30%;
+										"
+										>Nama</div>
+										<div
+										style="
+											width:70%;
+											display: flex;
+											justify-content: flex-end;
+										"
+										>
+											<input id=validationData.name placeholder="Masukan Email" type=email>
+										</div>
 									</div>
 									<div
 									style="
@@ -545,7 +592,7 @@ const app = {
 											justify-content: flex-end;
 										"
 										>
-											<input id=gameid placeholder="Masukan Email">
+											<input id=validationData.email placeholder="Masukan Email">
 										</div>
 									</div>
 									<div
@@ -569,7 +616,7 @@ const app = {
 											justify-content: flex-end;
 										"
 										>
-											<input id=gameid placeholder="Masukan No. Hp">
+											<input id=validationData.phone placeholder="Masukan No. Hp">
 										</div>
 									</div>
 									<div
@@ -599,7 +646,7 @@ const app = {
     									justify-content: flex-end;
 										"
 										>
-											<input id=gameid placeholder="08-xxx-xxx-xx">
+											<input id=targetData.hp placeholder="08-xxx-xxx-xx">
 										</div>
 									</div>
 								</div>
@@ -659,11 +706,11 @@ const app = {
 										background:#ededed;
 									"
 									>
-										<div id=vabri>BRI</div>
-										<div id=vabca>BCA</div>
-										<div id=vamandiri>MANDIRI</div>
-										<div id=vasyariah>SYARIAH</div>
-										<div id=vabni>BNI</div>
+										<div id=va.bri>BRI</div>
+										<div id=va.bca>BCA</div>
+										<div id=va.mandiri>MANDIRI</div>
+										<div id=va.syariah>SYARIAH</div>
+										<div id=va.bni>BNI</div>
 									</div>
 								</div>
 								<div
@@ -683,8 +730,8 @@ const app = {
 										background:#ededed;
 									"
 									>
-										<div id=csindomaret>Indomaret</div>
-										<div id=csalfamart>Alfamart</div>
+										<div id=cstore.indomaret>Indomaret</div>
+										<div id=cstore.alfamart>Alfamart</div>
 									</div>
 								</div>
 								<div
@@ -704,7 +751,7 @@ const app = {
 										background:#ededed;
 									"
 									>
-										<div id=qris>Qris all payment</div>
+										<div id=qris.qris>Qris all payment</div>
 									</div>
 								</div>
 							</div>
@@ -731,7 +778,7 @@ const app = {
 								font-weight: bold;
 							"
 							>0 Item, Total Rp. 0</div>
-							<div class=notvalid
+							<div class=notvalid id=submitbutton
 							style="
 								background: orange;
 								color: white;
@@ -771,14 +818,23 @@ const app = {
 					]))
 				},
 				openUserInput(){
-					//this.find('#rootboxcontent').clear();
-					this.find('#rootboxcontent').addChild(makeElement('div',{
-
-					}))
+					const toDelete = data[0]==='Games'?'pulsa':'topup';
+					this.find(`#userInput #${toDelete}`).remove();
+					//handling some cases.
+					if(toDelete==='pulsa'){
+						delete this.userData.targetData.hp;
+					}else{
+						delete this.userData.targetData.gameid;
+						delete this.userData.targetData.serverid;
+					}
+					this.findall('#userInput input').forEach(input=>{
+						input.oninput = ()=>{
+							const inputinfo = input.id.split('.');
+							this.userData[inputinfo[0]][inputinfo[1]] = input.value;
+						}
+					})
 				},
 				openPriceList(){
-					//this.find('#rootboxcontent').clear();
-					console.log(data);
 					const parentBox = this;
 					const products = app.db[data[0]][data[1]];
 					products.forEach(product=>{
@@ -807,14 +863,16 @@ const app = {
 							onadded(){
 								this.onclick = ()=>{
 									if(!this.selected){
-										parentBox.userData.products[this.data.code] = {
-											code:this.data.code,
-											price:this.data.price
+										parentBox.userData.products[this.data.buyer_sku_code] = {
+											code:this.data.buyer_sku_code,
+											price:this.data.price,
+											product_name:this.data.product_name,
+											brand:this.data.brand
 										}
 										this.selected = true;
 										this.classList.add('selectedprice');
 									}else{
-										delete parentBox.userData.products[this.data.code];
+										delete parentBox.userData.products[this.data.buyer_sku_code];
 										this.classList.remove('selectedprice');
 										this.selected = false;
 									}
@@ -830,10 +888,12 @@ const app = {
 				showTotal(){
 					let total = 0;let itemlen = 0;
 					for(let i in this.userData.products){
+						if(typeof this.userData.products[i]!='object')continue;
 						total += this.userData.products[i].price;
 						itemlen += 1;
 					}
-					this.find('#totaldisplay').innerHTML = `${itemlen} Item, Total Tagihan Rp. ${getPrice(total)}. ${this.userData.payment?`Akan dibayar melalui ${this.userData.payment}.`:'Silahkan pilih metode pembayaran!'}`;
+					this.userData.products.ammount = total;
+					this.find('#totaldisplay').innerHTML = `${itemlen} Item, Total Tagihan Rp. ${this.userData.products.ammount}. ${this.userData.payment?`Akan dibayar melalui ${this.userData.payment}.`:'Silahkan pilih metode pembayaran!'}`;
 				},
 				openPaymentMethod(){
 					const pm = this.findall('#valist div');
@@ -871,14 +931,59 @@ const app = {
 						}
 					})
 				},
+				check(){
+					//user input handle.
+					for(let i in this.userData){
+						if(i==='validationData' || i==='targetData'){
+							for(let j in this.userData[i]){
+								if(this.userData[i][j]===null)return {status:false,msg:`Silahkan Lengkapi User Info Anda Terlebih Dahulu!`}
+							}
+						}
+					}
+					if(this.userData.products.ammount===0)return {status:false,msg:'Silahkan Pilih Produk Yang Anda Inginkan Terlebih Dahulu!'}
+					if(!this.userData.payment)return {status:false,msg:'Pilih metode pembayarannya dulu bang!'}
+					return {status:true}
+				},
+				setupSubmitButton(){
+					this.find('#submitbutton').onclick = ()=>{
+						const validity = this.check();
+						console.log(validity);
+						if(validity.status){
+							forceRecheck(app.main,'Semua data valid, mohon tunggu GMarket sedang memproses permintaaan.');
+							this.userData.timestamp = getTimestamp();
+							app.content.addChild(openLoading('Mohon Tunggu...',(loading)=>{
+								cOn.post({
+									url:'/order?type=orderPay',
+									someSettings:[
+										['setRequestHeader','content-type','application/json']
+									],
+									data:jsonstr(this.userData),
+									onload(){
+										loading.remove();
+										//simple check.
+										const respdata = this.getJSONResponse();
+										if(!respdata.Success){
+											return forceRecheck(app.main,respdata.Message);
+										}
+										app.orderpaymentresponseSuccessHandler(respdata.Data,JSON.parse(this.data).products);
+									}
+								})
+							}))
+						}else{
+							forceRecheck(app.main,validity.msg);
+						}
+					}
+				},
 				onadded(){
 					this.find('#closebutton').onclick = ()=>{
 						this.remove();
 					}
 					this.setCcEvent();
 					this.openProdukInfo();
+					this.openUserInput();
 					this.openPriceList();
 					this.openPaymentMethod();
+					this.setupSubmitButton();
 				}
 			})
 		},
@@ -1487,6 +1592,139 @@ const app = {
 					this.topButtonsSetup();
 				}
 			})
+		},
+		paythisman(ipaymudata,productsbefore){
+			return makeElement('div',{
+				style:`
+					position:absolute;
+					width:100%;
+					height:100%;
+					display:flex;
+					background:white;
+					align-items:center;
+					justify-content:center;
+				`,
+				innerHTML:`
+					<div
+					style="
+						width:90%;
+						height:90%;
+						display:flex;
+						flex-direction:column;
+						gap:15px;
+					"
+					>
+						
+					</div>
+				`,
+				QRIS(){
+					this.find('div').addChild(makeElement('div',{
+						style:`
+								padding: 5%;
+								width: 90%;
+								display: flex;
+								flex-direction: column;
+								gap: 15px;
+						`,
+						innerHTML:`
+							<div
+							style="
+								font-size:28px;
+								text-align:center;
+							"
+							>
+								<img src=/file?fn=qristitle.png
+								style="
+									max-width:90%;
+								"
+								>
+								<div>Rp. ${getPrice(ipaymudata.Total)}</div>
+							</div>
+							<div
+							style="
+								width:100%;
+								text-align:center;
+							"
+							>
+								<img src=https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${ipaymudata.QrString}
+								style="
+									width:300px;
+									height:300px;
+									background:aliceblue;
+								">
+							</div>
+							<div
+							style="
+								width:100%;
+								height:50%;
+								display:flex;
+								align-items:center;
+								justify-content:center;
+								flex-direction:column;
+								gap:10px;
+							"
+							>
+								<div>Silahkan Scan Menggunakan</div>
+								<img src=/file?fn=/qris/appthatcanscan.png
+								style="
+									max-width:90%;
+								"
+								>
+							</div>
+							<div id=detailfor
+							style="
+								width:92%;
+								height:50%;
+								display:flex;
+								align-items:space-between;
+								justify-content:center;
+								flex-direction:column;
+								gap:10px;
+								padding:4%;
+								border:1px solid;
+								font-size:18px;
+								border-radius:10px;
+							"
+							>
+								
+							</div>
+						`,
+						initDetail(){
+							const datatodisplay = {
+								TransactionId:ipaymudata.TransactionId,
+								Expired:ipaymudata.Expired,
+								PaymentNo:ipaymudata.PaymentNo,
+								Fee:ipaymudata.Fee,
+								Total:`Rp. ${getPrice(ipaymudata.Total)}`,
+								SubTotal:`Rp. ${getPrice(ipaymudata.SubTotal)}`
+							}
+							for(let i in datatodisplay){
+								this.find('#detailfor').addChild(makeElement('div',{
+								style:`
+									display:flex;
+									align-items:center;
+									justify-content:center;
+									gap:10px;
+								`,
+								innerHTML:`
+									<div style="
+										width:100%;
+									">${i}</div>
+									${i!='PaymentNo'?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<textarea style="width:100%;">'+datatodisplay[i]+'</textarea>'}
+									
+								`
+							}))
+							}
+						},
+						onadded(){
+							this.initDetail();
+						}
+					}))
+				},
+				onadded(){
+					this[ipaymudata.Via]();
+				}
+			})
 		}
   },
   setMoremenu(){
@@ -1734,6 +1972,12 @@ const app = {
 	},
 	generateMyProfile(){
 		const el = app.template.myProfilePage();
+		this.hometodelete.push(el);
+		this.content.addChild(el);
+	},
+	orderpaymentresponseSuccessHandler(ipaymuresponse,databefore){
+		this.content.find('#buymenuwhitebox').parentElement.remove();
+		const el = app.template.paythisman(ipaymuresponse,databefore);
 		this.hometodelete.push(el);
 		this.content.addChild(el);
 	}

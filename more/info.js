@@ -7,7 +7,7 @@ const config = {
 const paymentConfig = {
 	va:'1179000899',
 	apikey:'QbGcoO0Qds9sQFDmY0MWg1Tq.xtuh1',
-	demourl:'https://sandbox.ipaymu.com/api/v2/payment',
+	demourl:'https://sandbox.ipaymu.com/api/v2/payment/direct',
 	productionurl:'https://my.ipaymu.com/api/v2/payment'
 }
 const sign = '7ad0dabf608f08ace635ece4d5393b3d';
@@ -74,14 +74,19 @@ module.exports = function(type,req,res){
 		},
 		order:{
 			orderPay(req,res){
-				const data = JSON.parse(req.body).payment;
-				const timestamp = JSON.parse(req.body).timestamp;
-				Object.assign(data,{
-					"amount":"10000",
-					"returnUrl":"https://gemastore.cyclic.app", //your thank you page url
-					"cancelUrl":"https://gemastore.cyclic.app", // your cancel page url
-					"notifyUrl":"https://gemastore.cyclic.app", // your callback url
-				})
+				const paymentInfo = req.body.payment.split('.');
+				const data = {
+					name:req.body.validationData.name,
+					phone:req.body.validationData.phone,
+					email:req.body.validationData.email,
+					amount:req.body.products.ammount,
+					comments:"GMarket Payment",
+					"notifyUrl":"https://gemastore.cyclic.app/paymentcallback", // your callback url
+					"referenceId":`gmtrx${req.body.timestamp}`, // your reference id or transaction id
+					"paymentMethod":paymentInfo[0],
+					"paymentChannel":paymentInfo[1]
+				};
+				const timestamp = req.body.timestamp;
 				let bodyEncrypt = crypto.SHA256(JSON.stringify(data));
 				let stringtosign = "POST:"+paymentConfig.va+":"+bodyEncrypt+":"+paymentConfig.apikey;
 				let signature = crypto.enc.Hex.stringify(crypto.HmacSHA256(stringtosign, paymentConfig.apikey));
@@ -100,7 +105,6 @@ module.exports = function(type,req,res){
 				)
 				.then((response) => response.json())
 				.then((responseJson) => {
-					// response
 					res.json(responseJson);
 				})
 			},
@@ -120,7 +124,6 @@ module.exports = function(type,req,res){
 		
 	}
 	//handling blocking host.
-	console.log(req.header.Host);
 	if(req.header.Host==='localhost:8080'||req.header.Host===undefined){
 		if(schema[type][req.query.type]){
 			//handling 'spaces'.
