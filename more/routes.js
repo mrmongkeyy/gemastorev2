@@ -5,6 +5,7 @@ const moreinfo = require('./info');
 const handleRegis = require('./newuserhandler')
 const emailVerifier = require('./emailVerifier');
 const loginhandler = require('./loginhandler');
+const sendotphandler = require('./otphandler');
 module.exports = [
 	{
 		mM:'get',
@@ -45,7 +46,7 @@ module.exports = [
 	{
 		mM:'post',
 		'/order'(req,res){
-			moreinfo('order',req,res);
+			moreinfo('order',req,res,db);
 		}
 	},
 	{
@@ -70,6 +71,12 @@ module.exports = [
 		mM:'get',
 		'/verifymyaccount'(req,res){
 			emailVerifier(req,res,db);
+		}
+	},
+	{
+		mM:'post',
+		'/sendotp'(req,res){
+			sendotphandler(req,res,db);
 		}
 	}
 ];

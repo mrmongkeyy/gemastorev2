@@ -1,4 +1,5 @@
 const app = {
+	lsName:'gmarketsessionstorage',
 	db:{},
 	thumbnailpath:{
 		"FREE FIRE":"/file?fn=ff.png",
@@ -680,7 +681,7 @@ const app = {
 									<div
 									style="margin-bottom:5px;"
 									>Gmarket Saldo</div>
-									<div id=valist class=notvalid
+									<div id=valist
 									style="
 										display:flex;
 										gap:10px;
@@ -709,7 +710,6 @@ const app = {
 										<div id=va.bri>BRI</div>
 										<div id=va.bca>BCA</div>
 										<div id=va.mandiri>MANDIRI</div>
-										<div id=va.syariah>SYARIAH</div>
 										<div id=va.bni>BNI</div>
 									</div>
 								</div>
@@ -778,7 +778,7 @@ const app = {
 								font-weight: bold;
 							"
 							>0 Item, Total Rp. 0</div>
-							<div class=notvalid id=submitbutton
+							<div id=submitbutton
 							style="
 								background: orange;
 								color: white;
@@ -816,6 +816,16 @@ const app = {
 							`
 						}
 					]))
+				},
+				autoFillData(){
+					if(!app.userProfileData)return;
+					this.findall('input').forEach(input=>{
+						const inputid = input.id.split('.');
+						if(inputid[0]==='validationData'){
+							input.value = app.userProfileData[inputid[1]==='phone'?'hp':inputid[1]];
+							this.userData['validationData'][inputid[1]] = input.value;
+						}
+					})
 				},
 				openUserInput(){
 					const toDelete = data[0]==='Games'?'pulsa':'topup';
@@ -893,7 +903,7 @@ const app = {
 						itemlen += 1;
 					}
 					this.userData.products.ammount = total;
-					this.find('#totaldisplay').innerHTML = `${itemlen} Item, Total Tagihan Rp. ${this.userData.products.ammount}. ${this.userData.payment?`Akan dibayar melalui ${this.userData.payment}.`:'Silahkan pilih metode pembayaran!'}`;
+					this.find('#totaldisplay').innerHTML = `${itemlen} Item, Total Tagihan Rp. ${getPrice(this.userData.products.ammount)}. ${this.userData.payment?`Akan dibayar melalui ${this.userData.payment}.`:'Silahkan pilih metode pembayaran!'}`;
 				},
 				openPaymentMethod(){
 					const pm = this.findall('#valist div');
@@ -901,7 +911,11 @@ const app = {
 					let selected = null;
 					pm.forEach(button=>{
 						button.onclick = ()=>{
-							if(objlen(parent.userData.products)===0 || button.parentElement.classList.contains('notvalid'))return;
+							if(objlen(parent.userData.products)===0 || button.id==='gmarketsaldo'){
+								if(app.userProfileData){
+									parent.userData.userInfo = app.userProfileData.email;
+								}else return forceRecheck(app.main,'Silahkan Login Terlebih Dahulu!');
+							}else if(parent.userData.userInfo)delete parent.userData.userInfo;
 							if(selected){
 								selected.classList.remove('selectedprice');
 							}
@@ -928,6 +942,7 @@ const app = {
 							rootboxcontentitems[div.id].classList.add('active');
 							itemactive = rootboxcontentitems[div.id];
 							activediv = div;
+							this.autoFillData();
 						}
 					})
 				},
@@ -947,13 +962,36 @@ const app = {
 				setupSubmitButton(){
 					this.find('#submitbutton').onclick = ()=>{
 						const validity = this.check();
-						console.log(validity);
 						if(validity.status){
 							forceRecheck(app.main,'Semua data valid, mohon tunggu GMarket sedang memproses permintaaan.');
 							this.userData.timestamp = getTimestamp();
 							app.content.addChild(openLoading('Mohon Tunggu...',(loading)=>{
+								const PaymentHandler = {
+									gmarket:{
+										orderType:'gmarketsaldopay',
+										onload(respdata){
+											if(!respdata.valid)forceRecheck(app.main,respdata.msg);
+											else{
+												forceRecheck(app.main,respdata.msg);
+												app.userProfileData.ballance = respdata.leftballance;
+												app.givemehome();
+											}
+										}
+									},
+									pg:{
+										orderType:'orderPay',
+										onload(respdata,data){
+											if(!respdata.Success){
+												return forceRecheck(app.main,respdata.Message);
+											}
+											app.orderpaymentresponseSuccessHandler(respdata.Data,JSON.parse(data).products);
+										}
+									}
+								}
+								let state = 'gmarket';
+								if(!this.userData.userInfo)state = 'pg';
 								cOn.post({
-									url:'/order?type=orderPay',
+									url:`/order?type=${PaymentHandler[state].orderType}`,
 									someSettings:[
 										['setRequestHeader','content-type','application/json']
 									],
@@ -962,10 +1000,7 @@ const app = {
 										loading.remove();
 										//simple check.
 										const respdata = this.getJSONResponse();
-										if(!respdata.Success){
-											return forceRecheck(app.main,respdata.Message);
-										}
-										app.orderpaymentresponseSuccessHandler(respdata.Data,JSON.parse(this.data).products);
+										PaymentHandler[state].onload(respdata,this.data);
 									}
 								})
 							}))
@@ -1011,11 +1046,14 @@ const app = {
 					>
 						<div id=loginlabelhead
 						style="
-							height:64px;
-							display:flex;
-							align-items:center;
-							font-size:18px;
-							cursor:pointer;
+							height: 64px;
+							display: flex;
+							align-items: center;
+							font-size: 18px;
+							cursor: pointer;
+							justify-content: space-around;
+							gap: 10px;
+							font-size: 16px;
 						"
 						>
 							<div class=active id=putLogin
@@ -1033,6 +1071,14 @@ const app = {
 							"
 							>
 								Buat Akun
+							</div>
+							<div id=putLupaPassword
+							style="
+								width:100%;
+								text-align:center;
+							"
+							>
+								LupaPassword
 							</div>
 						</div>
 						<div id=canvas
@@ -1067,6 +1113,124 @@ const app = {
 						</div>
 					</div>
 				`,
+				putLupaPassword(){
+					this.find('#canvas').clear();
+					this.find('#canvas').addChild(makeElement('div',{
+						parent:this,
+						style:`
+							height: 100%;
+							display: flex;
+							flex-direction: column;
+							padding: 20px;
+						`,
+						innerHTML:`
+							<div
+							style="
+								font-size:18px;
+								margin-bottom:10px;
+							"
+							>
+								Masukan Email Anda!
+							</div>
+							<div style="margin-bottom:24px;">
+								<div id=email>
+									<input placeholder="Masukan Email Anda..." type=email>
+								</div>
+							</div>
+							<div id=submit
+							style="
+								margin-top:10px;
+								padding:10px;
+								background:orange;
+								font-size:18px;
+								color:white;
+								text-align:center;
+								border-radius:20px;
+								cursor:pointer;
+							"
+							>
+								Kirim Otp
+							</div>
+						`,
+						dataUser:{
+							email:null
+						},
+						notEmpty(){
+							let valid = true;
+							for(let i in this.dataUser){
+								if(!this.dataUser[i])valid = false;
+							}
+							return valid;
+						},
+						validCheck(){
+
+						},
+						userInputEvent(){
+							this.findall('input').forEach(input=>{
+								input.oninput = ()=>{
+									this.dataUser[input.parentElement.id] = input.value;
+								}
+							})
+						},
+						checkMyData(){
+							const responseHandle = (resp)=>{
+								if(resp.valid){
+									forceRecheck(app.main,'Otp Terkirim!');
+									this.parent.remove();
+								}else{
+									forceRecheck(app.main,resp.msg);
+									this.parent.putLogin();
+								}
+							}
+							cOn.post({
+								url:'/sendotp',
+								someSettings:[
+									['setRequestHeader','content-type','application/json']
+								],
+								data:jsonstr(this.dataUser),
+								onload(){
+									const resp = this.getJSONResponse();
+									responseHandle(resp);
+								}
+							})
+						},
+						onadded(){
+							this.userInputEvent();
+							this.submitEvent();
+						},
+						submitEvent(){
+							this.find('#submit').onclick = ()=>{
+								if(this.notEmpty()){
+									this.showLoading();
+									this.checkMyData();
+								}else forceRecheck(app.main,'Tolong diperiksa kembali!');
+							}
+						},
+						onadded(){
+							this.userInputEvent();
+							this.submitEvent();
+						},
+						showLoading(){
+							this.parentElement.addChild(makeElement('div',{
+								id:'loading',
+								style:`
+									position:absolute;
+									width:100%;
+									height:100%;
+									background:white;
+									display:flex;
+									align-items:center;
+									justify-content:center;
+								`,
+								innerHTML:`
+									<div>
+										Tunggu Sebentar...
+									</div>
+								`
+							}))
+						}
+					}))
+				},
 				putLogin(){
 					this.find('#canvas').clear();
 					this.find('#canvas').addChild(makeElement('div',{
@@ -1092,20 +1256,11 @@ const app = {
 									<input placeholder="Masukan Email Anda..." type=email>
 								</div>
 							</div>
-							<div>
+							<div style="margin-bottom:24px;">
 								<div>Password</div>
 								<div id=password>
 									<input placeholder="Masukan Password Anda..." type=password>
 								</div>
-							</div>
-							<div
-							style="
-								margin-top:10px;
-							"
-							>
-								<div id=lupapass
-								style="cursor:pointer;"
-								>Lupa Pasword?</div>
 							</div>
 							<div id=submit
 							style="
@@ -1147,7 +1302,7 @@ const app = {
 							const responseHandle = (resp)=>{
 								if(resp.valid){
 									forceRecheck(app.main,'Login Berhasil!');
-									app.userProfileData = resp.msg;
+									app.processSuccessLogin(resp);
 									this.parent.remove();
 								}else{
 									forceRecheck(app.main,resp.msg);
@@ -1240,7 +1395,7 @@ const app = {
 									<input placeholder="Masukan Nama Anda..." type=email>
 								</div>
 							</div>
-							<div>
+							<div style="margin-bottom:24px;">
 								<div>Password</div>
 								<div id=password>
 									<input placeholder="Masukan Password Anda..." type=password>
@@ -1578,6 +1733,7 @@ const app = {
 				},
 				logout(){
 					app.userProfileData = null;
+					app.deleteSession();
 					app.givemehome();
 					forceRecheck(app.main,'Logout berhasil!');
 				},
@@ -1691,10 +1847,10 @@ const app = {
 						`,
 						initDetail(){
 							const datatodisplay = {
-								TransactionId:ipaymudata.TransactionId,
+								TransactionId:ipaymudata.SessionId,
 								Expired:ipaymudata.Expired,
 								PaymentNo:ipaymudata.PaymentNo,
-								Fee:ipaymudata.Fee,
+								Fee:`Rp. ${getPrice(ipaymudata.Fee)}`,
 								Total:`Rp. ${getPrice(ipaymudata.Total)}`,
 								SubTotal:`Rp. ${getPrice(ipaymudata.SubTotal)}`
 							}
@@ -1722,7 +1878,543 @@ const app = {
 					}))
 				},
 				onadded(){
-					this[ipaymudata.Via]();
+					this[ipaymudata.Channel]();
+				},
+				ALFAMART(){
+					this.find('div').addChild(makeElement('div',{
+						style:`
+								padding: 5%;
+								width: 90%;
+								display: flex;
+								flex-direction: column;
+								gap: 15px;
+						`,
+						innerHTML:`
+							<div
+							style="
+								font-size:28px;
+								text-align:center;
+							"
+							>
+								<img src=/file?fn=alfamarttitle.png
+								style="
+									max-width:90%;
+								"
+								>
+								<div>Rp. ${getPrice(ipaymudata.Total)}</div>
+							</div>
+							<div
+							style="
+								width:100%;
+								text-align:center;
+							"
+							>
+								<div
+								style="
+									font-size: 18px;
+									text-align: left;
+									padding: 31px;
+									border: 1px solid aliceblue;
+								">
+									${ipaymudata.Note}
+								</div>
+							</div>
+							<div id=detailfor
+							style="
+								width:92%;
+								height:50%;
+								display:flex;
+								align-items:space-between;
+								justify-content:center;
+								flex-direction:column;
+								gap:10px;
+								padding:4%;
+								border:1px solid;
+								font-size:18px;
+								border-radius:10px;
+							"
+							>
+								
+							</div>
+						`,
+						initDetail(){
+							const datatodisplay = {
+								TransactionId:ipaymudata.SeesionId,
+								Expired:ipaymudata.Expired,
+								PaymentNo:ipaymudata.PaymentNo,
+								Fee:`Rp. ${getPrice(ipaymudata.Fee)}`,
+								Total:`Rp. ${getPrice(ipaymudata.Total)}`,
+								SubTotal:`Rp. ${getPrice(ipaymudata.SubTotal)}`,
+								StoreFee:`Rp. ${getPrice(ipaymudata.StoreFee)}`
+							}
+							for(let i in datatodisplay){
+								this.find('#detailfor').addChild(makeElement('div',{
+								style:`
+									display:flex;
+									align-items:center;
+									justify-content:center;
+									gap:10px;
+								`,
+								innerHTML:`
+									<div style="
+										width:100%;
+									">${i}</div>
+									${i!='PaymentNo'?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<textarea style="width:100%;">'+datatodisplay[i]+'</textarea>'}
+									
+								`
+							}))
+							}
+						},
+						onadded(){
+							this.initDetail();
+						}
+					}))
+				},
+				INDOMARET(){
+					this.find('div').addChild(makeElement('div',{
+						style:`
+								padding: 5%;
+								width: 90%;
+								display: flex;
+								flex-direction: column;
+								gap: 15px;
+						`,
+						innerHTML:`
+							<div
+							style="
+								font-size:28px;
+								text-align:center;
+							"
+							>
+								<img src=/file?fn=indomarettitle.png
+								style="
+									max-width:90%;
+								"
+								>
+								<div>Rp. ${getPrice(ipaymudata.Total)}</div>
+							</div>
+							<div
+							style="
+								width:100%;
+								text-align:center;
+							"
+							>
+								<div
+								style="
+									font-size: 18px;
+									text-align: left;
+									padding: 31px;
+									border: 1px solid aliceblue;
+								">
+									${ipaymudata.Note}
+								</div>
+							</div>
+							<div id=detailfor
+							style="
+								width:92%;
+								height:50%;
+								display:flex;
+								align-items:space-between;
+								justify-content:center;
+								flex-direction:column;
+								gap:10px;
+								padding:4%;
+								border:1px solid;
+								font-size:18px;
+								border-radius:10px;
+							"
+							>
+								
+							</div>
+						`,
+						initDetail(){
+							const datatodisplay = {
+								TransactionId:ipaymudata.SessionId,
+								Expired:ipaymudata.Expired,
+								PaymentNo:ipaymudata.PaymentNo,
+								Fee:`Rp. ${getPrice(ipaymudata.Fee)}`,
+								Total:`Rp. ${getPrice(ipaymudata.Total)}`,
+								SubTotal:`Rp. ${getPrice(ipaymudata.SubTotal)}`,
+								StoreFee:`Rp. ${getPrice(ipaymudata.StoreFee)}`
+							}
+							for(let i in datatodisplay){
+								this.find('#detailfor').addChild(makeElement('div',{
+								style:`
+									display:flex;
+									align-items:center;
+									justify-content:center;
+									gap:10px;
+								`,
+								innerHTML:`
+									<div style="
+										width:100%;
+									">${i}</div>
+									${i!='PaymentNo'?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<textarea style="width:100%;">'+datatodisplay[i]+'</textarea>'}
+									
+								`
+							}))
+							}
+						},
+						onadded(){
+							this.initDetail();
+						}
+					}))
+				},
+				BRI(){
+					this.find('div').addChild(makeElement('div',{
+						style:`
+								padding: 5%;
+								width: 90%;
+								display: flex;
+								flex-direction: column;
+								gap: 15px;
+						`,
+						innerHTML:`
+							<div
+							style="
+								font-size:28px;
+								text-align:center;
+							"
+							>
+								<img src=/file?fn=brivatitle.png
+								style="
+									max-width:90%;
+								"
+								>
+								<div>Rp. ${getPrice(ipaymudata.Total)}</div>
+							</div>
+							<div
+							style="
+								width:100%;
+								text-align:center;
+							"
+							>
+								<div
+								style="
+									font-size: 18px;
+									text-align: left;
+									padding: 31px;
+									border: 1px solid aliceblue;
+								">
+									${ipaymudata.Note||'Silahkan Lakukan Pembayaran Dengan Nomor Pembayaran '+ipaymudata.PaymentNo}
+								</div>
+							</div>
+							<div id=detailfor
+							style="
+								width:92%;
+								height:50%;
+								display:flex;
+								align-items:space-between;
+								justify-content:center;
+								flex-direction:column;
+								gap:10px;
+								padding:4%;
+								border:1px solid;
+								font-size:18px;
+								border-radius:10px;
+							"
+							>
+								
+							</div>
+						`,
+						initDetail(){
+							const datatodisplay = {
+								TransactionId:ipaymudata.SessionId,
+								Expired:ipaymudata.Expired,
+								PaymentNo:ipaymudata.PaymentNo,
+								Fee:`Rp. ${getPrice(ipaymudata.Fee)}`,
+								Total:`Rp. ${getPrice(ipaymudata.Total)}`,
+								SubTotal:`Rp. ${getPrice(ipaymudata.SubTotal)}`
+							}
+							for(let i in datatodisplay){
+								this.find('#detailfor').addChild(makeElement('div',{
+								style:`
+									display:flex;
+									align-items:center;
+									justify-content:center;
+									gap:10px;
+								`,
+								innerHTML:`
+									<div style="
+										width:100%;
+									">${i}</div>
+									${i!='PaymentNo'?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<textarea style="width:100%;">'+datatodisplay[i]+'</textarea>'}
+									
+								`
+							}))
+							}
+						},
+						onadded(){
+							this.initDetail();
+						}
+					}))
+				},
+				BCA(){
+					this.find('div').addChild(makeElement('div',{
+						style:`
+								padding: 5%;
+								width: 90%;
+								display: flex;
+								flex-direction: column;
+								gap: 15px;
+						`,
+						innerHTML:`
+							<div
+							style="
+								font-size:28px;
+								text-align:center;
+							"
+							>
+								<img src=/file?fn=bcavatitle.png
+								style="
+									max-width:90%;
+								"
+								>
+								<div>Rp. ${getPrice(ipaymudata.Total)}</div>
+							</div>
+							<div
+							style="
+								width:100%;
+								text-align:center;
+							"
+							>
+								<div
+								style="
+									font-size: 18px;
+									text-align: left;
+									padding: 31px;
+									border: 1px solid aliceblue;
+								">
+									${ipaymudata.Note||'Silahkan Lakukan Pembayaran Dengan Nomor Pembayaran '+ipaymudata.PaymentNo}
+								</div>
+							</div>
+							<div id=detailfor
+							style="
+								width:92%;
+								height:50%;
+								display:flex;
+								align-items:space-between;
+								justify-content:center;
+								flex-direction:column;
+								gap:10px;
+								padding:4%;
+								border:1px solid;
+								font-size:18px;
+								border-radius:10px;
+							"
+							>
+								
+							</div>
+						`,
+						initDetail(){
+							const datatodisplay = {
+								TransactionId:ipaymudata.SessionId,
+								Expired:ipaymudata.Expired,
+								PaymentNo:ipaymudata.PaymentNo,
+								Fee:`Rp. ${getPrice(ipaymudata.Fee)}`,
+								Total:`Rp. ${getPrice(ipaymudata.Total)}`,
+								SubTotal:`Rp. ${getPrice(ipaymudata.SubTotal)}`
+							}
+							for(let i in datatodisplay){
+								this.find('#detailfor').addChild(makeElement('div',{
+								style:`
+									display:flex;
+									align-items:center;
+									justify-content:center;
+									gap:10px;
+								`,
+								innerHTML:`
+									<div style="
+										width:100%;
+									">${i}</div>
+									${i!='PaymentNo'?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<textarea style="width:100%;">'+datatodisplay[i]+'</textarea>'}
+									
+								`
+							}))
+							}
+						},
+						onadded(){
+							this.initDetail();
+						}
+					}))
+				},
+				MANDIRI(){
+					this.find('div').addChild(makeElement('div',{
+						style:`
+								padding: 5%;
+								width: 90%;
+								display: flex;
+								flex-direction: column;
+								gap: 15px;
+						`,
+						innerHTML:`
+							<div
+							style="
+								font-size:28px;
+								text-align:center;
+							"
+							>
+								<img src=/file?fn=mandirivatitle.png
+								style="
+									max-width:90%;
+								"
+								>
+								<div>Rp. ${getPrice(ipaymudata.Total)}</div>
+							</div>
+							<div
+							style="
+								width:100%;
+								text-align:center;
+							"
+							>
+								<div
+								style="
+									font-size: 18px;
+									text-align: left;
+									padding: 31px;
+									border: 1px solid aliceblue;
+								">
+									${ipaymudata.Note||'Silahkan Lakukan Pembayaran Dengan Nomor Pembayaran '+ipaymudata.PaymentNo}
+								</div>
+							</div>
+							<div id=detailfor
+							style="
+								width:92%;
+								height:50%;
+								display:flex;
+								align-items:space-between;
+								justify-content:center;
+								flex-direction:column;
+								gap:10px;
+								padding:4%;
+								border:1px solid;
+								font-size:18px;
+								border-radius:10px;
+							"
+							>
+								
+							</div>
+						`,
+						initDetail(){
+							const datatodisplay = {
+								TransactionId:ipaymudata.SessionId,
+								Expired:ipaymudata.Expired,
+								PaymentNo:ipaymudata.PaymentNo,
+								Fee:`Rp. ${getPrice(ipaymudata.Fee)}`,
+								Total:`Rp. ${getPrice(ipaymudata.Total)}`,
+								SubTotal:`Rp. ${getPrice(ipaymudata.SubTotal)}`
+							}
+							for(let i in datatodisplay){
+								this.find('#detailfor').addChild(makeElement('div',{
+								style:`
+									display:flex;
+									align-items:center;
+									justify-content:center;
+									gap:10px;
+								`,
+								innerHTML:`
+									<div style="
+										width:100%;
+									">${i}</div>
+									${i!='PaymentNo'?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<textarea style="width:100%;">'+datatodisplay[i]+'</textarea>'}
+									
+								`
+							}))
+							}
+						},
+						onadded(){
+							this.initDetail();
+						}
+					}))
+				},
+				BNI(){
+					this.find('div').addChild(makeElement('div',{
+						style:`
+								padding: 5%;
+								width: 90%;
+								display: flex;
+								flex-direction: column;
+								gap: 15px;
+						`,
+						innerHTML:`
+							<div
+							style="
+								font-size:28px;
+								text-align:center;
+							"
+							>
+								<img src=/file?fn=bnivatitle.png
+								style="
+									max-width:90%;
+								"
+								>
+								<div>Rp. ${getPrice(ipaymudata.Total)}</div>
+							</div>
+							<div
+							style="
+								width:100%;
+								text-align:center;
+							"
+							>
+								<div
+								style="
+									font-size: 18px;
+									text-align: left;
+									padding: 31px;
+									border: 1px solid aliceblue;
+								">
+									${ipaymudata.Note||'Silahkan Lakukan Pembayaran Dengan Nomor Pembayaran '+ipaymudata.PaymentNo}
+								</div>
+							</div>
+							<div id=detailfor
+							style="
+								width:92%;
+								height:50%;
+								display:flex;
+								align-items:space-between;
+								justify-content:center;
+								flex-direction:column;
+								gap:10px;
+								padding:4%;
+								border:1px solid;
+								font-size:18px;
+								border-radius:10px;
+							"
+							>
+								
+							</div>
+						`,
+						initDetail(){
+							const datatodisplay = {
+								TransactionId:ipaymudata.SessionId,
+								Expired:ipaymudata.Expired,
+								PaymentNo:ipaymudata.PaymentNo,
+								Fee:`Rp. ${getPrice(ipaymudata.Fee)}`,
+								Total:`Rp. ${getPrice(ipaymudata.Total)}`,
+								SubTotal:`Rp. ${getPrice(ipaymudata.SubTotal)}`
+							}
+							for(let i in datatodisplay){
+								this.find('#detailfor').addChild(makeElement('div',{
+								style:`
+									display:flex;
+									align-items:center;
+									justify-content:center;
+									gap:10px;
+								`,
+								innerHTML:`
+									<div style="
+										width:100%;
+									">${i}</div>
+									${i!='PaymentNo'?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<textarea style="width:100%;">'+datatodisplay[i]+'</textarea>'}
+									
+								`
+							}))
+							}
+						},
+						onadded(){
+							this.initDetail();
+						}
+					}))
 				}
 			})
 		}
@@ -1828,7 +2520,7 @@ const app = {
 				app.setMoremenu();
 				app.scrollTheImg();
 				app.setCategory();
-				app.forceLoginSystem();
+				app.forceLoginSystem(true);
 			}
 		})
 	},
@@ -1904,6 +2596,10 @@ const app = {
 		this.main.findall('.gnavbutton').forEach(button=>{
 			button.onclick = ()=>{
 				if(actionmap[button.id]){
+					if(button.id==='account'){
+						this[actionmap[button.id]]();
+						return;
+					}
 					this[actionmap[button.id]](button);
 				}else this.underDevelopmentFase();
 			}
@@ -1966,11 +2662,15 @@ const app = {
 			button.find('img').src = '/file?fn=closex.png';
 		}
 	},
-	forceLoginSystem(){
-		if(!this.userProfileData)this.main.addChild(app.template.loginSystem());
-		else this.generateMyProfile();
+	forceLoginSystem(init=false){
+		if(this.userProfileData||this.userLogCheck()){
+			if(!init)this.generateMyProfile();
+		}else this.main.addChild(app.template.loginSystem());
 	},
 	generateMyProfile(){
+		this.hometodelete.forEach(el=>{
+			el.remove();
+		})
 		const el = app.template.myProfilePage();
 		this.hometodelete.push(el);
 		this.content.addChild(el);
@@ -1980,6 +2680,27 @@ const app = {
 		const el = app.template.paythisman(ipaymuresponse,databefore);
 		this.hometodelete.push(el);
 		this.content.addChild(el);
+	},
+	userLogCheck(){
+		const UserSession = this.getSession();
+		if(UserSession && UserSession.valid > new Date().getTime()){
+			this.userProfileData = UserSession;
+			return true;
+		}
+		return false;
+	},
+	getSession(){
+		return JSON.parse(localStorage.getItem(this.lsName));
+	},
+	saveSession(){
+		localStorage.setItem(this.lsName,jsonstr(Object.assign(this.userProfileData,{valid:getTimePlus(60000)})))
+	},
+	processSuccessLogin(response){
+		this.userProfileData = response.msg;
+		this.saveSession();
+	},
+	deleteSession(){
+		localStorage.removeItem(this.lsName);
 	}
 }
 

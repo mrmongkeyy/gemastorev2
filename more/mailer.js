@@ -6,8 +6,8 @@ const mailerTransforter = nodemailer.createTransport({
     pass:'iuxbxcerqssluupr'
   }
 })
-module.exports = function(data,onfine,onerror){
-	let mailDetails = {
+module.exports = function(onfine,onerror,details){
+	let mailDetails = details||{
 		from:'gmarket.cyclic.app',
 		to:data.email,
 		subject:'Gmarket Verification Account!',
@@ -31,7 +31,7 @@ module.exports = function(data,onfine,onerror){
 			</div>
 		`
 	};
-	mailerTransforter.sendMail(mailDetails, function(err, data) {
+	mailerTransforter.sendMail(details, function(err) {
 		if(err) {
 			console.log(err);
 			onerror();

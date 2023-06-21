@@ -13,7 +13,7 @@ const paymentConfig = {
 const sign = '7ad0dabf608f08ace635ece4d5393b3d';
 const md5 = require('./md5');
 const filterString = require('./stringfilter');
-module.exports = function(type,req,res){
+module.exports = function(type,req,res,db){
 	const schema = {
 		pricelist:{
 			all(req,res){
@@ -73,6 +73,18 @@ module.exports = function(type,req,res){
 			}
 		},
 		order:{
+			gmarketsaldopay(req,res,db){
+				const userid = req.body.userInfo.split('@')[0];
+				db.ref(`users/${userid}`).get().then(data=>{
+					data = data.val()||{};
+					if(data.ballance >= req.body.products.ammount){
+						const leftballance = data.ballance-req.body.products.ammount;
+						db.ref(`users/${userid}`).update({ballance:leftballance}).then(()=>{
+							res.json({valid:true,msg:'Pembayaran Berhasil, sedang memproses pesanan anda!',leftballance})
+						})
+					}else res.json({valid:false,msg:'Saldo Tidak Cukup!'})
+				})
+			},
 			orderPay(req,res){
 				const paymentInfo = req.body.payment.split('.');
 				const data = {
@@ -82,7 +94,7 @@ module.exports = function(type,req,res){
 					amount:req.body.products.ammount,
 					comments:"GMarket Payment",
 					"notifyUrl":"https://gemastore.cyclic.app/paymentcallback", // your callback url
-					"referenceId":`gmtrx${req.body.timestamp}`, // your reference id or transaction id
+					"referenceId":`GMTrx${req.body.timestamp}`, // your reference id or transaction id
 					"paymentMethod":paymentInfo[0],
 					"paymentChannel":paymentInfo[1]
 				};
@@ -128,7 +140,7 @@ module.exports = function(type,req,res){
 		if(schema[type][req.query.type]){
 			//handling 'spaces'.
 			if(req.query.operator)req.query.operator = filterString(req.query.operator,'%20',' ');
-			schema[type][req.query.type](req,res);
+			schema[type][req.query.type](req,res,db);
 		}else res.json({msg:'invalid type given'})
 	}else{
 		res.json({msg:'access_denied'});

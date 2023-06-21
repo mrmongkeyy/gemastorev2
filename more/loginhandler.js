@@ -1,6 +1,5 @@
 
 module.exports = function(req,res,db){
-	console.log(req.body.email);
 	db.ref('users').get().then((data)=>{
 		const newData = data.val()||{};
 		req.body.email = req.body.email.split('@')[0];

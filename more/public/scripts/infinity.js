@@ -394,7 +394,9 @@ const compareSet = function(src,c1,c2){
 	}
 }
 const forceRecheck = function(el,msg){
+	el.saveRemove('#frcel');
 	el.addChild(makeElement('div',{
+		id:'frcel',
 		style:`
 			position:absolute;
 			background:white;
@@ -412,4 +414,7 @@ const forceRecheck = function(el,msg){
 			},2000);
 		}
 	}))
+}
+const getTimePlus = function(number){
+	return new Date().getTime()+number;
 }
