@@ -1,0 +1,218 @@
+<!doctype HTML>
+<html>
+  <head>
+    <title>G-Market Admin</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="/styles?fn=adminstyle">
+  </head>
+  <body>
+     <main>
+      <header>
+        <div
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 10%;
+          font-size: 18px;
+        "
+        >
+          G-Market Admin
+        </div>
+        <div id="buttons"
+        style="
+          display: flex;
+          gap: 12px;
+          font-size: 18px;
+          flex-direction: column;
+          padding-top:10px;
+          padding:10px;
+          background:white;
+        "
+        >
+          <div id=setting
+          style="
+            display: flex;
+            align-items: center;
+            gap:10px;
+            padding:0 10px;
+            border:1px solid #f1f1f1;
+            color:black;
+            padding:10px;
+            border-radius:10px;
+            cursor: pointer;
+          "
+          >
+            <img
+            src="/file?fn=setting-lines.png"
+            style="
+              width:16px;
+              height:16px;
+            "
+            >Settings
+          </div>
+          <div id="users"
+          style="
+            display: flex;
+            align-items: center;
+            gap:10px;
+            padding:0 10px;
+            border:1px solid #f1f1f1;
+            color:black;
+            padding:10px;
+            border-radius:10px;
+            cursor: pointer;
+          "
+          >
+            <img
+            src="/file?fn=user.png"
+            style="
+              width:16px;
+              height:16px;
+            "
+            >Users
+          </div>
+          <div id="voucher"
+          style="
+            display: flex;
+            align-items: center;
+            gap:10px;
+            padding:0 10px;
+            border:1px solid #f1f1f1;
+            color:black;
+            padding:10px;
+            border-radius:10px;
+            cursor: pointer;
+          "
+          >
+            <img
+            src="/file?fn=voucher.png"
+            style="
+              width:16px;
+              height:16px;
+            "
+            >Voucher
+          </div>
+          <div id="news"
+          style="
+            display: flex;
+            align-items: center;
+            gap:10px;
+            padding:0 10px;
+            border:1px solid #f1f1f1;
+            color:black;
+            padding:10px;
+            border-radius:10px;
+            cursor: pointer;
+          "
+          >
+            <img
+            src="/file?fn=ticket.png"
+            style="
+              width:16px;
+              height:16px;
+            "
+            >News
+          </div>
+          <div id="riwayat"
+          style="
+            display: flex;
+            align-items: center;
+            gap:10px;
+            padding:0 10px;
+            border:1px solid #f1f1f1;
+            color:black;
+            padding:10px;
+            border-radius:10px;
+            cursor: pointer;
+          "
+          >
+            <img
+            src="/file?fn=transaction.png"
+            style="
+              width:16px;
+              height:16px;
+            "
+            >Riwayat
+          </div>
+        </div>
+      </header>
+      <content>
+        <div id="settings">
+          <div id="header"
+          style="
+            height: 10%;
+            width:98%;
+            background:white;
+            display: flex;
+            justify-content: flex-start;
+            color: white;
+            align-items:center;
+            padding:0 1%;
+            border-bottom: 2px solid #f1f1f1;
+            gap:10px;
+          "
+          >
+            <div id="savechanges"
+            style="
+              background: #f1f1f1;
+              border-radius: 20px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              /* height: auto; */
+              height: 32px;
+              gap: 2px;
+              color: black;
+              padding: 4px 10px;
+              cursor: pointer;
+            "
+            >
+              <img src="/file?fn=savechanges.png"
+              style="
+                width:16px;
+                height: 16px;
+              "
+              >
+              Simpan Perubahan
+            </div>
+            <div id="refreshbutton"
+            style="
+              background: #f1f1f1;
+              border-radius: 20px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              /* height: auto; */
+              height: 32px;
+              gap: 2px;
+              color: black;
+              padding: 4px 10px;
+              cursor: pointer;
+            "
+            >
+              <img src="/file?fn=reload.png"
+              style="
+                width:16px;
+                height: 16px;
+              "
+              >
+              Refresh
+            </div>
+          </div>
+          <div id="body"
+          style="
+            height:100%;
+            width: 100%;
+            overflow:auto;
+          "
+          >
+
+          </div>
+        </div>
+      </content>
+     </main>
+    <script src=/scripts?fn=infinity></script>
+    <script src=/scripts?fn=admin></script>
+  </body>
+</html>

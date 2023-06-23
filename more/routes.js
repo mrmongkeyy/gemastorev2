@@ -6,11 +6,24 @@ const handleRegis = require('./newuserhandler')
 const emailVerifier = require('./emailVerifier');
 const loginhandler = require('./loginhandler');
 const sendotphandler = require('./otphandler');
+const adminpanelhandler = require('./adminpanel');
 module.exports = [
 	{
 		mM:'get',
 		'/'(req,res){
 			view.go('index',req,res);
+		}
+	},
+	{
+		mM:'get',
+		'/admin'(req,res){
+			view.go('admin',req,res);
+		}
+	},
+	{
+		mM:'post',
+		'/admin'(req,res){
+			adminpanelhandler(req,res,db);
 		}
 	},
 	{
@@ -34,7 +47,7 @@ module.exports = [
 	{
 		mM:'get',
 		'/info'(req,res){
-			moreinfo('pricelist',req,res);
+			moreinfo('pricelist',req,res,db);
 		}
 	},
 	{

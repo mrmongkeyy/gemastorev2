@@ -285,7 +285,7 @@ const app = {
 				`
 			})
 		},
-		buyMenu(info,filterBase){
+		buyMenu(info,filterBase,configaddition){
 			const data = info.split(',');
 			return makeElement('div',{
 				userData:{
@@ -680,7 +680,7 @@ const app = {
 								>
 									<div
 									style="margin-bottom:5px;"
-									>Gmarket Saldo</div>
+									>Gmarket Saldo (+${configaddition.gsaldobonus} G Points)</div>
 									<div id=valist
 									style="
 										display:flex;
@@ -868,14 +868,14 @@ const app = {
 								>
 								<div>${product.product_name}</div>
 								<div>${product.desc}</div>
-								<div>RP. ${getPrice(product.price)}</div>
+								<div>RP. ${getPrice(product.price+configaddition.itemmarkupprice)}</div>
 							`,
 							onadded(){
 								this.onclick = ()=>{
 									if(!this.selected){
 										parentBox.userData.products[this.data.buyer_sku_code] = {
 											code:this.data.buyer_sku_code,
-											price:this.data.price,
+											price:this.data.price+configaddition.itemmarkupprice,
 											product_name:this.data.product_name,
 											brand:this.data.brand
 										}
@@ -914,6 +914,7 @@ const app = {
 							if(objlen(parent.userData.products)===0 || button.id==='gmarketsaldo'){
 								if(app.userProfileData){
 									parent.userData.userInfo = app.userProfileData.email;
+									parent.userData.gsaldopaybonus = app.tweaks.gsaldobonus;
 								}else return forceRecheck(app.main,'Silahkan Login Terlebih Dahulu!');
 							}else if(parent.userData.userInfo)delete parent.userData.userInfo;
 							if(selected){
@@ -974,6 +975,9 @@ const app = {
 											else{
 												forceRecheck(app.main,respdata.msg);
 												app.userProfileData.ballance = respdata.leftballance;
+												app.userProfileData.points = respdata.nowpoints;
+												app.userProfileData.Trxs = respdata.mystrxs;
+												app.saveSession(0,false);
 												app.givemehome();
 											}
 										}
@@ -981,10 +985,10 @@ const app = {
 									pg:{
 										orderType:'orderPay',
 										onload(respdata,data){
-											if(!respdata.Success){
+											if(!respdata.responseJson.Success){
 												return forceRecheck(app.main,respdata.Message);
 											}
-											app.orderpaymentresponseSuccessHandler(respdata.Data,JSON.parse(data).products);
+											app.orderpaymentresponseSuccessHandler(respdata,JSON.parse(data).products);
 										}
 									}
 								}
@@ -1604,9 +1608,7 @@ const app = {
 								display:flex;
 								justify-content:center;
 								flex-direction:column;
-								border:1px solid #edeef1;
 								align-items:center;
-								border-radius:20px;
 							">
 								<div
 								style="
@@ -1614,7 +1616,6 @@ const app = {
 									flex-direction:column;
 									font-size:14px;
 									width:100%;
-									height:90%;
 									gap:10px;
 									align-items:center;
 									font-weight:bold;
@@ -1665,9 +1666,10 @@ const app = {
 											style="
 												width:50%;
 												display:flex;
+												overflow:auto;
 											"
 											>
-												<input value=${app.userProfileData.email} style="width:100%;">
+												${app.userProfileData.email}
 											</div>
 										</div>
 										<div
@@ -1715,12 +1717,15 @@ const app = {
 								>History</div>
 								<div>Voucher</div>
 							</div>
-							<div
+							<div id=moreinforbox
 							style="
-								display:flex;
-								align-items:center;
-								justify-content:center;
-								height:100%;
+							display: flex;
+							align-items: flex-start;
+							justify-content: flex-start;
+							height: 100%;
+							font-size: 14px;
+							font-weight: bold;
+							overflow: auto;
 							"
 							>
 								<div>Belum ada data!</div>
@@ -1728,6 +1733,130 @@ const app = {
 						</div>
 					</div>
 				`,
+				moreinfostate:'hs',
+				generateHistory(){
+					// mystrxs
+					const moreinfobox = this.find('#moreinforbox');
+					const datatrxs = app.userProfileData.Trxs;
+					if(datatrxs.length>0)moreinfobox.clear();
+					moreinfobox.addChild(makeElement('div',{
+						style:`
+						`,
+						innerHTML:`
+							<div
+							style="
+							display: flex;
+							align-items: center;
+							gap: 10px;
+							padding: 10px 0;
+							border-bottom: 1px solid;
+							margin-bottom: 10px;
+							position:sticky;
+							top:0;
+							background:white;
+							"
+							>
+								<div
+								style="
+									width:32px;
+									text-align:center;
+								"
+								>No</div>
+								<div
+								style="
+									width:100px;
+									text-align:center;
+								">ID</div>
+								<div
+								style="
+									width:100px;
+									text-align:center;
+								">Ammount</div>
+								<div
+								style="
+									width:100px;
+									text-align:center;
+								">Payment</div>
+								<div
+								style="
+									width:100px;
+									text-align:center;
+								">PaymentCode</div>
+								<div
+								style="
+									width:100px;
+									text-align:center;
+								">Expired</div>
+								<div
+								style="
+									width:100px;
+									text-align:center;
+								">Status</div>
+							</div>
+						`,
+						generate(){
+							datatrxs.forEach((data,i)=>{
+								this.addChild(makeElement('div',{
+									style:`
+										display:flex;
+										align-items:center;
+										gap:10px;
+										margin-bottom:5px;
+										font-size:12px;
+									`,
+									innerHTML:`
+										<div
+										style="
+											width:32px;
+											text-align:center;
+											overflow:auto;
+										"
+										>${i+1}.</div>
+										<input
+										style="
+											width:80px;
+											text-align:center;
+											overflow:auto;
+										" value=${data.id}>
+										<div
+										style="
+											width:100px;
+											text-align:center;
+											overflow:auto;
+										">Rp. ${getPrice(data.details.products.ammount)}</div>
+										<div
+										style="
+											width:100px;
+											text-align:center;
+											overflow:auto;
+										">${data.details.payment}</div>
+										<input
+										style="
+											width:80px;
+											text-align:center;
+											overflow:auto;
+										" value=${data.paymentCode||'-'}>
+										<div
+										style="
+											width:100px;
+											text-align:center;
+											overflow:auto;
+										">${data.expired||'-'}</div>
+										<div
+										style="
+											width:100px;
+											text-align:center;
+											overflow:auto;
+										">${data.status}</div>
+									`
+								}))
+							})
+						},
+						onadded(){
+							this.generate();
+						}
+					}))
+				},
 				makedepo(){
 					forceRecheck(app.main,'Maaf fitur ini sedang dikerjakan!');
 				},
@@ -1746,6 +1875,7 @@ const app = {
 				},
 				onadded(){
 					this.topButtonsSetup();
+					this.generateHistory();
 				}
 			})
 		},
@@ -1939,7 +2069,7 @@ const app = {
 						`,
 						initDetail(){
 							const datatodisplay = {
-								TransactionId:ipaymudata.SeesionId,
+								TransactionId:ipaymudata.SessionId,
 								Expired:ipaymudata.Expired,
 								PaymentNo:ipaymudata.PaymentNo,
 								Fee:`Rp. ${getPrice(ipaymudata.Fee)}`,
@@ -2431,9 +2561,35 @@ const app = {
 		}
 	},
   scrollTheImg(speed=3){
-    let frame;canMove=true;ontimeout=false;
-    const imgbox = find('#imglabel');
-    imgbox.onmouseover = ()=>{canMove=false}
+    // let frame;canMove=true;ontimeout=false;
+    // const imgbox = find('#imglabel');
+    // 
+    // //animation frame.
+    // const scroll = ()=>{
+    //   if(!ontimeout){
+    //     if(canMove){
+    //       imgbox.scrollLeft += speed;
+    //       //imgbox.find('img')
+    //     }
+    //     if(imgbox.scrollLeft+imgbox.offsetWidth >= imgbox.scrollWidth ||imgbox.scrollLeft <= 0){
+    //       ontimeout = true;
+    //       setTimeout(()=>{
+    //         ontimeout=false;
+    //         speed *= -1;
+    //       },500)
+    //     }
+    //   }
+    //   frame = requestAnimationFrame(scroll);
+    // }
+    // scroll();
+		const imgsrc = ['/file?fn=64cf4e3842fe8cbbfa8207c30859e0cf.png',
+			'/file?fn=1e55766bd29e3e7c85a60d9d4887c870.png',
+			'/file?fn=5ec17e06f73f92b117ebf18654d85c08.png',
+			'/file?fn=61181b434d4118b566c0b6b1a3de6eab.png'
+		]
+		const imgbox = find('#imglabel img');
+		let canMove = true;
+		imgbox.onmouseover = ()=>{canMove=false}
     imgbox.onmouseleave = ()=>{canMove=true}
 		imgbox.ontouchstart = ()=>{
 			canMove = false;
@@ -2441,24 +2597,15 @@ const app = {
 		imgbox.ontouchend = ()=>{
 			canMove = true;
 		}
-    //animation frame.
-    const scroll = ()=>{
-      if(!ontimeout){
-        if(canMove){
-          imgbox.scrollLeft += speed;
-          //imgbox.find('img')
-        }
-        if(imgbox.scrollLeft+imgbox.offsetWidth >= imgbox.scrollWidth ||imgbox.scrollLeft <= 0){
-          ontimeout = true;
-          setTimeout(()=>{
-            ontimeout=false;
-            speed *= -1;
-          },500)
-        }
-      }
-      frame = requestAnimationFrame(scroll);
-    }
-    scroll();
+		let imgindex = 0;
+		setInterval(()=>{
+			if(!canMove)return;
+			imgindex += 1;
+			imgbox.src = imgsrc[imgindex];
+			if(imgindex===imgsrc.length-1){
+				imgindex = 0;
+			}
+		},3000)
   },
   displayContent(typedata){
     const boxdiv = find('#box-div');
@@ -2476,6 +2623,14 @@ const app = {
 		if(datalen===0){
 			boxdiv.addChild(app.template.noData());
 		}
+
+		//giving scrolling content-box event.
+		// this.content.find('#box-div').onscroll = ()=>{
+		// 	this.imglabel.style.height = "64px";
+		// }
+		// this.content.find('#box-div').onscrollend = ()=>{
+		// 	this.imglabel.style.height = "300px";
+		//}
   },
 	content:find('content'),
   init(){
@@ -2514,7 +2669,8 @@ const app = {
 		cOn.get({
 			url:'/info?type=all',
 			onload(){
-				app.basedata = this.getJSONResponse().data;
+				app.basedata = this.getJSONResponse().base.data;
+				app.tweaks = this.getJSONResponse().tweaks;
 				app.processDb();
 				app.setupGlobalNav();
 				app.setMoremenu();
@@ -2544,6 +2700,7 @@ const app = {
 		this.main.addChild(app.template.underDevelopment());
 	},
 	main:find('main'),
+	imglabel:find('#imglabel'),
 	category:find('#category'),
 	setCategory(){
 		//generating the categories.
@@ -2577,7 +2734,7 @@ const app = {
 		this.displayContent(state);
 	},
 	openCashier(info,filterBase=false){
-		let el = this.template.buyMenu(info,filterBase);
+		let el = this.template.buyMenu(info,filterBase,this.tweaks);
 		this.hometodelete.push(el);
 		this.content.addChild(el);
 	},
@@ -2676,6 +2833,9 @@ const app = {
 		this.content.addChild(el);
 	},
 	orderpaymentresponseSuccessHandler(ipaymuresponse,databefore){
+		app.userProfileData.Trxs = ipaymuresponse.trxdata;
+		app.saveSession(0,false);
+		ipaymuresponse = ipaymuresponse.responseJson.Data;
 		this.content.find('#buymenuwhitebox').parentElement.remove();
 		const el = app.template.paythisman(ipaymuresponse,databefore);
 		this.hometodelete.push(el);
@@ -2692,12 +2852,13 @@ const app = {
 	getSession(){
 		return JSON.parse(localStorage.getItem(this.lsName));
 	},
-	saveSession(){
-		localStorage.setItem(this.lsName,jsonstr(Object.assign(this.userProfileData,{valid:getTimePlus(60000)})))
+	saveSession(timeplus,setValidity=true){
+		if(setValidity)return localStorage.setItem(this.lsName,jsonstr(Object.assign(this.userProfileData,{valid:getTimePlus(timeplus)})))
+		localStorage.setItem(this.lsName,jsonstr(this.userProfileData));
 	},
 	processSuccessLogin(response){
 		this.userProfileData = response.msg;
-		this.saveSession();
+		this.saveSession(1800000);
 	},
 	deleteSession(){
 		localStorage.removeItem(this.lsName);

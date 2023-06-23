@@ -49,7 +49,8 @@ module.exports = function(req,res,db){
         name:newData[req.query.id].name,
         password:newData[req.query.id].password,
 		    ballance:0,
-        points:0
+        points:0,
+        Trxs:[]
       }
       const emailfixed = datavalid.email.split('@');
       db.ref(`users/${emailfixed[0]}`).set(datavalid).then(()=>{

@@ -1,14 +1,14 @@
 
 module.exports = function(req,res,db){
-	db.ref('users').get().then((data)=>{
+	const userId = req.body.email.split('@')[0];
+	db.ref(`users/${userId}`).get().then((data)=>{
 		const newData = data.val()||{};
-		req.body.email = req.body.email.split('@')[0];
-		if(newData[req.body.email]){
-			if(newData[req.body.email].password===req.body.password){
-				delete newData[req.body.email].password;
+		if(newData.email){
+			if(newData.password===req.body.password){
+				delete newData.password;
 				res.json({
 					valid:true,
-					msg:newData[req.body.email]
+					msg:newData
 				})
 			}else{
 				res.json({valid:false,msg:'Wrong Password'})

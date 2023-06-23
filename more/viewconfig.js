@@ -1,3 +1,4 @@
 module.exports = {
-	index:'index.html'
+	index:'index.html',
+	admin:'admin.html'
 }

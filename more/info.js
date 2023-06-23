@@ -17,7 +17,10 @@ module.exports = function(type,req,res,db){
 	const schema = {
 		pricelist:{
 			all(req,res){
-				this.request(res,sign,'','');
+				db.ref('tweakdataconfig').get().then(data=>{
+					const valueddata = data.val();
+					this.request(res,sign,'','',valueddata);
+				})
 			},
 			pulsa(req,res){
 				this.request(res,sign,'pulsa',req.query.operator);
@@ -34,7 +37,7 @@ module.exports = function(type,req,res,db){
 			voucher(req,res){
 				this.request(res,sign,'voucher',req.query.operator);
 			},
-			request(res,sign,type,operator=''){
+			request(res,sign,type,operator='',tweaks){
 				// axios.get('https://api.tokovoucher.id/produk/code?member_code=M230618KCLS1906XT&signature=f61bf1a2a98739e2110613d2ccb765ff&'
 				// ).then(resp=>{
 				// 	res.json(resp.data);
@@ -51,7 +54,7 @@ module.exports = function(type,req,res,db){
 						"content-type":"application/json"
 					}
 				}).then(resp=>{
-					res.json(resp.data);
+					res.json({base:resp.data,tweaks});
 				})
 			}
 		},
@@ -79,13 +82,30 @@ module.exports = function(type,req,res,db){
 					data = data.val()||{};
 					if(data.ballance >= req.body.products.ammount){
 						const leftballance = data.ballance-req.body.products.ammount;
-						db.ref(`users/${userid}`).update({ballance:leftballance}).then(()=>{
-							res.json({valid:true,msg:'Pembayaran Berhasil, sedang memproses pesanan anda!',leftballance})
+						const nowpoints = data.points + req.body.gsaldopaybonus;
+						if(!data.Trxs)data.Trxs = [{
+							id:`GMTrx${req.body.timestamp}`,
+							details:req.body,
+							status:'done'
+						}];
+						else data.Trxs.push({
+							id:`GMTrx${req.body.timestamp}`,
+							details:req.body,
+							status:'done'
+						});
+						db.ref(`users/${userid}`).update({ballance:leftballance,points:nowpoints,Trxs:data.Trxs}).then(()=>{
+							db.ref(`history/GMTrx${req.body.timestamp}`).set({
+								payment:'GMarketSaldo',
+								moredetails:req.body,
+								status:'done'
+							}).then(()=>{
+								res.json({valid:true,msg:'Pembayaran Berhasil, sedang memproses pesanan anda!',leftballance,nowpoints,mystrxs:data.Trxs})
+							})
 						})
 					}else res.json({valid:false,msg:'Saldo Tidak Cukup!'})
 				})
 			},
-			orderPay(req,res){
+			orderPay(req,res,db){
 				const paymentInfo = req.body.payment.split('.');
 				const data = {
 					name:req.body.validationData.name,
@@ -117,7 +137,35 @@ module.exports = function(type,req,res,db){
 				)
 				.then((response) => response.json())
 				.then((responseJson) => {
-					res.json(responseJson);
+					const userid = req.body.validationData.email.split('@')[0];
+					db.ref(`users/${userid}`).get().then(data=>{
+						data = data.val()||{};
+						if(!data.Trxs)data.Trxs = [{
+							id:`GMTrx${req.body.timestamp}`,
+							details:req.body,
+							status:'pending',
+							paymentCode:responseJson.Data.PaymentNo,
+							expired:responseJson.Data.Expired
+						}];
+						else data.Trxs.push({
+							id:`GMTrx${req.body.timestamp}`,
+							details:req.body,
+							status:'pending',
+							paymentCode:responseJson.Data.PaymentNo,
+							expired:responseJson.Data.Expired
+						});
+						db.ref(`users/${userid}`).update({Trxs:data.Trxs}).then(()=>{
+							db.ref(`history/GMTrx${req.body.timestamp}`).set({
+								payment:req.body.payment,
+								moredetails:req.body,
+								status:'pending',
+								paymentCode:responseJson.Data.PaymentNo,
+								expired:responseJson.Data.Expired
+							}).then(()=>{
+								res.json({trxdata:data.Trxs,responseJson});
+							})
+						})
+					})
 				})
 			},
 			orderPulsa(req,res){
