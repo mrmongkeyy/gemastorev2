@@ -374,6 +374,7 @@ const app = {
 							<div id=productInfo class=activecc>Product Info</div>
 							<div id=userInput>User Input</div>
 							<div id=priceList>Price List</div>
+							<div id=voucher>Vouchers</div>
 							<div id=paymentMethod>Payment Method</div>
 						</div>
 						<div id=rootboxcontent

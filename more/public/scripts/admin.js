@@ -473,6 +473,486 @@ const admin = {
           this.processUsers();
         }
       })
+    },
+    vouchers(data){
+      return makeElement('div',{
+        data,
+        style:`
+          display: flex;
+          font-size:18px;
+          align-items: flex-start;
+          flex-direction: column;
+        `,
+        innerHTML:`
+        <div style="
+        height:48px;
+        display: flex;
+        align-items: center;
+        position:sticky;
+        top:0;
+        background:white;
+        border-bottom:2px solid #f1f1f1;
+      ">
+        <div
+        style="
+          width: 64px;
+          overflow: auto;
+          text-align: center;
+        "
+        >No</div>
+        <div
+        style="
+          width: 200px;
+          overflow: auto;
+          text-align: center;
+        ">Voucher Id</div>
+        <div
+        style="
+          width: 200px;
+          overflow: auto;
+          text-align: center;
+        ">Nominal Diskon (%)</div>
+        <div
+        style="
+          width: 200px;
+          overflow: auto;
+          text-align: center;
+        ">Kategori Produk</div>
+        <div
+        style="
+          width: 200px;
+          overflow: auto;
+          text-align: center;
+        ">Jenis Produk</div>
+        <div
+        style="
+          width: 200px;
+          overflow: auto;
+          text-align: center;
+        ">Expired</div>
+        <div
+        style="
+          width: 200px;
+          overflow: auto;
+          text-align: center;
+        ">Hapus</div>
+      </div>
+      <div
+      style="
+        display: flex;
+        font-size:14px;
+        align-items: flex-start;
+        flex-direction: column;
+        height:100%;
+        width: 100%;
+      "
+      >
+        <div style="
+          display: flex;
+          justify-content: space-around;
+          overflow: auto;
+        ">
+          <div id=userparent
+            style="width:100%"
+          >
+          </div>
+        </div>
+      </div>
+        `,
+        processUsers(){
+          const userTemplate = (trxid,i,data)=>{
+            return makeElement('div',{
+              style:`
+              margin-top:10px;
+              width: 100%;
+              display: flex;
+              overflow: auto;
+              `,
+              innerHTML:`
+              <div
+              style="
+                width: 64px;
+                overflow: auto;
+                text-align: center;
+              "
+              >
+                ${i}.
+              </div>
+              <div
+              style="
+                width: 200px;
+                overflow: auto;
+                text-align: center;
+              ">${trxid}</div>
+              <div
+              style="
+                width: 200px;
+                overflow: auto;
+                text-align: center;
+              ">${Number(data.pricecutter)}%</div>
+              <div
+              style="
+                width: 200px;
+                overflow: auto;
+                text-align: center;
+              ">${data.category}</div><div
+              style="
+                width: 200px;
+                overflow: auto;
+                text-align: center;
+              ">${data.type}</div>
+              <div
+              style="
+                width: 200px;
+                overflow: auto;
+                text-align: center;
+              ">${data.expired}</div>
+              <div
+              style="
+                width: 200px;
+                overflow: auto;
+                text-align: center;
+              ">
+                <img src=/file?fn=delete.png
+                style="
+                  width:18px;
+                  height:18px;
+                  cursor:pointer;
+                "
+                >
+              </div>
+              `,trxid,
+              deleteButtonSetup(){
+                this.find('img').onclick = ()=>{
+                  const onload = (data)=>{
+                    if(data.valid){
+                      admin.content.find('#refreshbutton').click();
+                    }else forceRecheck(admin.main,'Gagal Menghapus Voucher!');
+                  }
+                  cOn.post({
+                    url:'/admin',
+                    someSettings:[
+                      ['setRequestHeader','content-type','application/json']
+                    ],
+                    data:jsonstr({type:'deletevoucher',voucherid:this.trxid}),
+                    onload(){
+                      onload(this.getJSONResponse());
+                    }
+                  })
+                }
+              },
+              onadded(){
+                this.deleteButtonSetup();
+              }
+            })
+          }
+          let index = 0;
+          for(let i in this.data){
+            index++;
+            this.find('#userparent').addChild(userTemplate(i,index,this.data[i]));
+          }
+          if(index ===0 ){
+            this.find('#userparent').parentElement.parentElement.appendChild(makeElement('div',{
+              style:`
+                width:100%;
+                height:100%;
+                align-items:center;
+                justify-content:center;
+              `,
+              innerHTML:'Tidak Ada Data!'
+            }))
+          }
+        },
+        onadded(){
+          this.processUsers();
+        }
+      })
+    },
+    newVoucher(){
+      return makeElement('div',{
+        style:`
+          position:absolute;
+          width:100%;
+          height:100%;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          background:rgb(0,0,0,0.5);
+        `,
+        innerHTML:`
+          <div
+          style="
+            background:white;
+            font-size:18px;
+          "
+          >
+            <div
+            style="
+              display:flex;
+              align-items:centr;
+              justify-content:flex-start;
+              gap:10px;
+              padding:20px 0;
+              border-bottom:2px solid #f1f1f1;
+            "
+            >
+              <div
+              style="
+                width:100px;
+                text-align:center;
+              "
+              >No</div>
+              <div
+              style="
+                width:200px;
+                text-align:center;
+              ">VoucherId</div>
+              <div
+              style="
+                width:200px;
+                text-align:center;
+              ">Diskon(%)</div>
+              <div
+              style="
+                width:200px;
+                text-align:center;
+              ">Kategory</div>
+              <div
+              style="
+                width:200px;
+                text-align:center;
+              ">Jenis</div>
+              <div
+              style="
+                width:200px;
+                text-align:center;
+              ">Expired</div>
+            </div>
+            <div id=body
+            style="
+              min-height:200px;
+              max-height:500px;
+              overflow:auto;
+            "
+            >
+            </div>
+            <div
+            style="
+              display:flex;
+              align-items:center;
+              padding:10px 5px;
+              gap:10px;
+              justify-content:flex-end;
+              border-top:2px solid #f1f1f1;
+            "
+            >
+              <div id=newrowbutton
+              style="
+                background:orange;
+                padding:10px;
+                color:white;
+                border-radius:20px;
+                cursor:pointer;
+              "
+              >
+                <div>Tambah</div>
+              </div>
+              <div id=savebutton
+              style="
+                background:orange;
+                padding:10px;
+                color:white;
+                border-radius:20px;
+                cursor:pointer;
+              ">
+                <div>Simpan</div>
+            </div>
+            <div id=closebutton
+              style="
+                background:orange;
+                padding:10px;
+                color:white;
+                border-radius:20px;
+                cursor:pointer;
+              ">
+                <div>Batal</div>
+              </div>
+          </div>
+        `,
+        vouchers:{},
+        addRow(voucher,id){
+          this.find('#body').addChild(makeElement('div',{
+            id,
+            style:`
+              display:flex;
+              align-items:center;
+              width:100%;
+              justify-content:flex-start;
+              margin-top:10px;
+              gap:10px;
+              padding-bottom:10px;
+              border-bottom:1px solid #f1f1f1;
+            `,
+            parent:this,
+            innerHTML:`
+              <div
+              style="
+                width:100px;
+                text-align:center;
+              "
+              >${objlen(this.vouchers)}.</div>
+              <div
+              style="
+                width:200px;
+                text-align:center;
+              ">${voucher.id}</div>
+              <div
+              style="
+                width:200px;
+                text-align:center;
+              "><input placeholder="Nominal Diskon" type=number id=pricecutter></div>
+              <div
+              style="
+                width:200px;
+                text-align:center;
+              ">
+                <select id=category>
+                  <option>Pilih Kategory</option>
+                </select>
+              </div>
+              <div
+              style="
+                width:200px;
+                text-align:center;
+              ">
+                <select id=type>
+                  <option>Pilih Jenis</option>
+              </select>
+              </div>
+              <div
+              style="
+                width:200px;
+                text-align:center;
+              "><input type=date id=expired></div>
+            `,
+            processDb(){
+              // this.basedata.forEach(data=>{
+              // 	if(this.db[data.category_name]){
+              // 		if(this.db[data.category_name][data.operator_produk]){
+              // 			this.db[data.category_name][data.operator_produk].push(data);
+              // 		}else{
+              // 			this.db[data.category_name][data.operator_produk] = [data];
+              // 		}
+              // 	}else{
+              // 		const obj = {};
+              // 		obj[data.operator_produk] = [data];
+              // 		this.db[data.category_name] = data;
+              // 	}
+              // })
+              this.basedata.forEach(item=>{
+                if(this.db[item.category]){
+                  if(this.db[item.category][item.brand]){
+                    this.db[item.category][item.brand].push(item);
+                  }else{
+                    this.db[item.category][item.brand] = [item];
+                  }
+                }else{
+                  const obj = {};
+                  obj[item.brand] = [item];
+                  this.db[item.category] = obj;
+                }
+              })
+            },
+            db:{},
+            initData(){
+              const onload = (data)=>{
+                this.basedata = data.base.data;
+                this.processDb();
+                this.selectEvent();
+              }
+              cOn.get({
+                url:'/info?type=all',
+                onload(){
+                  onload(this.getJSONResponse());
+                }
+              })
+            },
+            selectEvents:{
+              category(select,db){
+                for(let i in db){
+                  select.addChild(makeElement('option',{
+                    innerHTML:i
+                  }))
+                }
+              },
+              type(select,db,category){
+                for(let i in db[category]){
+                  select.addChild(makeElement('option',{
+                    innerHTML:i
+                  }))
+                }
+              }
+            },
+            selectEvent(){
+              this.findall('select').forEach(select=>{
+                select.onchange = ()=>{
+                  this.parent.vouchers[this.id][select.id] = select.value;
+                  this.category = select.value;
+                }
+                select.onclick = ()=>{
+                  this.selectEvents[select.id](select,this.db,this.category);
+                }
+              })
+              this.findall('input').forEach(input=>{
+                input.onchange = ()=>{
+                  this.parent.vouchers[this.id][input.id] = input.value;
+                }
+              })
+            },
+            onadded(){
+              this.initData();
+            }
+          }))
+        },
+        setupEventButton(){
+          this.find('#newrowbutton').onclick = ()=>{
+            const voucher = {
+              id:`GMV${getTimePlus(Math.floor(Math.random()*10000))}`,
+              pricecutter:null,
+              expired:null,
+              category:'game',
+              type:'mobilelegend'
+            }
+            this.vouchers[voucher.id] = voucher;
+            this.addRow(voucher,voucher.id);
+          }
+          this.find('#savebutton').onclick = ()=>{
+            const onload = (res)=>{
+              if(res.valid){
+                admin.content.find('#refreshbutton').click();
+                this.remove();
+              }
+            }
+            cOn.post({
+              url:'/admin',
+              someSettings:[
+                ['setRequestHeader','content-type','application/json']
+              ],
+              data:jsonstr({type:'updatevoucher',vouchers:this.vouchers}),
+              onload(){
+                onload(this.getJSONResponse())
+              }
+            })
+          }
+          this.find('#closebutton').onclick = ()=>{
+            this.remove();
+          }
+        },
+        onadded(){
+          this.setupEventButton();
+          this.find('#newrowbutton').click();
+        }
+      })
     }
   },
   state:'opensetting',
@@ -501,7 +981,6 @@ const admin = {
   openusers(){
     //req a setting first.
     const response = (data)=>{
-      console.log(data);
       this.adminbody.addChild(this.template.users(data));
     }
     cOn.post({
@@ -519,7 +998,21 @@ const admin = {
     
   },
   openvoucher(){
-
+    const response = (data)=>{
+      this.adminbody.addChild(this.template.vouchers(data));
+    }
+    cOn.post({
+      url:'/admin',
+      someSettings:[
+        ['setRequestHeader','content-type','application/json']
+      ],
+      data:jsonstr({
+        type:'getvoucherlist'
+      }),
+      onload(){
+        response(this.getJSONResponse());
+      }
+    })
   },
   opennews(){
 
@@ -564,9 +1057,20 @@ const admin = {
       this[this.state]();
     }
   },
+  setupNewVoucherButton(){
+    this.content.find('#addvoucher').onclick = ()=>{
+      this.main.addChild(this.template.newVoucher());
+    }
+  },
+  setupNewNewsButton(){
+    this.content.find('#addnewsbutton').onclick = ()=>{
+
+    }
+  },
   init(){
     this.navSetup();
     this.setuprefreshbutton();
+    this.setupNewVoucherButton();
   }
 }
 

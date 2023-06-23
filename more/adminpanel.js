@@ -29,6 +29,16 @@ module.exports = function(req,res,db){
       db.ref('tweakdataconfig').update(req.body.data).then(()=>{
         res.json({valid:true});
       })
+    },
+    updatevoucher(req,res,db){
+      db.ref('vouchers').update(req.body.vouchers).then(()=>{
+        res.json({valid:true});
+      })
+    },
+    deletevoucher(req,res,db){
+      db.ref(`vouchers/${req.body.voucherid}`).remove().then(()=>{
+        res.json({valid:true});
+      })
     }
   }
   if(!schema[req.body.type]){
