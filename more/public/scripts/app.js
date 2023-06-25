@@ -241,35 +241,35 @@ const app = {
 				}
 			})
 		},
-    boxItem(data,info,displayOption){
-			const imgsrc = app.thumbnailpath[data.brand]?app.thumbnailpath[data.brand]:'/file?fn=hg.png';
-      return makeElement('div',{
-				dataid:data.buyer_sku_code,
-				info:info,
-        id:'box-in',
-        innerHTML:`
-        <div id="thumbbox"
-        >
-          <img src="${imgsrc}"
-          style="
-            object-fit: cover;
-            background:white;
-						${data.settings?'width:'+data.settings.width+';'+'height:'+data.settings.height+';':''}
-          "
-          >
-        </div>
-        <div
-        style="
-          padding: 8%;
-					width: 84%;
-					text-align: center;
-        "
-        >
-          ${displayOption?data[displayOption]:data.brand}
-        </div>
-        `
-      })
-    },
+		boxItem(data,info,displayOption){
+				const imgsrc = app.thumbnailpath[data.brand]?app.thumbnailpath[data.brand]:'/file?fn=hg.png';
+		return makeElement('div',{
+					dataid:data.buyer_sku_code,
+					info:info,
+			id:'box-in',
+			innerHTML:`
+			<div id="thumbbox"
+			>
+			<img src="${imgsrc}"
+			style="
+				object-fit: cover;
+				background:white;
+							${data.settings?'width:'+data.settings.width+';'+'height:'+data.settings.height+';':''}
+			"
+			>
+			</div>
+			<div
+			style="
+			padding: 8%;
+						width: 84%;
+						text-align: center;
+			"
+			>
+			${displayOption?data[displayOption]:data.brand}
+			</div>
+			`
+		})
+		},
 		noData(){
 			return makeElement('div',{
 				style:`
@@ -285,7 +285,7 @@ const app = {
 				`
 			})
 		},
-		buyMenu(info,filterBase,configaddition){
+		buyMenu(info,filterBase,configaddition,uiinfo){
 			const data = info.split(',');
 			return makeElement('div',{
 				userData:{
@@ -328,6 +328,7 @@ const app = {
 							display:flex;
 							justify-content:space-between;
 							padding:10px;
+							border-bottom:2px solid #f1f1f1;
 						"
 						>
 							<div
@@ -361,399 +362,366 @@ const app = {
 								>
 							</div>
 						</div>
-						<div id=paymentboxcategory
-						style="
-							display:flex;
-							padding:10px;
-							height:32px;
-							display:flex;
-							align-items:center;
-							border-bottom:1px solid #9ca3af;
-							gap:10px;
-						">
-							<div id=productInfo class=activecc>Product Info</div>
-							<div id=userInput>User Input</div>
-							<div id=priceList>Price List</div>
-							<div id=voucher>Vouchers</div>
-							<div id=paymentMethod>Payment Method</div>
-						</div>
 						<div id=rootboxcontent
 						style="
 							height:100%;
 							overflow:auto;
 							font-size:18px;
 							position:relative;
+							background:#edeef1;
 						"
 						>
-							<div class="item active"
-							id=productInfo
-							></div>
-							<div class="item"
-							id=userInput
-							>
-								<div id=topup>
-									<div
-									style=margin-bottom:10px;
-									>
-										<b>Validation Data</b>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-										width:100%;
-										align-items:center;
-										margin-bottom:10px;
-									"
-									>
-										<div
-										style="
-											width:30%;
-										"
-										>Nama</div>
-										<div
-										style="
-											width:70%;
-											display: flex;
-											justify-content: flex-end;
-										"
-										>
-											<input id=validationData.name placeholder="Masukan Nama Kamu...">
-										</div>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-										width:100%;
-										align-items:center;
-										margin-bottom:10px;
-									"
-									>
-										<div
-										style="
-											width:30%;
-										"
-										>Email</div>
-										<div
-										style="
-											width:70%;
-											display: flex;
-											justify-content: flex-end;
-										"
-										>
-											<input id=validationData.email placeholder="Masukan Email" type=email>
-										</div>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-										width:100%;
-										align-items:center;
-										margin-bottom:10px;
-									"
-									>
-										<div
-										style="
-											width:30%;
-										"
-										>No. Hp</div>
-										<div
-										style="
-											width:70%;
-											display: flex;
-											justify-content: flex-end;
-										"
-										>
-											<input id=validationData.phone placeholder="Masukan No. Hp">
-										</div>
-									</div>
-									<div
-									style=margin-bottom:10px;
-									>
-										<b>Transaction Data</b>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-										width:100%;
-										align-items:center;
-										margin-bottom:10px;
-									"
-									>
-										<div
-										style="
-											width:30%;
-										"
-										>Game ID</div>
-										<div
-										style="
-											width:70%;
-											display: flex;
-    									justify-content: flex-end;
-										"
-										>
-											<input id=targetData.gameid placeholder="Masukan Game Id">
-										</div>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-										width:100%;
-										align-items:center;
-									"
-									>
-										<div
-										style="
-											width:30%;
-										"
-										>Server ID</div>
-										<div
-										style="
-											width:70%;
-											display: flex;
-    									justify-content: flex-end;
-										"
-										>
-											<input id=targetData.serverid placeholder="Masukan Server Id">
-										</div>
-									</div>
-									<div
-									style="
-										display:flex;
-										align-items:center;
-										margin-top:15px;
-										gap:10px;
-									"
-									>
-										<div id=validationbutton class=notvalid
-										>
-											Cek
-										</div>
-										<div
-										style="
-											font-size:12px;
-										"
-										>
-											Gunakan untuk memvalidasi data yang anda masukan.
-										</div>
-									</div>
-								</div>
-								<div
-								id=pulsa>
-									<div
-									style=margin-bottom:10px;
-									>
-										<b>Validation Data</b>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-										width:100%;
-										align-items:center;
-										margin-bottom:10px;
-									"
-									>
-										<div
-										style="
-											width:30%;
-										"
-										>Nama</div>
-										<div
-										style="
-											width:70%;
-											display: flex;
-											justify-content: flex-end;
-										"
-										>
-											<input id=validationData.name placeholder="Masukan Email" type=email>
-										</div>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-										width:100%;
-										align-items:center;
-										margin-bottom:10px;
-									"
-									>
-										<div
-										style="
-											width:30%;
-										"
-										>Email</div>
-										<div
-										style="
-											width:70%;
-											display: flex;
-											justify-content: flex-end;
-										"
-										>
-											<input id=validationData.email placeholder="Masukan Email">
-										</div>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-										width:100%;
-										align-items:center;
-										margin-bottom:10px;
-									"
-									>
-										<div
-										style="
-											width:30%;
-										"
-										>No. Hp</div>
-										<div
-										style="
-											width:70%;
-											display: flex;
-											justify-content: flex-end;
-										"
-										>
-											<input id=validationData.phone placeholder="Masukan No. Hp">
-										</div>
-									</div>
-									<div
-									style=margin-bottom:10px;
-									>
-										<b>Transaction Data</b>
-									</div>
-									<div
-									style="
-										display:flex;
-										justify-content:space-between;
-										width:100%;
-										align-items:center;
-										margin-bottom:10px;
-										gap:10px;
-									"
-									>
-										<div
-										style="
-											width:30%;
-										"
-										>No. Hp</div>
-										<div
-										style="
-											width:70%;
-											display: flex;
-    									justify-content: flex-end;
-										"
-										>
-											<input id=targetData.hp placeholder="08-xxx-xxx-xx">
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="item"
-							id=priceList
+							<div
+							style="
+								margin-bottom:8px;
+								width:100%;
+							"
 							>
 								<div
 								style="
-									padding:15px;
-									width:100%;
+									text-align:center;
+									padding:10px;
 									display:flex;
-									flex-wrap:wrap;
 									justify-content:center;
-									gap:16px;
-									font-size:12px;
+									align-items:center;
+									border:2px solid white;
+									position:relative;
 								"
 								>
-									
+									<img src=${uiinfo}
+									style="
+										width:100%;
+										position:absolute;
+										height:100%;
+										object-fit:cover;
+										opacity:.5;
+									">
+									<img src=${uiinfo}
+									style="
+										width:200px;
+										height:200px;
+										padding:5px;
+										background:white;
+										border-radius:50%;
+										z-index:1;
+									"
+									>
 								</div>
 							</div>
-							<div class="item"
-							id=paymentMethod
+							<div
+							style="
+								margin-bottom:8px;
+								background:white;
+								padding:10px;
+								color:black;
+							"
 							>
 								<div
 								style="
-									width:100%;
-									padding-bottom:0;
+									margin-bottom:10px;
+									padding-bottom: 5px;
+    							border-bottom: 2px solid #f1f1f1;
 								"
-								>
-									<div
-									style="margin-bottom:5px;"
-									>Gmarket Saldo (+${configaddition.gsaldobonus} G Points)</div>
-									<div id=valist
-									style="
-										display:flex;
-										gap:10px;
-										justify-content:space-around;
-										background:#ededed;
-									"
-									>
-										<div id=gmarketsaldo>G Market Saldo</div>
+								>Masukan Data Anda</div>
+								<div style="margin-bottom:10px;">
+									<div>
+										<div>Email</div>
+										<div>
+											<input placeholder="Masukan Email Anda">
+										</div>
+									</div>
+									<div>
+										<div>Phone</div>
+										<div>
+											<input placeholder="Masukan Phone Anda">
+										</div>
 									</div>
 								</div>
-								<div
-								style="
-									width:100%;
-									padding-bottom:0;
-								"
-								>
-									<div
-									style="margin-bottom:5px;">Virtual Account / VA</div>
-									<div id=valist
-									style="
-										display:flex;
-										justify-content:space-around;
-										background:#ededed;
-									"
-									>
-										<div id=va.bri>BRI</div>
-										<div id=va.bca>BCA</div>
-										<div id=va.mandiri>MANDIRI</div>
-										<div id=va.bni>BNI</div>
+								<div style="display:${data[0]==='Games'?'block':'none'};">
+									<div>
+										<div>Game ID</div>
+										<div>
+											<input placeholder="Masukan Id Game Anda">
+										</div>
+									</div>
+									<div>
+										<div>Server ID</div>
+										<div>
+											<input placeholder="Masukan Id Server Anda">
+										</div>
 									</div>
 								</div>
-								<div
-								style="
-									width:100%;
-									padding-bottom:0;
-								"
-								>
-									<div
-									style="margin-bottom:5px;"
-									>Convinence Store / CS</div>
-									<div id=valist
-									style="
-										display:flex;
-										gap:10px;
-										justify-content:space-around;
-										background:#ededed;
-									"
-									>
-										<div id=cstore.indomaret>Indomaret</div>
-										<div id=cstore.alfamart>Alfamart</div>
+								<div style="display:${data[0]!='Games'?'block':'none'};">
+									<div>
+										<div>Hp</div>
+										<div>
+											<input placeholder="Masukan Nomor Anda">
+										</div>
 									</div>
 								</div>
+								<div>
+								</div>
+							</div>
+							<div id=productparents
+							style="
+								margin-bottom:8px;
+								background:white;
+								color:black;
+								padding:10px;
+								display:flex;
+								flex-wrap:wrap;
+							"
+							>
 								<div
 								style="
-									width:100%;
-									padding-bottom:0;
+									margin-bottom:10px;
+									padding-bottom: 5px;
+    							border-bottom: 2px solid #f1f1f1;
 								"
-								>
+								>Pilih Produk</div>
+								
+							</div>
+							<div
+							style="
+								margin-bottom:8px;
+								background:white;
+								color:black;
+								padding:10px;
+							"
+							>
+								<div
+								style="
+									margin-bottom:10px;
+									padding-bottom: 5px;
+   								border-bottom: 2px solid #f1f1f1;
+								"
+								>Pilih Metode Pembayaran</div>
+								<div style="
+									margin-bottom:10px;
+								">
 									<div
-									style="margin-bottom:5px;"
+									style="
+										padding: 10px;
+										/* background: #111340; */
+										/* border-bottom: 2px solid #f1f1f1; */
+										color: black;
+										border: 2px solid #f1f1f1;
+										border-bottom: 0;
+									"
+									>G Market Saldo</div>
+									<div style="
+										display: flex;
+										gap: 10px;
+										padding: 0 10px;
+										border-radius: 0 0 10px 10px;
+										border: 2px solid #f1f1f1;
+									">
+										<div
+										style="
+										display: flex;
+										gap: 10px;
+										padding: 0 10px;
+										border-radius: 0 0 10px 10px;
+										padding: 10px 0;
+    								color: white;
+										"
+										>
+											<div
+											style="
+											background: #111340;
+											padding: 10px;
+											border-radius: 5px;
+											"
+											>G Market Saldo</div>
+										</div>
+									</div>
+								</div>
+								<div style="
+									margin-bottom:10px;
+								">
+									<div
+									style="
+										padding: 10px;
+										/* background: #111340; */
+										/* border-bottom: 2px solid #f1f1f1; */
+										color: black;
+										border: 2px solid #f1f1f1;
+										border-bottom: 0;
+									"
+									>Virtual Account</div>
+									<div style="
+										display: flex;
+										gap: 10px;
+										padding: 0 10px;
+										border-radius: 0 0 10px 10px;
+										border: 2px solid #f1f1f1;
+									">
+										<div
+										style="
+											display:flex;
+											align-items:center;
+										"
+										>
+											<img src=/file?fn=bri.png
+											style="
+												width:64px;
+												height:64px;
+												border-radius:10px;
+												object-fit:contain;
+											">
+										</div>
+										<div
+										style="
+											display:flex;
+											align-items:center;
+										"
+										>
+											<img src=/file?fn=bni.png
+											style="
+												width:64px;
+												height:64px;
+												border-radius:10px;
+												object-fit:contain;
+											">
+										</div>
+										<div
+										style="
+											display:flex;
+											align-items:center;
+										"
+										>
+											<img src=/file?fn=mandiri.png
+											style="
+												width:64px;
+												height:64px;
+												border-radius:10px;
+												object-fit:contain;
+											">
+										</div>
+										<div
+										style="
+											display:flex;
+											align-items:center;
+										"
+										>
+											<img src=/file?fn=bca.png
+											style="
+												width:64px;
+												height:64px;
+												border-radius:10px;
+												object-fit:contain;
+											">
+										</div>
+									</div>
+								</div>
+								<div style=margin-bottom:10px;>
+									<div
+									style="
+										padding: 10px;
+										/* background: #111340; */
+										/* border-bottom: 2px solid #f1f1f1; */
+										color: black;
+										border: 2px solid #f1f1f1;
+										border-bottom: 0;
+									"
+									>Convenience Store</div>
+									<div style="
+										display: flex;
+										gap: 10px;
+										padding: 0 10px;
+										border-radius: 0 0 10px 10px;
+										border: 2px solid #f1f1f1;
+									">
+										<div
+										style="
+											display:flex;
+											align-items:center;
+										"
+										>
+											<img src=/file?fn=alfamart.png
+											style="
+												width:64px;
+												height:64px;
+												border-radius:10px;
+												object-fit:contain;
+											">
+										</div>
+										<div
+										style="
+											display:flex;
+											align-items:center;
+										"
+										>
+											<img src=/file?fn=indomaret.png
+											style="
+												width:64px;
+												height:64px;
+												border-radius:10px;
+												object-fit:contain;
+											">
+										</div>
+									</div>
+								</div>
+								<div>
+									<div
+									style="
+										padding: 10px;
+										/* background: #111340; */
+										/* border-bottom: 2px solid #f1f1f1; */
+										color: black;
+										border: 2px solid #f1f1f1;
+										border-bottom: 0;
+									"
 									>Qris</div>
-									<div id=valist
-									style="
-										display:flex;
-										gap:10px;
-										justify-content:space-around;
-										background:#ededed;
-									"
-									>
-										<div id=qris.qris>Qris all payment</div>
+									<div style="
+										display: flex;
+										gap: 10px;
+										padding: 0 10px;
+										border-radius: 0 0 10px 10px;
+										border: 2px solid #f1f1f1;
+									">
+										<div
+										style="
+											display:flex;
+											align-items:center;
+										"
+										>
+											<img src=/file?fn=qris.png
+											style="
+												width:64px;
+												height:64px;
+												border-radius:10px;
+												object-fit:contain;
+											">
+										</div>
 									</div>
+								</div>
+							</div>
+							<div
+							style="
+								margin-bottom:8px;
+								background:white;
+								color:black;
+								padding:10px;
+								display:flex;
+								flex-wrap:wrap;
+							"
+							>
+								<div
+								style="
+									margin-bottom:10px;
+									padding-bottom: 5px;
+    							border-bottom: 2px solid #f1f1f1;
+								"
+								>Tambahkan Voucher / Jika Ada</div>
+								<div
+								style="
+									display:flex;
+									gap:10px;
+									width:100%;
+								"
+								>
+									<input placeholder="Masukan kode voucher anda">
 								</div>
 							</div>
 						</div>
@@ -761,10 +729,11 @@ const app = {
 						style="
 							height: 32px;
 							display: flex;
-							justify-content: flex-end;
+							justify-content: flex-start;
 							align-items: center;
 							padding: 20px;
-							border-top: 1px solid;
+							border-top: 2px solid #f1f1f1;
+							gap:10px;
 						"
 						>
 							<div id=totaldisplay
@@ -781,14 +750,32 @@ const app = {
 							>0 Item, Total Rp. 0</div>
 							<div id=submitbutton
 							style="
-								background: orange;
+								background: #111340;
 								color: white;
-								padding: 10px 20px;
+								padding: 5px 10px;
 								display: flex;
 								align-items: center;
 								height: 100%;
-								font-size: 24px;
-								border-top: 1px solid orange;
+								font-size: 16px;
+								border-radius: 10px;
+								gap:10px;
+							"
+							>
+								<img src=/file?fn=keranjang.png
+								style="
+									width:24px;height:24px;
+								"
+								>Keranjangin
+							</div>
+							<div id=submitbutton
+							style="
+								background: #111340;
+								color: white;
+								padding: 5px 10px;
+								display: flex;
+								align-items: center;
+								height: 100%;
+								font-size: 16px;
 								border-radius: 10px;
 							"
 							>
@@ -797,27 +784,6 @@ const app = {
 						</div>
 					</div>
 				`,
-				openProdukInfo(){
-					this.find('#rootboxcontent #productInfo').addChild(app.template.rootboxcontent([
-						{key:'Tipe Produk',value:data[0]},
-						{key:'Nama Produk',value:data[1]},
-						{key:'Catatan',value:'Masukan data dengan benar, kesalahan data ditanggung sendiri.'},
-						{
-							key:'Cara Membeli',
-							value:`
-								1. Klik Tab UserInput, Kemudian Isi Data Dengan Benar.<p>
-								2. Pindah kebagian PriceList, Silahkan Pilih Produk Yang Anda Inginkan.
-									 Anda Dapat Memilih Lebih Dari Satu, sistem akan menghandlenya.<p>
-								3. Setelah Memilih Produk anda dapat pergi ke tab pembayaran.<p>
-								4. Anda Bisa mengecek Ulang setiap data yang anda masukan.<p>
-								5. Anda bisa menekan tombol beli, kemudian anda akan diberikan detail pembayaran.<p>
-								6. Pesanan anda kami simpan terlebih dahulu, dan akan kami proses setelah sistem menerima
-									 notifikasi pembayaran berhasil Anda lakukan oleh Payment Gateway yang anda pilih.<p>
-								7. Selamat Berbelanja!
-							`
-						}
-					]))
-				},
 				autoFillData(){
 					if(!app.userProfileData)return;
 					this.findall('input').forEach(input=>{
@@ -848,53 +814,123 @@ const app = {
 				openPriceList(){
 					const parentBox = this;
 					const products = app.db[data[0]][data[1]];
-					products.forEach(product=>{
-						const item = makeElement('div',{
-							data:product,selected:false,
+					console.log(products);
+					for(let i=0;i<products.length;i+=2){
+						const outel = makeElement('div',{
 							style:`
-								padding:10px;
-								border:1px solid;
-								width:30%;
-								min-height:50px;
-								display:flex;
-								flex-direction:column;
-								gap:10px;
-								justify-content:center;
-							`,
-							innerHTML:`
-								<img src=${app.thumbnailpath[data[1]]}
-								style="
-									width:32px;height:32px;border-radius:50%;
-								"
-								>
-								<div>${product.product_name}</div>
-								<div>${product.desc}</div>
-								<div>RP. ${getPrice(product.price+configaddition.itemmarkupprice)}</div>
+							display:flex;
+							width:100%;
+							margin-bottom:10px;
+							justify-content:space-between;
 							`,
 							onadded(){
-								this.onclick = ()=>{
-									if(!this.selected){
-										parentBox.userData.products[this.data.buyer_sku_code] = {
-											code:this.data.buyer_sku_code,
-											price:this.data.price+configaddition.itemmarkupprice,
-											product_name:this.data.product_name,
-											brand:this.data.brand
-										}
-										this.selected = true;
-										this.classList.add('selectedprice');
-									}else{
-										delete parentBox.userData.products[this.data.buyer_sku_code];
-										this.classList.remove('selectedprice');
-										this.selected = false;
-									}
-									parentBox.showTotal();
-								}
 
-								if(filterBase && this.data.buyer_sku_code === filterBase)this.click();
 							}
 						})
-						this.find('#priceList div').addChild(item);
-					})
+						for(let j=0;j<2;j++){
+							if(products[i+j]){
+								outel.innerHTML += `
+								<div
+								style="
+									width: 48%;
+										height: 150px;
+										position: relative;
+										display: flex;
+										justify-content: center;
+										align-items: center;
+										border:2px solid #f1f1f1;
+								"
+								>
+									<img src=${uiinfo}
+									style="
+										width:100%;
+										height:100%;
+										object-fit:cover;
+									"
+									>
+									<div
+									style="
+										width:100%;
+										padding:10px;
+										background:#ffffffbf;
+										position:absolute;
+										color:black;
+										text-align:center;
+									"
+									>
+										<div>${products[i+j].category}</div>
+										<div>${products[i+j].product_name}</div>
+										<div>Rp ${getPrice(Number(products[i+j].price)+Number(configaddition.itemmarkupprice))}</div>
+									</div>
+								</div>
+								`
+							}
+						}
+						this.find('#productparents').addChild(outel);
+					}
+					// products.forEach(product=>{
+					// 	const item = makeElement('div',{
+					// 		data:product,selected:false,
+					// 		style:`
+					// 			padding:10px;
+					// 			border:1px solid;
+					// 			width:30%;
+					// 			min-height:50px;
+					// 			display:flex;
+					// 			flex-direction:column;
+					// 			gap:10px;
+					// 			justify-content:center;
+					// 		`,
+					// 		innerHTML:`
+					// 			<img src=${app.thumbnailpath[data[1]]}
+					// 			style="
+					// 				width:32px;height:32px;border-radius:50%;
+					// 			"
+					// 			>
+					// 			<div>${product.product_name}</div>
+					// 			<div>${product.desc}</div>
+					// 			<div>RP. ${getPrice(product.price+configaddition.itemmarkupprice)}</div>
+					// 		`,
+					// 		onadded(){
+					// 			this.onclick = ()=>{
+					// 				if(!this.selected){
+					// 					parentBox.userData.products[this.data.buyer_sku_code] = {
+					// 						code:this.data.buyer_sku_code,
+					// 						price:this.data.price+configaddition.itemmarkupprice,
+					// 						product_name:this.data.product_name,
+					// 						brand:this.data.brand
+					// 					}
+					// 					this.selected = true;
+					// 					this.classList.add('selectedprice');
+					// 				}else{
+					// 					delete parentBox.userData.products[this.data.buyer_sku_code];
+					// 					this.classList.remove('selectedprice');
+					// 					this.selected = false;
+					// 				}
+					// 				parentBox.showTotal();
+					// 			}
+
+					// 			if(filterBase && this.data.buyer_sku_code === filterBase)this.click();
+					// 		}
+					// 	})
+					// 	this.find('#priceList div').addChild(item);
+					// })
+				},
+				openVoucherList(){
+					this.find('#voucherslistbox').addChild(app.template.vouchershop(app.userProfileData.vouchers,true,true));
+					if(objlen(app.userProfileData.vouchers)===0){
+						this.find('#voucherslistbox').addChild(makeElement('div',{
+							style:`
+							width: 100%;
+							height: 100%;
+							display: flex;
+							position: absolute;
+							align-items: center;
+							justify-content: center;
+							`,
+							innerHTML:'Tidak Ada Voucher Untuk Digunakan!'
+						}))
+					}
 				},
 				showTotal(){
 					let total = 0;let itemlen = 0;
@@ -925,26 +961,6 @@ const app = {
 							selected.classList.add('selectedprice');
 							parent.userData.payment = button.id;
 							parent.showTotal();
-						}
-					})
-				},
-				setCcEvent(){
-					const buttons = this.find('#paymentboxcategory').findall('div');
-					const rootboxcontentitems = {};
-					this.findall('#rootboxcontent .item').forEach(div=>{
-						rootboxcontentitems[div.id] = div;
-					});
-					let activediv = buttons[0];
-					let itemactive = rootboxcontentitems['productInfo'];
-					buttons.forEach(div=>{
-						div.onclick = ()=>{
-							activediv.classList.remove('activecc');
-							itemactive.classList.remove('active');
-							div.classList.add('activecc');
-							rootboxcontentitems[div.id].classList.add('active');
-							itemactive = rootboxcontentitems[div.id];
-							activediv = div;
-							this.autoFillData();
 						}
 					})
 				},
@@ -1018,11 +1034,8 @@ const app = {
 					this.find('#closebutton').onclick = ()=>{
 						this.remove();
 					}
-					this.setCcEvent();
-					this.openProdukInfo();
-					this.openUserInput();
+					//this.setCcEvent();
 					this.openPriceList();
-					this.openPaymentMethod();
 					this.setupSubmitButton();
 				}
 			})
@@ -1033,20 +1046,20 @@ const app = {
 					position:absolute;
 					width:100%;
 					height:100%;
-					background:RGB(0,0,0,.5);
 					display:flex;
-					align-items:center;
+					background:#111340c7;
+					align-items:flex-start;
 					justify-content:center;
 					z-index:1;
 				`,
 				innerHTML:`
 					<div
 					style="
-						background:white;
-						display:flex;
-						flex-direction:column;
-						padding:0 50px;
-						border-radius:20px;
+						background: white;
+						display: flex;
+						flex-direction: column;
+						width: 80%;
+						border-radius:0 0 20px 20px;
 					"
 					>
 						<div id=loginlabelhead
@@ -1059,6 +1072,7 @@ const app = {
 							justify-content: space-around;
 							gap: 10px;
 							font-size: 16px;
+							border-bottom:2px solid #f1f1f1;
 						"
 						>
 							<div class=active id=putLogin
@@ -1146,7 +1160,7 @@ const app = {
 							style="
 								margin-top:10px;
 								padding:10px;
-								background:orange;
+								background:#111340;
 								font-size:18px;
 								color:white;
 								text-align:center;
@@ -1271,7 +1285,7 @@ const app = {
 							style="
 								margin-top:10px;
 								padding:10px;
-								background:orange;
+								background:#111340;
 								font-size:18px;
 								color:white;
 								text-align:center;
@@ -1410,7 +1424,7 @@ const app = {
 							style="
 								margin-top:10px;
 								padding:10px;
-								background:orange;
+								background:#111340;
 								font-size:18px;
 								color:white;
 								text-align:center;
@@ -2548,6 +2562,136 @@ const app = {
 					}))
 				}
 			})
+		},
+		vouchershop(data,deleteheader,cashier=false){
+			return makeElement('div',{
+				style:`
+					position:absolute;
+					width:100%;
+					height:100%;
+					background:white;
+					display:flex;
+					justify-content:center;
+					flex-direction:column;
+				`,
+				innerHTML:`
+					<div id=header
+					style="
+						border-bottom:1px solid #f1f1f1;
+						display:flex;
+						align-items:center;
+						justify-content:space-between;
+						width:100%;
+						font-size:18px;
+						padding:10px 0;
+					"
+					>
+						<div
+						style="margin-left:10px;"
+						>Voucher List</div>
+						<div id=closepanel
+						style="
+							margin-right:10px;
+							padding:2px;
+							width:16px;
+							height:16px;
+							color:black;
+							display:flex;
+							align-items:center;
+							justify-content:center;
+							cursor:pointer;
+						"
+						>X</div>
+					</div>
+					<div id=voucherbox
+					style="
+						padding: 5%;
+						width: 90%;
+						height: 90%;
+						display: flex;
+						gap: 5px;
+						flex-wrap: wrap;
+						justify-content: center;
+						align-items: flex-start;
+						align-content: flex-start;
+					"
+					>
+						
+					</div>
+				`,
+				generateVoucher(){
+					const template = (content,id)=>{
+						return makeElement('div',{
+							id,
+							style:`
+								display: flex;
+								gap: 5px;
+								padding: 5px;
+								border-radius: 10px;
+								border: 1px solid;
+								width: 100px;
+								flex-direction: column;
+								align-items: center;
+								justify-content: center;
+								position:relative;
+							`,
+							innerHTML:`
+								<img src=/file?fn=voucherdiscount.png
+								style="
+									width:32px;
+									height:32px;
+									border-radius:50%;
+									background:lightgray;
+
+								"
+								>
+								<div>
+									Diskon ${content.pricecutter}%
+								</div>
+								<div>
+									${content.category+' '+content.type}
+								</div>
+								<div>
+									${content.gpointneeded} G Points
+								</div>
+								<div>
+									exp on ${content.expired}
+								</div>
+								<div id=buyvoucherbutton
+								style="
+									background:orange;
+									color:white;padding:5px 10px;
+									border-radius:20px;
+									cursor:pointer
+								"
+								>
+									${!cashier?'Beli':'Pakai'}
+								</div>
+							`,
+							onadded(){
+								this.find('#buyvoucherbutton').onclick = ()=>{
+									app.buyvoucher(this.id);
+								}
+							}
+						})
+					}
+					for(let i in data){
+						this.find('#voucherbox').addChild(template(data[i],i));
+					}
+				},
+				closepanel(){
+					this.find('#closepanel').onclick = ()=>{
+						this.remove();
+					}
+				},
+				onadded(){
+					this.closepanel();
+					this.generateVoucher();
+					if(deleteheader){
+						this.find('#header').remove();
+					}
+				}
+			})
 		}
   },
   setMoremenu(){
@@ -2561,52 +2705,57 @@ const app = {
 			hideElement(this.moremenu.parentElement);
 		}
 	},
-  scrollTheImg(speed=3){
-    // let frame;canMove=true;ontimeout=false;
-    // const imgbox = find('#imglabel');
-    // 
-    // //animation frame.
-    // const scroll = ()=>{
-    //   if(!ontimeout){
-    //     if(canMove){
-    //       imgbox.scrollLeft += speed;
-    //       //imgbox.find('img')
-    //     }
-    //     if(imgbox.scrollLeft+imgbox.offsetWidth >= imgbox.scrollWidth ||imgbox.scrollLeft <= 0){
-    //       ontimeout = true;
-    //       setTimeout(()=>{
-    //         ontimeout=false;
-    //         speed *= -1;
-    //       },500)
-    //     }
-    //   }
-    //   frame = requestAnimationFrame(scroll);
-    // }
-    // scroll();
-		const imgsrc = ['/file?fn=64cf4e3842fe8cbbfa8207c30859e0cf.png',
-			'/file?fn=1e55766bd29e3e7c85a60d9d4887c870.png',
-			'/file?fn=5ec17e06f73f92b117ebf18654d85c08.png',
-			'/file?fn=61181b434d4118b566c0b6b1a3de6eab.png'
-		]
-		const imgbox = find('#imglabel img');
-		let canMove = true;
-		imgbox.onmouseover = ()=>{canMove=false}
-    imgbox.onmouseleave = ()=>{canMove=true}
-		imgbox.ontouchstart = ()=>{
-			canMove = false;
-		}
-		imgbox.ontouchend = ()=>{
-			canMove = true;
-		}
+  scrollTheImg(){
+		const imglabel = find('#imglabel');
+		const imgs = findall('#imglabel img');
 		let imgindex = 0;
-		setInterval(()=>{
-			if(!canMove)return;
-			imgindex += 1;
-			imgbox.src = imgsrc[imgindex];
-			if(imgindex===imgsrc.length-1){
-				imgindex = 0;
+
+		let topme = false;
+		let grabbingme = false;
+		let movedir = 1;
+		const letscheck = ()=>{
+			const pos = imgindex + movedir;
+			if(pos>=0 && pos<=imgs.length-1){
+				imgs[pos].scrollIntoView();
+				imgindex = pos;
 			}
-		},3000)
+		}
+		imglabel.onmouseover = ()=>{topme=true}
+		imglabel.onmouseleave = ()=>{
+			topme=false;
+			grabbingme=false;
+			letscheck();
+		}
+		
+		imglabel.onmousedown = ()=>{grabbingme=true}
+		imglabel.onmouseup = ()=>{
+			grabbingme=false;
+			letscheck();
+		}
+		
+		imglabel.onmousemove = (e)=>{
+			if(topme && grabbingme){
+				if(e.movementX===0)return;
+				imglabel.scrollLeft -= e.movementX;
+				movedir = e.movementX>0?-1:1;
+			}
+		}
+		let touchstartposx = 0;
+		let movement = 0;
+		imglabel.ontouchstart = (e)=>{
+			touchstartposx = e.targetTouches[0].clientX;
+		}
+		imglabel.ontouchmove = (e)=>{
+			movement = e.targetTouches[0].clientX-touchstartposx;
+			touchstartposx = e.targetTouches[0].clientX;
+			if(movement===0)return;
+			imglabel.scrollLeft -= movement;
+			movedir = movement>0?-1:1;
+		}
+		imglabel.ontouchend = ()=>{
+			letscheck();
+		}
+
   },
   displayContent(typedata){
     const boxdiv = find('#box-div');
@@ -2616,7 +2765,7 @@ const app = {
 			//if(typeof this.db[typedata][i]!=='object' || !app.thumbnailpath[i])continue;
 			const boxin = app.template.boxItem(app.db[typedata][i][0],typedata+','+i);
 			boxin.onclick = ()=>{
-				this.openCashier(boxin.info);
+				this.openCashier(boxin.info,false,boxin.find('img').src);
 			}
       boxdiv.addChild(boxin);
 			datalen += 1;
@@ -2674,7 +2823,7 @@ const app = {
 				app.tweaks = this.getJSONResponse().tweaks;
 				app.processDb();
 				app.setupGlobalNav();
-				app.setMoremenu();
+				app.openSearchBar();
 				app.scrollTheImg();
 				app.setCategory();
 				app.forceLoginSystem(true);
@@ -2734,8 +2883,8 @@ const app = {
 		this.categoryState = state;
 		this.displayContent(state);
 	},
-	openCashier(info,filterBase=false){
-		let el = this.template.buyMenu(info,filterBase,this.tweaks);
+	openCashier(info,filterBase=false,uiinfo){
+		let el = this.template.buyMenu(info,filterBase,this.tweaks,uiinfo);
 		this.hometodelete.push(el);
 		this.content.addChild(el);
 	},
@@ -2747,13 +2896,14 @@ const app = {
 	},
 	setupGlobalNav(){
 		const actionmap = {
-			searchBar:'openSearchBar',
 			account:'forceLoginSystem',
-			home:'givemehome'
+			home:'givemehome',
+			gtovoucher:'iwannavoucher'
 		}
 		this.main.findall('.gnavbutton').forEach(button=>{
 			button.onclick = ()=>{
 				if(actionmap[button.id]){
+					this.closeSideMenu();
 					if(button.id==='account'){
 						this[actionmap[button.id]]();
 						return;
@@ -2791,16 +2941,16 @@ const app = {
 	},
 	openSearchBar(button){
 		const scb = this.content.find('#searchBarInput');
-		const imglabel = this.content.find('#imglabel');
+		//const imglabel = this.content.find('#imglabel');
 		if(this.scbopened){
-			hideElement(scb);
-			showElement(imglabel,'flex');
+			//hideElement(scb);
+			//showElement(imglabel,'flex');
 			this.scbopened = false;
-			button.find('img').src = '/file?fn=whitefinder.png';
+			//button.find('img').src = '/file?fn=whitefinder.png';
 			scb.find('input').value = '';
 		}else{
-			showElement(scb,'flex');
-			scb.find('input').focus();
+			//showElement(scb,'flex');
+			//scb.find('input').focus();
 			if(!scb.find('input').onkeydown){
 				scb.find('input').onkeydown = (e)=>{
 					if(e.code==='Enter' && scb.find('input').value.length>0){
@@ -2815,9 +2965,9 @@ const app = {
 					}
 				}
 			}
-			hideElement(imglabel);
+			//hideElement(imglabel);
 			this.scbopened = true;
-			button.find('img').src = '/file?fn=closex.png';
+			//button.find('img').src = '/file?fn=closex.png';
 		}
 	},
 	forceLoginSystem(init=false){
@@ -2861,8 +3011,54 @@ const app = {
 		this.userProfileData = response.msg;
 		this.saveSession(1800000);
 	},
+	closeSideMenu(){
+		//hideElement(this.main.find('#moremenu').parentElement);
+	},
 	deleteSession(){
 		localStorage.removeItem(this.lsName);
+	},
+	iwannavoucher(){
+		this.loadVoucher();
+	},
+	loadVoucher(){
+		const onload = (data)=>{
+			const voucherpanel = this.template.vouchershop(data);
+			this.hometodelete.push(voucherpanel);
+			this.content.addChild(voucherpanel);	
+		}
+		cOn.post({
+			url:'/admin',
+			someSettings:[
+				['setRequestHeader','content-type','application/json']
+			],
+			data:jsonstr({type:'getvoucherlist'}),
+			onload(){
+				onload(this.getJSONResponse());
+			}
+		})
+	},
+	buyvouchersuccesshandler(data){
+		this.userProfileData.vouchers = data.currentVouchers;
+		this.userProfileData.points = data.points;
+	},
+	buyvoucher(voucherid){
+		if(!this.userProfileData)return forceRecheck(app.main,'Harap Login Terlebih Dahulu!');
+		else{
+			cOn.post({
+				url:'/admin',
+				someSettings:[
+					['setRequestHeader','content-type','application/json']
+				],
+				data:jsonstr({type:'buyyingvoucher',userinfo:this.userProfileData.email,voucherid}),
+				onload(){
+					const data = this.getJSONResponse();
+					forceRecheck(app.main,data.msg);
+					if(data.valid){
+						app.buyvouchersuccesshandler(data);
+					}
+				}
+			})
+		}
 	}
 }
 

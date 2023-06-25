@@ -39,6 +39,27 @@ module.exports = function(req,res,db){
       db.ref(`vouchers/${req.body.voucherid}`).remove().then(()=>{
         res.json({valid:true});
       })
+    },
+    buyyingvoucher(req,res,db){
+      db.ref(`vouchers/${req.body.voucherid}`).get().then(data=>{
+        const voucher = data.val()||{};
+        if(!voucher.expired)return res.json({valid:false,msg:'Voucher Not Found!'})
+        //check for voucher validity.
+        const now = new Date().getTime();
+        const vouchervalidtime = Number(Date.parse(voucher.expired));
+        if(now>vouchervalidtime)return res.json({valid:false,msg:'Voucher expired'})
+        db.ref(`users/${req.body.userinfo.split('@')[0]}`).get().then(data=>{
+          const valueddata = data.val();
+          if(valueddata.points<Number(voucher.gpointneeded))return res.json({valid:false,msg:'GPoints Not Enough!'});
+          const currentVouchers = valueddata.vouchers||{};
+          currentVouchers[voucher.id] = voucher;
+          const points = valueddata.points - Number(voucher.gpointneeded);
+          db.ref(`users/${req.body.userinfo.split('@')[0]}`).update({points,vouchers:currentVouchers}).then(()=>{
+            res.json({valid:true,currentVouchers,points,msg:'Pembelian Voucher Anda Sukses!'});
+          })
+        })
+      })
+      
     }
   }
   if(!schema[req.body.type]){

@@ -239,7 +239,7 @@ const admin = {
                 width: 200px;
                 overflow: auto;
                 text-align: center;
-              ">${getPrice(data.voucher||0)}</div>
+              ">${getPrice(objlen(data.vouchers))}</div>
               <div
               style="
                 width: 200px;
@@ -535,6 +535,12 @@ const admin = {
           width: 200px;
           overflow: auto;
           text-align: center;
+        ">Harga</div>
+        <div
+        style="
+          width: 200px;
+          overflow: auto;
+          text-align: center;
         ">Hapus</div>
       </div>
       <div
@@ -612,6 +618,12 @@ const admin = {
                 width: 200px;
                 overflow: auto;
                 text-align: center;
+              ">${getPrice(data.gpointneeded||0)} GPoints</div>
+              <div
+              style="
+                width: 200px;
+                overflow: auto;
+                text-align: center;
               ">
                 <img src=/file?fn=delete.png
                 style="
@@ -671,29 +683,34 @@ const admin = {
     newVoucher(){
       return makeElement('div',{
         style:`
-          position:absolute;
-          width:100%;
-          height:100%;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          background:rgb(0,0,0,0.5);
+          position: absolute;
+          /* width: 100%; */
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(0, 0, 0, 0.5);
         `,
         innerHTML:`
           <div
           style="
-            background:white;
-            font-size:18px;
+            background: white;
+            font-size: 18px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
           "
           >
             <div
             style="
-              display:flex;
-              align-items:centr;
-              justify-content:flex-start;
-              gap:10px;
-              padding:20px 0;
-              border-bottom:2px solid #f1f1f1;
+              display: flex;
+              align-items: center;
+              justify-content: flex-start;
+              gap: 10px;
+              padding: 20px 0;
+              border-bottom: 2px solid #f1f1f1;
             "
             >
               <div
@@ -727,6 +744,11 @@ const admin = {
                 width:200px;
                 text-align:center;
               ">Expired</div>
+              <div
+              style="
+                width:200px;
+                text-align:center;
+              ">Harga/GPoints</div>
             </div>
             <div id=body
             style="
@@ -738,12 +760,17 @@ const admin = {
             </div>
             <div
             style="
-              display:flex;
-              align-items:center;
-              padding:10px 5px;
-              gap:10px;
-              justify-content:flex-end;
-              border-top:2px solid #f1f1f1;
+              display: flex;
+              align-items: center;
+              /* padding: 10px 5px; */
+              gap: 10px;
+              justify-content: flex-end;
+              /* border-top: 2px solid #f1f1f1; */
+              position: fixed;
+              right: 0;
+              bottom: 20px;
+              background: white;
+              margin-right:10px;
             "
             >
               <div id=newrowbutton
@@ -834,6 +861,11 @@ const admin = {
                 width:200px;
                 text-align:center;
               "><input type=date id=expired></div>
+              <div
+              style="
+                width:200px;
+                text-align:center;
+              "><input type=number id=gpointneeded placeholder="Gpoint yang dibutuhkan"></div>
             `,
             processDb(){
               // this.basedata.forEach(data=>{
@@ -945,6 +977,7 @@ const admin = {
             })
           }
           this.find('#closebutton').onclick = ()=>{
+            admin[admin.state]();
             this.remove();
           }
         },
@@ -1059,7 +1092,8 @@ const admin = {
   },
   setupNewVoucherButton(){
     this.content.find('#addvoucher').onclick = ()=>{
-      this.main.addChild(this.template.newVoucher());
+      this.adminbody.clear();
+      this.adminbody.addChild(this.template.newVoucher());
     }
   },
   setupNewNewsButton(){
