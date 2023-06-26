@@ -375,6 +375,7 @@ const app = {
 							style="
 								margin-bottom:8px;
 								width:100%;
+								border-radius:0 0 20px 20px;
 							"
 							>
 								<div
@@ -386,6 +387,8 @@ const app = {
 									align-items:center;
 									border:2px solid white;
 									position:relative;
+									border-radius:0 0 20px 20px;
+									overflow:hidden;
 								"
 								>
 									<img src=${uiinfo}
@@ -412,50 +415,51 @@ const app = {
 							style="
 								margin-bottom:8px;
 								background:white;
-								padding:10px;
+								padding:32px;
 								color:black;
+								border-radius:20px;
 							"
 							>
 								<div
 								style="
 									margin-bottom:10px;
 									padding-bottom: 5px;
-    							border-bottom: 2px solid #f1f1f1;
+									font-weight:bold;
 								"
 								>Masukan Data Anda</div>
 								<div style="margin-bottom:10px;">
 									<div>
 										<div>Email</div>
-										<div>
-											<input placeholder="Masukan Email Anda">
+										<div style=display:flex;>
+											<input placeholder="Masukan Email Anda" style=width:100%;>
 										</div>
 									</div>
 									<div>
 										<div>Phone</div>
-										<div>
-											<input placeholder="Masukan Phone Anda">
+										<div style=display:flex;>
+											<input placeholder="Masukan Phone Anda" style=width:100%;>
 										</div>
 									</div>
 								</div>
 								<div style="display:${data[0]==='Games'?'block':'none'};">
 									<div>
 										<div>Game ID</div>
-										<div>
-											<input placeholder="Masukan Id Game Anda">
+										<div style=display:flex;>
+											<input placeholder="Masukan ID Game Anda" style=width:100%;>
 										</div>
 									</div>
 									<div>
-										<div>Server ID</div>
-										<div>
-											<input placeholder="Masukan Id Server Anda">
+										<div>Server ID / Jika Ada</div>
+										<div style=display:flex;>
+											<input placeholder="Masukan ID Server Anda" style=width:100%;>
 										</div>
 									</div>
 								</div>
 								<div style="display:${data[0]!='Games'?'block':'none'};">
 									<div>
 										<div>Hp</div>
-										<div>
-											<input placeholder="Masukan Nomor Anda">
+										<div style=display:flex;>
+											<input placeholder="Masukan Nomor Anda" style=width:100%;>
 										</div>
 									</div>
 								</div>
@@ -467,16 +471,17 @@ const app = {
 								margin-bottom:8px;
 								background:white;
 								color:black;
-								padding:10px;
+								padding:32px;
 								display:flex;
 								flex-wrap:wrap;
+								border-radius:20px;
 							"
 							>
 								<div
 								style="
 									margin-bottom:10px;
 									padding-bottom: 5px;
-    							border-bottom: 2px solid #f1f1f1;
+									font-weight:bold;
 								"
 								>Pilih Produk</div>
 								
@@ -486,14 +491,15 @@ const app = {
 								margin-bottom:8px;
 								background:white;
 								color:black;
-								padding:10px;
+								padding:32px;
+								border-radius:20px;
 							"
 							>
 								<div
 								style="
 									margin-bottom:10px;
 									padding-bottom: 5px;
-   								border-bottom: 2px solid #f1f1f1;
+									font-weight:bold;
 								"
 								>Pilih Metode Pembayaran</div>
 								<div style="
@@ -507,6 +513,7 @@ const app = {
 										color: black;
 										border: 2px solid #f1f1f1;
 										border-bottom: 0;
+										border-radius:10px 10px 0 0;
 									"
 									>G Market Saldo</div>
 									<div style="
@@ -547,6 +554,7 @@ const app = {
 										color: black;
 										border: 2px solid #f1f1f1;
 										border-bottom: 0;
+										border-radius:10px 10px 0 0;
 									"
 									>Virtual Account</div>
 									<div style="
@@ -555,6 +563,7 @@ const app = {
 										padding: 0 10px;
 										border-radius: 0 0 10px 10px;
 										border: 2px solid #f1f1f1;
+										justify-content:space-around;
 									">
 										<div
 										style="
@@ -623,6 +632,7 @@ const app = {
 										color: black;
 										border: 2px solid #f1f1f1;
 										border-bottom: 0;
+										border-radius:10px 10px 0 0;
 									"
 									>Convenience Store</div>
 									<div style="
@@ -671,6 +681,7 @@ const app = {
 										color: black;
 										border: 2px solid #f1f1f1;
 										border-bottom: 0;
+										border-radius:10px 10px 0 0;
 									"
 									>Qris</div>
 									<div style="
@@ -702,16 +713,17 @@ const app = {
 								margin-bottom:8px;
 								background:white;
 								color:black;
-								padding:10px;
+								padding:32px;
 								display:flex;
 								flex-wrap:wrap;
+								border-radius:20px;
 							"
 							>
 								<div
 								style="
 									margin-bottom:10px;
 									padding-bottom: 5px;
-    							border-bottom: 2px solid #f1f1f1;
+									font-weight:bold;
 								"
 								>Tambahkan Voucher / Jika Ada</div>
 								<div
@@ -721,7 +733,7 @@ const app = {
 									width:100%;
 								"
 								>
-									<input placeholder="Masukan kode voucher anda">
+									<input placeholder="Masukan kode voucher anda" style=width:100%;>
 								</div>
 							</div>
 						</div>
@@ -833,29 +845,35 @@ const app = {
 								<div
 								style="
 									width: 48%;
-										height: 150px;
 										position: relative;
 										display: flex;
-										justify-content: center;
-										align-items: center;
 										border:2px solid #f1f1f1;
+										border-radius:20px;
+										overflow:hidden;
+										flex-direction:column;
+										padding-bottom:32px;
+										cursor:pointer;
+										align-items:center;
+										gap:10px;
 								"
 								>
 									<img src=${uiinfo}
 									style="
-										width:100%;
-										height:100%;
+										width:32px;
+										height:32px;
+										border-radius:50%;
 										object-fit:cover;
+										padding-top:10px;
 									"
 									>
 									<div
 									style="
-										width:100%;
-										padding:10px;
-										background:#ffffffbf;
-										position:absolute;
-										color:black;
-										text-align:center;
+										width: 100%;
+										/* padding: 10px; */
+										background: #ffffffbf;
+										/* position: absolute; */
+										color: black;
+										text-align: center;
 									"
 									>
 										<div>${products[i+j].category}</div>
@@ -868,53 +886,6 @@ const app = {
 						}
 						this.find('#productparents').addChild(outel);
 					}
-					// products.forEach(product=>{
-					// 	const item = makeElement('div',{
-					// 		data:product,selected:false,
-					// 		style:`
-					// 			padding:10px;
-					// 			border:1px solid;
-					// 			width:30%;
-					// 			min-height:50px;
-					// 			display:flex;
-					// 			flex-direction:column;
-					// 			gap:10px;
-					// 			justify-content:center;
-					// 		`,
-					// 		innerHTML:`
-					// 			<img src=${app.thumbnailpath[data[1]]}
-					// 			style="
-					// 				width:32px;height:32px;border-radius:50%;
-					// 			"
-					// 			>
-					// 			<div>${product.product_name}</div>
-					// 			<div>${product.desc}</div>
-					// 			<div>RP. ${getPrice(product.price+configaddition.itemmarkupprice)}</div>
-					// 		`,
-					// 		onadded(){
-					// 			this.onclick = ()=>{
-					// 				if(!this.selected){
-					// 					parentBox.userData.products[this.data.buyer_sku_code] = {
-					// 						code:this.data.buyer_sku_code,
-					// 						price:this.data.price+configaddition.itemmarkupprice,
-					// 						product_name:this.data.product_name,
-					// 						brand:this.data.brand
-					// 					}
-					// 					this.selected = true;
-					// 					this.classList.add('selectedprice');
-					// 				}else{
-					// 					delete parentBox.userData.products[this.data.buyer_sku_code];
-					// 					this.classList.remove('selectedprice');
-					// 					this.selected = false;
-					// 				}
-					// 				parentBox.showTotal();
-					// 			}
-
-					// 			if(filterBase && this.data.buyer_sku_code === filterBase)this.click();
-					// 		}
-					// 	})
-					// 	this.find('#priceList div').addChild(item);
-					// })
 				},
 				openVoucherList(){
 					this.find('#voucherslistbox').addChild(app.template.vouchershop(app.userProfileData.vouchers,true,true));
