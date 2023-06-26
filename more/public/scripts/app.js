@@ -549,9 +549,10 @@ const app = {
 										padding: 0 10px;
 										border-radius: 0 0 10px 10px;
 										border: 2px solid #f1f1f1;
-										justify-content:space-around;
+										justify-content:flex-start;
 										align-items:center;
 										height:64px;
+										overflow:auto;
 									">
 										<div
 										style="
@@ -922,7 +923,7 @@ const app = {
 									>
 									<div
 									style="
-										width: 100%;
+										width: 90%;
 										/* padding: 10px; */
 										background: #ffffffbf;
 										/* position: absolute; */
