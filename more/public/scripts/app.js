@@ -426,21 +426,7 @@ const app = {
 									padding-bottom: 5px;
 									font-weight:bold;
 								"
-								>Masukan Data Anda</div>
-								<div style="margin-bottom:10px;">
-									<div>
-										<div>Email</div>
-										<div style=display:flex;>
-											<input placeholder="Masukan Email Anda" style=width:100%;>
-										</div>
-									</div>
-									<div>
-										<div>Phone</div>
-										<div style=display:flex;>
-											<input placeholder="Masukan Phone Anda" style=width:100%;>
-										</div>
-									</div>
-								</div>
+								>Masukan Data Tujuan Anda</div>
 								<div style="display:${data[0]==='Games'?'block':'none'};">
 									<div>
 										<div>Game ID</div>
@@ -564,11 +550,17 @@ const app = {
 										border-radius: 0 0 10px 10px;
 										border: 2px solid #f1f1f1;
 										justify-content:space-around;
+										align-items:center;
+										height:64px;
 									">
 										<div
 										style="
-											display:flex;
-											align-items:center;
+											display: flex;
+											align-items: center;
+											height: 32px;
+											border: 2px solid #f1f1f1;
+											border-radius: 10px;
+											cursor:pointer;
 										"
 										>
 											<img src=/file?fn=bri.png
@@ -581,8 +573,12 @@ const app = {
 										</div>
 										<div
 										style="
-											display:flex;
-											align-items:center;
+											display: flex;
+											align-items: center;
+											height: 32px;
+											border: 2px solid #f1f1f1;
+											border-radius: 10px;
+											cursor:pointer;
 										"
 										>
 											<img src=/file?fn=bni.png
@@ -595,8 +591,12 @@ const app = {
 										</div>
 										<div
 										style="
-											display:flex;
-											align-items:center;
+											display: flex;
+											align-items: center;
+											height: 32px;
+											border: 2px solid #f1f1f1;
+											border-radius: 10px;
+											cursor:pointer;
 										"
 										>
 											<img src=/file?fn=mandiri.png
@@ -609,8 +609,12 @@ const app = {
 										</div>
 										<div
 										style="
-											display:flex;
-											align-items:center;
+											display: flex;
+											align-items: center;
+											height: 32px;
+											border: 2px solid #f1f1f1;
+											border-radius: 10px;
+											cursor:pointer;
 										"
 										>
 											<img src=/file?fn=bca.png
@@ -641,11 +645,18 @@ const app = {
 										padding: 0 10px;
 										border-radius: 0 0 10px 10px;
 										border: 2px solid #f1f1f1;
+										align-items:center;
+										height:64px;
 									">
 										<div
 										style="
-											display:flex;
-											align-items:center;
+											display: flex;
+											align-items: center;
+											height: 32px;
+											border: 2px solid #f1f1f1;
+											border-radius: 10px;
+											cursor:pointer;
+											padding:5px;
 										"
 										>
 											<img src=/file?fn=alfamart.png
@@ -658,8 +669,13 @@ const app = {
 										</div>
 										<div
 										style="
-											display:flex;
-											align-items:center;
+											display: flex;
+											align-items: center;
+											height: 32px;
+											border: 2px solid #f1f1f1;
+											border-radius: 10px;
+											cursor:pointer;
+											padding:5px;
 										"
 										>
 											<img src=/file?fn=indomaret.png
@@ -690,20 +706,58 @@ const app = {
 										padding: 0 10px;
 										border-radius: 0 0 10px 10px;
 										border: 2px solid #f1f1f1;
+										align-items:center;
+										height:64px;
 									">
 										<div
 										style="
-											display:flex;
-											align-items:center;
+											display: flex;
+											align-items: center;
+											height: 32px;
+											border: 2px solid #f1f1f1;
+											border-radius: 10px;
+											cursor:pointer;
+											padding:5px;
 										"
 										>
 											<img src=/file?fn=qris.png
 											style="
-												width:64px;
-												height:64px;
+												width: 75px;
+												height: 40px;
 												border-radius:10px;
 												object-fit:contain;
 											">
+										</div>
+									</div>
+								</div>
+							</div>
+							<div
+							style="
+								margin-bottom:8px;
+								background:white;
+								padding:32px;
+								color:black;
+								border-radius:20px;
+							"
+							>
+								<div
+								style="
+									margin-bottom:10px;
+									padding-bottom: 5px;
+									font-weight:bold;
+								"
+								>Masukan Data Validasi Anda</div>
+								<div style="margin-bottom:10px;">
+									<div>
+										<div>Email</div>
+										<div style=display:flex;>
+											<input placeholder="Masukan Email Anda" style=width:100%;>
+										</div>
+									</div>
+									<div>
+										<div>Phone</div>
+										<div style=display:flex;>
+											<input placeholder="Masukan Phone Anda" style=width:100%;>
 										</div>
 									</div>
 								</div>
@@ -1018,8 +1072,8 @@ const app = {
 					width:100%;
 					height:100%;
 					display:flex;
-					background:#111340c7;
-					align-items:flex-start;
+					background: rgb(0 0 0 / 40%);
+					align-items:center;
 					justify-content:center;
 					z-index:1;
 				`,
@@ -1030,7 +1084,7 @@ const app = {
 						display: flex;
 						flex-direction: column;
 						width: 80%;
-						border-radius:0 0 20px 20px;
+						border-radius:20px;
 					"
 					>
 						<div id=loginlabelhead
@@ -1061,14 +1115,6 @@ const app = {
 							"
 							>
 								Buat Akun
-							</div>
-							<div id=putLupaPassword
-							style="
-								width:100%;
-								text-align:center;
-							"
-							>
-								LupaPassword
 							</div>
 						</div>
 						<div id=canvas
@@ -1246,11 +1292,19 @@ const app = {
 									<input placeholder="Masukan Email Anda..." type=email>
 								</div>
 							</div>
-							<div style="margin-bottom:24px;">
+							<div style="margin-bottom:10px;">
 								<div>Password</div>
 								<div id=password>
 									<input placeholder="Masukan Password Anda..." type=password>
 								</div>
+							</div>
+							<div id=putLupaPassword
+							style="
+								width:100%;
+								cursor:pointer;
+							"
+							>
+								Lupa Password?
 							</div>
 							<div id=submit
 							style="
@@ -1316,6 +1370,9 @@ const app = {
 							this.submitEvent();
 						},
 						submitEvent(){
+							this.find('#putLupaPassword').onclick = ()=>{
+								this.parent.putLupaPassword();
+							}
 							this.find('#submit').onclick = ()=>{
 								if(this.notEmpty()){
 									this.showLoading();
@@ -1488,7 +1545,7 @@ const app = {
 					}))
 				},
 				setupCc(){
-					const ccs = this.findall('#loginlabelhead div')
+					const ccs = this.findall('#loginlabelhead div');
 					let activecc = ccs[0];
 					ccs.forEach(div=>{
 						div.onclick = ()=>{
@@ -1511,357 +1568,168 @@ const app = {
 			})
 		},
 		myProfilePage(){
+
 			return makeElement('div',{
 				style:`
-					position:absolute;
-					width:100%;
-					height:100%;
-					background:white;
-					display:flex;
-					align-items:center;
-					justify-content:center;
+					position: absolute;
+					width: 100%;
+					height: 100%;
+					display: flex;
+					align-items: flex-start;
+					justify-content: center;
+					background: rgb(237 238 241);
 				`,
 				innerHTML:`
 					<div
 					style="
-						width:90%;
-						height:90%;
-						display:flex;
-						flex-direction:column;
-						gap:15px;
+						width: 80%;
+						min-height: 100px;
+						border: 2px solid #f1f1f1;
+						border-radius: 10px;
+						background: white;
+						margin-top:10px;
 					"
 					>
-						<div id=profileupperbuttons
+						<div
 						style="
-							height:10%;
-							width:100%;
+							padding:10px;
 							display:flex;
-							justify-content:flex-end;
-							gap:10px;
 							align-items:center;
-							font-size:16px;
+							justify-content:space-between;
+							gap:10px;
+							background:white;
+							border-radius: 10px;
+							padding-bottom:0;
 						"
 						>
-							<div id=makedepo>
-								Deposit
+								<div id=opensettings style="
+								display: flex;
+								align-items: center;
+								gap: 5px;
+								border: 1px solid #f1f1f1;
+								padding: 8px;
+								border-radius: 10px;
+								cursor:pointer;
+							">
+								<img src=/file?fn=setting-lines.png
+								style="
+									width:16px;
+									height:16px;
+								"
+								>
+								Settings
 							</div>
-							<div id=logout>
+							<div id=logoutbutton style="
+								display: flex;
+								align-items: center;
+								gap: 5px;
+								border: 1px solid #f1f1f1;
+								padding: 8px;
+								border-radius: 10px;
+								cursor:pointer;
+							">
 								Keluar
+								<img src=/file?fn=exit.png
+								style="
+									width:16px;
+									height:16px;
+								"
+								>
 							</div>
 						</div>
 						<div
 						style="
-							width:100%;
-							height:40%;
 							display:flex;
-							gap:15px;
+							align-items:center;
+							justify-content:center;
 						"
 						>
 							<div
 							style="
-								height:100%;
-								width:40%;
-								display:flex;
-								align-items:center;
-								justify-content:center;
-								border:1px solid #edeef1;
-								border-radius:20px;
-								overflow:hidden;
+								border-radius: 50%;
+								width: 100px;
+								height: 100px;
+								background: #03A9F4;
+								font-size: 54px;
+								/* border: 2px solid #f1f1f1; */
+								background: #111340;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+								color: white;
+							"
+							>${app.userProfileData.name[0]}</div>
+						</div>
+						<div
+						style="
+							padding:20px 10px;
+						"
+						>
+							<div
+							style="
+								text-align:center;
 							"
 							>
-								<div
-								style="
-									width:100%;
-									height:100%;
-									background:#edeef1;
-									overflow:hidden;
-									display:flex;
-									align-items:center;
-									justify-content:center;
-								"
-								>
-									<div
-									style="
-										font-size:64px;
-									"
-									>${app.userProfileData.name[0]}</div>
-								</div>
+								<span style="
+									padding:5px;
+									border:1px solid #f1f1f1;
+									border-radius:20px;
+								">Saldo Rp ${getPrice(app.userProfileData.ballance)}</span>
+								<span style="
+									padding:5px;
+									border:1px solid #f1f1f1;
+									border-radius:20px;
+								">${getPrice(app.userProfileData.Trxs.length)} Transaksi</span>
 							</div>
 							<div
 							style="
-								width:60%;
-								height:100%;
 								display:flex;
-								justify-content:center;
-								flex-direction:column;
 								align-items:center;
-							">
-								<div
+								justify-content:center;
+							"
+							>
+								<div id=topupbutton
 								style="
-									display:flex;
-									flex-direction:column;
-									font-size:14px;
-									width:100%;
-									gap:10px;
-									align-items:center;
-									font-weight:bold;
+									border-radius: 30px;
+									border: 2px solid #f1f1f1;
+									margin-top: 32px;
+									display: flex;
+									align-items: center;
+									justify-content: center;
+									padding: 11px;
+									font-size: 18px;
+									gap: 5px;
+									background: #edeef1;
+									cursor:pointer;
 								"
 								>
-									<div
+									<img src=/file?fn=save-money.png
 									style="
-										width:90%;
-										font-size:32px;
-									"
-									>Hi, ${app.userProfileData.name}</div>
-									<div
-									style="
-										height:100%;
-										width:90%;
-										display:flex;
-										flex-direction:column;
-										justify-content:center;
-										gap:5px;
+										width:16px;
+										height:16px;
+										border-radius:50%;
+										cursor:pointer;
+										overflow:inherit;
 									"
 									>
-										<div
-										style="
-											display:flex;
-											justify-content:space-between;
-										"
-										>
-											<div>Ballance</div>
-											<div>Rp. ${getPrice(app.userProfileData.ballance)}</div>
-										</div>
-										<div
-										style="
-											display:flex;
-											justify-content:space-between;
-										"
-										>
-											<div>G Points</div>
-											<div>${app.userProfileData.points} G</div>
-										</div>
-										<div
-										style="
-											display:flex;
-											justify-content:space-between;
-										"
-										>
-											<div>Email</div>
-											<div
-											style="
-												width:50%;
-												display:flex;
-												overflow:auto;
-											"
-											>
-												${app.userProfileData.email}
-											</div>
-										</div>
-										<div
-										style="
-											display:flex;
-											justify-content:space-between;
-										"
-										>
-											<div>Hp</div>
-											<div
-											>${app.userProfileData.hp}</div>
-										</div>
-									</div>
+									<div>Topup</div>
 								</div>
-							</div>
-						</div>
-						<div
-						style="
-							width:100%;
-							height:60%;
-							border:1px solid #edeef1;
-							border-radius:20px;
-							display:flex;
-							flex-direction:column;
-						"
-						>
-							<div
-							style="
-								height:20%;
-								width:100%;
-								display:flex;
-								border-bottom:1px solid #edeef1;
-								font-size:16px;
-								align-items:center;
-								justify-content:space-around;
-								gap:2px;
-								background:#edeef1;
-								border-radius:20px 20px 0 0;
-							"
-							>
-								<div class=activecc
-								style="
-									background:none;
-								"
-								>History</div>
-								<div>Voucher</div>
-							</div>
-							<div id=moreinforbox
-							style="
-							display: flex;
-							align-items: flex-start;
-							justify-content: flex-start;
-							height: 100%;
-							font-size: 14px;
-							font-weight: bold;
-							overflow: auto;
-							"
-							>
-								<div>Belum ada data!</div>
 							</div>
 						</div>
 					</div>
 				`,
-				moreinfostate:'hs',
-				generateHistory(){
-					// mystrxs
-					const moreinfobox = this.find('#moreinforbox');
-					const datatrxs = app.userProfileData.Trxs;
-					if(datatrxs.length>0)moreinfobox.clear();
-					moreinfobox.addChild(makeElement('div',{
-						style:`
-						`,
-						innerHTML:`
-							<div
-							style="
-							display: flex;
-							align-items: center;
-							gap: 10px;
-							padding: 10px 0;
-							border-bottom: 1px solid;
-							margin-bottom: 10px;
-							position:sticky;
-							top:0;
-							background:white;
-							"
-							>
-								<div
-								style="
-									width:32px;
-									text-align:center;
-								"
-								>No</div>
-								<div
-								style="
-									width:100px;
-									text-align:center;
-								">ID</div>
-								<div
-								style="
-									width:100px;
-									text-align:center;
-								">Ammount</div>
-								<div
-								style="
-									width:100px;
-									text-align:center;
-								">Payment</div>
-								<div
-								style="
-									width:100px;
-									text-align:center;
-								">PaymentCode</div>
-								<div
-								style="
-									width:100px;
-									text-align:center;
-								">Expired</div>
-								<div
-								style="
-									width:100px;
-									text-align:center;
-								">Status</div>
-							</div>
-						`,
-						generate(){
-							datatrxs.forEach((data,i)=>{
-								this.addChild(makeElement('div',{
-									style:`
-										display:flex;
-										align-items:center;
-										gap:10px;
-										margin-bottom:5px;
-										font-size:12px;
-									`,
-									innerHTML:`
-										<div
-										style="
-											width:32px;
-											text-align:center;
-											overflow:auto;
-										"
-										>${i+1}.</div>
-										<input
-										style="
-											width:80px;
-											text-align:center;
-											overflow:auto;
-										" value=${data.id}>
-										<div
-										style="
-											width:100px;
-											text-align:center;
-											overflow:auto;
-										">Rp. ${getPrice(data.details.products.ammount)}</div>
-										<div
-										style="
-											width:100px;
-											text-align:center;
-											overflow:auto;
-										">${data.details.payment}</div>
-										<input
-										style="
-											width:80px;
-											text-align:center;
-											overflow:auto;
-										" value=${data.paymentCode||'-'}>
-										<div
-										style="
-											width:100px;
-											text-align:center;
-											overflow:auto;
-										">${data.expired||'-'}</div>
-										<div
-										style="
-											width:100px;
-											text-align:center;
-											overflow:auto;
-										">${data.status}</div>
-									`
-								}))
-							})
-						},
-						onadded(){
-							this.generate();
-						}
-					}))
-				},
-				makedepo(){
-					forceRecheck(app.main,'Maaf fitur ini sedang dikerjakan!');
-				},
 				logout(){
 					app.userProfileData = null;
 					app.deleteSession();
 					app.givemehome();
 					forceRecheck(app.main,'Logout berhasil!');
 				},
-				topButtonsSetup(){
-					this.findall('#profileupperbuttons div').forEach(button=>{
-						button.onclick= ()=>{
-							this[button.id]();
-						}
-					})
-				},
+				processTopup(){},
+				openmoresettings(){},
 				onadded(){
-					this.topButtonsSetup();
-					this.generateHistory();
+					this.find('#opensettings').onclick = ()=>{this.openmoresettings()}
+					this.find('#logoutbutton').onclick = ()=>{this.logout()};
+					this.find('#topupbutton').onclick = ()=>{this.processTopup()};
 				}
 			})
 		},
@@ -2663,6 +2531,64 @@ const app = {
 					}
 				}
 			})
+		},
+		trackTrxPanel(){
+			return makeElement('div',{
+				style:`
+					position: absolute;
+					background: #edeef1;
+					width: 100%;
+					height: 100%;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				`,
+				innerHTML:`
+					<div
+					style="
+						width:90%;
+						height:90%;
+					"
+					>
+						<div style="
+						font-size: 24px;
+						color: black;
+						margin-bottom: 10px;">Lacak Pesanan Anda</div>
+						<div
+						style="
+							padding: 30px;
+							border-radius: 10px;
+							border: 2px solid #f1f1f1;
+							background:white;
+						"
+						>	
+							<div style=margin-bottom:5px;>ID Pesanan</div>
+							<div style="display:flex;">
+								<input placeholder="Masukan ID Pesanan Anda"
+								style="
+									width:100%;
+								"
+								>
+							</div>
+							<div style="
+								display:flex;
+								margin-top:10px;
+							">
+								<div
+								style="
+									padding: 10px 30px;
+									background: #111340;
+									color: white;
+									border-radius: 20px;
+									font-size: 18px;
+									cursor:pointer;
+								"
+								>Lacak</div>
+							</div>
+						</div>
+					</div>
+				`
+			})
 		}
   },
   setMoremenu(){
@@ -2757,6 +2683,8 @@ const app = {
   init(){
 		//this.forceLoginSystem();
 		this.requestData();
+		//this.generateMyProfile();
+		//this.openTrackTrxPanel();
   },
 	processDb(){
 		// this.basedata.forEach(data=>{
@@ -2869,7 +2797,8 @@ const app = {
 		const actionmap = {
 			account:'forceLoginSystem',
 			home:'givemehome',
-			gtovoucher:'iwannavoucher'
+			gtovoucher:'iwannavoucher',
+			openhistorypanel:'openTrackTrxPanel'
 		}
 		this.main.findall('.gnavbutton').forEach(button=>{
 			button.onclick = ()=>{
@@ -3030,6 +2959,14 @@ const app = {
 				}
 			})
 		}
+	},
+	openTrackTrxPanel(){
+		this.hometodelete.forEach(el=>{
+			el.remove();
+		})
+		const el = app.template.trackTrxPanel();
+		this.hometodelete.push(el);
+		this.content.addChild(el);
 	}
 }
 
