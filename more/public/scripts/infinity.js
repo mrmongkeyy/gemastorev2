@@ -418,3 +418,15 @@ const forceRecheck = function(el,msg){
 const getTimePlus = function(number){
 	return new Date().getTime()+number;
 }
+const nonull = function(obj){
+	const nullkeys = [];
+	for(let i in obj){
+		if(!obj[i]){
+			nullkeys.push(i);
+		}
+	}
+	return {
+		valid:nullkeys.length===0?true:false,
+		nullkeys
+	}
+}

@@ -19,7 +19,10 @@ module.exports = function(type,req,res,db){
 			all(req,res){
 				db.ref('tweakdataconfig').get().then(data=>{
 					const valueddata = data.val();
-					this.request(res,sign,'','',valueddata);
+					db.ref('markupPriceList').get().then(datamarkup=>{
+						const markupData = datamarkup.val();
+						this.request(res,sign,'','',valueddata,markupData);
+					})
 				})
 			},
 			pulsa(req,res){
@@ -37,7 +40,7 @@ module.exports = function(type,req,res,db){
 			voucher(req,res){
 				this.request(res,sign,'voucher',req.query.operator);
 			},
-			request(res,sign,type,operator='',tweaks){
+			request(res,sign,type,operator='',tweaks,markupPriceList){
 				// axios.get('https://api.tokovoucher.id/produk/code?member_code=M230618KCLS1906XT&signature=f61bf1a2a98739e2110613d2ccb765ff&'
 				// ).then(resp=>{
 				// 	res.json(resp.data);
@@ -54,8 +57,48 @@ module.exports = function(type,req,res,db){
 						"content-type":"application/json"
 					}
 				}).then(resp=>{
-					res.json({base:resp.data,tweaks});
+					res.json({base:resp.data,tweaks,markupPriceList});
 				})
+			},
+			order(req,res,db){
+				const producttoreq = [];
+				//parsing the data.
+				for(let i in req.body.products){
+					if(i!=='ammount' && i!=='len'){
+						producttoreq.push(req.body.products[i]);
+					}
+				}
+				const devkey = 'dev-da2994f0-0eb9-11ee-af39-e78992aaf8f1';
+				const username = 'gesawegwMkJD';
+				let reqLen = 0;
+				const customer_no = req.body.type==='games'?req.body.targetData.gameid+req.body.targetData.serverid:req.body.targetData.hp;
+				const responseBucket = {};
+				const doOrder = ()=>{
+					const data = {
+						username,
+						customer_no,
+						sign:md5(username+devkey+producttoreq[reqLen].ref_id),
+						ref_id:producttoreq[reqLen].ref_id,
+						buyer_sku_code:producttoreq[reqLen].buyer_sku_code,
+						testing:true
+					}
+					axios.post('https://api.digiflazz.com/v1/transaction',data,{
+						headers:{
+							"content-type":"application/json"
+						}
+					}).then(resp=>{
+						responseBucket[resp.data.data.ref_id] = resp.data.data;
+						reqLen += 1;
+						if(reqLen<req.body.products.len){
+							doOrder();
+						}else{
+							db.ref('digiflazzbucketinfo').update(responseBucket).then(()=>{
+								console.log('updatePesananBerhasil');
+							})
+						}
+					})
+				}
+				doOrder();
 			}
 		},
 		orderCheck:{
@@ -77,107 +120,133 @@ module.exports = function(type,req,res,db){
 		},
 		order:{
 			gmarketsaldopay(req,res,db){
-				const userid = req.body.userInfo.split('@')[0];
-				db.ref(`users/${userid}`).get().then(data=>{
-					data = data.val()||{};
-					if(data.ballance >= req.body.products.ammount){
-						const leftballance = data.ballance-req.body.products.ammount;
-						const nowpoints = data.points + req.body.gsaldopaybonus;
-						if(!data.Trxs)data.Trxs = [{
-							id:`GMTrx${req.body.timestamp}`,
-							details:req.body,
-							status:'done'
-						}];
-						else data.Trxs.push({
-							id:`GMTrx${req.body.timestamp}`,
-							details:req.body,
-							status:'done'
-						});
-						db.ref(`users/${userid}`).update({ballance:leftballance,points:nowpoints,Trxs:data.Trxs}).then(()=>{
-							db.ref(`history/GMTrx${req.body.timestamp}`).set({
-								payment:'GMarketSaldo',
-								moredetails:req.body,
-								status:'done'
-							}).then(()=>{
-								res.json({valid:true,msg:'Pembayaran Berhasil, sedang memproses pesanan anda!',leftballance,nowpoints,mystrxs:data.Trxs})
-							})
-						})
-					}else res.json({valid:false,msg:'Saldo Tidak Cukup!'})
-				})
-			},
-			orderPay(req,res,db){
-				const paymentInfo = req.body.payment.split('.');
-				const data = {
-					name:req.body.validationData.name,
-					phone:req.body.validationData.phone,
-					email:req.body.validationData.email,
-					amount:req.body.products.ammount,
-					comments:"GMarket Payment",
-					"notifyUrl":"https://gemastore.cyclic.app/paymentcallback", // your callback url
-					"referenceId":`GMTrx${req.body.timestamp}`, // your reference id or transaction id
-					"paymentMethod":paymentInfo[0],
-					"paymentChannel":paymentInfo[1]
-				};
-				const timestamp = req.body.timestamp;
-				let bodyEncrypt = crypto.SHA256(JSON.stringify(data));
-				let stringtosign = "POST:"+paymentConfig.va+":"+bodyEncrypt+":"+paymentConfig.apikey;
-				let signature = crypto.enc.Hex.stringify(crypto.HmacSHA256(stringtosign, paymentConfig.apikey));
-				fetch(
-					paymentConfig.demourl,
-					{
-						method: "POST",
-						headers: {
-							Accept: 'application/json', 'Content-Type': 'application/json',
-							va: paymentConfig.va,
-							signature,
-							timestamp
-						},
-						body: JSON.stringify(data)
-					}
-				)
-				.then((response) => response.json())
-				.then((responseJson) => {
-					const userid = req.body.validationData.email.split('@')[0];
+				req.on('data',(data)=>{
+					req.body = JSON.parse(data.toString());
+					userid = req.body.userInfo.split('@')[0];
 					db.ref(`users/${userid}`).get().then(data=>{
 						data = data.val()||{};
-						if(!data.Trxs)data.Trxs = [{
-							id:`GMTrx${req.body.timestamp}`,
-							details:req.body,
-							status:'pending',
-							paymentCode:responseJson.Data.PaymentNo,
-							expired:responseJson.Data.Expired
-						}];
-						else data.Trxs.push({
-							id:`GMTrx${req.body.timestamp}`,
-							details:req.body,
-							status:'pending',
-							paymentCode:responseJson.Data.PaymentNo,
-							expired:responseJson.Data.Expired
-						});
-						db.ref(`users/${userid}`).update({Trxs:data.Trxs}).then(()=>{
-							db.ref(`history/GMTrx${req.body.timestamp}`).set({
-								payment:req.body.payment,
-								moredetails:req.body,
-								status:'pending',
-								paymentCode:responseJson.Data.PaymentNo,
-								expired:responseJson.Data.Expired
-							}).then(()=>{
-								res.json({trxdata:data.Trxs,responseJson});
-							})
-						})
+						let vouchermsg;
+						const doprocess = (voucherdata)=>{
+							if(voucherdata){
+								let productsInfo;
+								for(let i in req.body.products){
+									if(i!=='ammount' && i!=='len'){
+										productsInfo = req.body.products[i].category+req.body.products[i].brand;
+										break;
+									}
+								}
+								if(productsInfo === voucherdata.category+voucherdata.type){
+									if(Date.parse(voucherdata.expired)>=new Date().getTime()){
+										vouchermsg = 'Voucher Berhasil Digunakan!';
+										req.body.products.ammount *= Number(voucherdata.pricecutter)/100;
+									}else vouchermsg = 'Voucher Kadaluarsa!';
+								}else vouchermsg = 'Voucher tidak support';
+							}else vouchermsg = 'Tidak Ada Voucher';
+							console.log(req.body.products.ammount);
+							if(data.ballance >= req.body.products.ammount){
+								const leftballance = data.ballance-req.body.products.ammount;
+								if(!data.Trxs)data.Trxs = [{
+									id:`GMTrx${req.body.timestamp}`,
+									details:req.body,
+									status:'done'
+								}];
+								else data.Trxs.push({
+									id:`GMTrx${req.body.timestamp}`,
+									details:req.body,
+									status:'done'
+								});
+								db.ref(`users/${userid}`).update({ballance:leftballance,Trxs:data.Trxs}).then(()=>{
+									db.ref(`history/GMTrx${req.body.timestamp}`).set({
+										payment:'GMarketSaldo',
+										moredetails:req.body,
+										status:'done',
+										ammount:req.body.products.ammount,
+										vouchermsg
+									}).then(()=>{
+										//schema.pricelist.order(req,res,db);
+										res.json({valid:true,vouchermsg,msg:'Pembayaran Berhasil, sedang memproses pesanan anda!',leftballance,mystrxs:data.Trxs})
+									})
+								})
+							}else res.json({valid:false,msg:'Saldo Tidak Cukup!',vouchermsg})
+						}
+						if(req.body.targetData.voucher){
+							db.ref(`vouchers/${req.body.targetData.voucher}`).get().then(voucherdata=>{
+								voucherdata = voucherdata.val();
+								doprocess(voucherdata);
+							}); 
+						}else doprocess();
 					})
 				})
+				
 			},
-			orderPulsa(req,res){
-				const data = req.body;
-				const sign = md5(config.username+config.apiKey+data.ref_id);
-				Object.assign(data,{sign,username:config.username,commands:'topup'});
-				axios.post('https://testprepaid.mobilepulsa.net//v1/legacy/index/',{
-					body:JSON.stringify(data)
-				},{
-					headers:{"content-type":"application/json"}
-				}).then(resp=>{
-					res.json(resp.data);
+			orderPay(req,res,db){
+				req.on('data',(bodydata)=>{
+					req.body = JSON.parse(bodydata.toString());
+					const paymentInfo = req.body.payment.split('.');
+					const data = {
+						name:req.body.validationData.name,
+						phone:req.body.validationData.phone,
+						email:req.body.validationData.email,
+						amount:req.body.products.ammount,
+						comments:"GMarket Payment",
+						"notifyUrl":"https://gemastore.cyclic.app/paymentcallback", // your callback url
+						"referenceId":`GMTrx${req.body.timestamp}`, // your reference id or transaction id
+						"paymentMethod":paymentInfo[0],
+						"paymentChannel":paymentInfo[1]
+					};
+					const timestamp = req.body.timestamp;
+					let bodyEncrypt = crypto.SHA256(JSON.stringify(data));
+					let stringtosign = "POST:"+paymentConfig.va+":"+bodyEncrypt+":"+paymentConfig.apikey;
+					let signature = crypto.enc.Hex.stringify(crypto.HmacSHA256(stringtosign, paymentConfig.apikey));
+					fetch(
+						paymentConfig.demourl,
+						{
+							method: "POST",
+							headers: {
+								Accept: 'application/json', 'Content-Type': 'application/json',
+								va: paymentConfig.va,
+								signature,
+								timestamp
+							},
+							body: JSON.stringify(data)
+						}
+					)
+					.then((response) => response.json())
+					.then((responseJson) => {
+						if(responseJson.Success){
+							const userid = req.body.validationData.email.split('@')[0];
+							db.ref(`users/${userid}`).get().then(data=>{
+								data = data.val()||{};
+								if(!data.Trxs)data.Trxs = [{
+									id:`GMTrx${req.body.timestamp}`,
+									details:req.body,
+									status:'pending',
+									paymentCode:responseJson.Data.PaymentNo,
+									expired:responseJson.Data.Expired
+								}];
+								else data.Trxs.push({
+									id:`GMTrx${req.body.timestamp}`,
+									details:req.body,
+									status:'pending',
+									paymentCode:responseJson.Data.PaymentNo,
+									expired:responseJson.Data.Expired
+								});
+								db.ref(`users/${userid}`).update({Trxs:data.Trxs}).then(()=>{
+									db.ref(`history/GMTrx${req.body.timestamp}`).set({
+										payment:req.body.payment,
+										moredetails:req.body,
+										status:'pending',
+										paymentCode:responseJson.Data.PaymentNo,
+										expired:responseJson.Data.Expired
+									}).then(()=>{
+										res.json({trxdata:data.Trxs,responseJson});
+									})
+								})
+							})
+						}else {
+							res.json({responseJson});
+						}
+					})
 				})
 			}
 		}

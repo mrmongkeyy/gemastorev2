@@ -78,11 +78,11 @@ module.exports = {
 				this.header[this.rawHeaders[i]] = this.rawHeaders[i+1];
 			}
 			//handling post req.
-			this.on('data',(data)=>{
-				if(this.header['content-type']==='application/json'){
-					this.body = JSON.parse(data.toString());
-				}else this.body = data.toString();
-			})
+			// this.on('data',(data)=>{
+			// 	if(this.header['content-type']==='application/json'){
+			// 		this.body = JSON.parse(data.toString());
+			// 	}else this.body = data.toString();
+			// })
 		}
 	}
 };

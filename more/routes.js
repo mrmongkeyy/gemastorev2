@@ -7,6 +7,11 @@ const emailVerifier = require('./emailVerifier');
 const loginhandler = require('./loginhandler');
 const sendotphandler = require('./otphandler');
 const adminpanelhandler = require('./adminpanel');
+const handlepaymentcallback = require('./paymentcallbackhandler');
+const transactionChecker = require('./transactionchecker');
+const changedatauserhandler = require('./datauserchanger');
+const topupuserhandler = require('./topupuserhandler');
+const handlepaymentcallbackdeposit = require('./paymentcallbackhandlerdeposit');
 module.exports = [
 	{
 		mM:'get',
@@ -59,13 +64,14 @@ module.exports = [
 	{
 		mM:'post',
 		'/order'(req,res){
+			console.log(req);
 			moreinfo('order',req,res,db);
 		}
 	},
 	{
 		mM:'get',
 		'/check'(req,res){
-			moreinfo('orderCheck',req,res);
+			transactionChecker(req,res,db);
 		}
 	},
 	{
@@ -90,6 +96,30 @@ module.exports = [
 		mM:'post',
 		'/sendotp'(req,res){
 			sendotphandler(req,res,db);
+		}
+	},
+	{
+		mM:'post',
+		'/paymentcallback'(req,res){
+			handlepaymentcallback(req,res,db);
+		}
+	},
+	{
+		mM:'post',
+		'/depositpaymentcallback'(req,res){
+			handlepaymentcallbackdeposit(req,res,db);
+		}
+	},
+	{
+		mM:'post',
+		'/newuserdata'(req,res){
+			changedatauserhandler(req,res,db);
+		}
+	},
+	{
+		mM:'post',
+		'/topupuser'(req,res){
+			topupuserhandler(req,res,db);
 		}
 	}
 ];

@@ -237,7 +237,7 @@ const app = {
 							`
 						}))
 					})
-					
+
 				}
 			})
 		},
@@ -285,22 +285,18 @@ const app = {
 				`
 			})
 		},
-		buyMenu(info,filterBase,configaddition,uiinfo){
+		buyMenu(info,filterBase,configaddition,uiinfo,dataid){
 			const data = info.split(',');
 			return makeElement('div',{
 				userData:{
 					products:{
-						ammount:0
+						ammount:0,
+						len:0
 					},
 					validationData:{
+						name:null,
 						email:null,
-						phone:null,
-						name:null
-					},
-					targetData:{
-						hp:null,
-						gameid:null,
-						serverid:null
+						phone:null
 					},
 					payment:null
 				},
@@ -431,13 +427,13 @@ const app = {
 									<div>
 										<div>Game ID</div>
 										<div style=display:flex;>
-											<input placeholder="Masukan ID Game Anda" style=width:100%;>
+											<input placeholder="Masukan ID Game Anda" style=width:100%; id=targetData.gameid>
 										</div>
 									</div>
 									<div>
 										<div>Server ID / Jika Ada</div>
 										<div style=display:flex;>
-											<input placeholder="Masukan ID Server Anda" style=width:100%;>
+											<input placeholder="Masukan ID Server Anda" style=width:100%; id=targetData.serverid>
 										</div>
 									</div>
 								</div>
@@ -445,7 +441,7 @@ const app = {
 									<div>
 										<div>Hp</div>
 										<div style=display:flex;>
-											<input placeholder="Masukan Nomor Anda" style=width:100%;>
+											<input placeholder="Masukan Nomor Anda" style=width:100%; id=targetData.hp type=number>
 										</div>
 									</div>
 								</div>
@@ -470,7 +466,7 @@ const app = {
 									font-weight:bold;
 								"
 								>Pilih Produk</div>
-								
+
 							</div>
 							<div
 							style="
@@ -516,12 +512,10 @@ const app = {
 										padding: 0 10px;
 										border-radius: 0 0 10px 10px;
 										padding: 10px 0;
-    								color: white;
 										"
 										>
-											<div
+											<div   id=saldo.gmarket class=payment
 											style="
-											background: #111340;
 											padding: 10px;
 											border-radius: 5px;
 											"
@@ -554,7 +548,7 @@ const app = {
 										height:64px;
 										overflow:auto;
 									">
-										<div
+										<div  id=va.bri class=payment
 										style="
 											display: flex;
 											align-items: center;
@@ -572,7 +566,7 @@ const app = {
 												object-fit:contain;
 											">
 										</div>
-										<div
+										<div  id=va.bni class=payment
 										style="
 											display: flex;
 											align-items: center;
@@ -590,7 +584,7 @@ const app = {
 												object-fit:contain;
 											">
 										</div>
-										<div
+										<div  id=va.mandiri class=payment
 										style="
 											display: flex;
 											align-items: center;
@@ -608,7 +602,7 @@ const app = {
 												object-fit:contain;
 											">
 										</div>
-										<div
+										<div id=va.bca class=payment
 										style="
 											display: flex;
 											align-items: center;
@@ -649,7 +643,7 @@ const app = {
 										align-items:center;
 										height:64px;
 									">
-										<div
+										<div id=cstore.alfamart class=payment
 										style="
 											display: flex;
 											align-items: center;
@@ -668,7 +662,7 @@ const app = {
 												object-fit:contain;
 											">
 										</div>
-										<div
+										<div id=cstore.indomaret
 										style="
 											display: flex;
 											align-items: center;
@@ -710,7 +704,7 @@ const app = {
 										align-items:center;
 										height:64px;
 									">
-										<div
+										<div id=qris.qris class=payment
 										style="
 											display: flex;
 											align-items: center;
@@ -750,15 +744,21 @@ const app = {
 								>Masukan Data Validasi Anda</div>
 								<div style="margin-bottom:10px;">
 									<div>
+										<div>Nama</div>
+										<div style=display:flex;>
+											<input placeholder="Masukan Nama Anda" style=width:100%; id=validationData.name>
+										</div>
+									</div>
+									<div>
 										<div>Email</div>
 										<div style=display:flex;>
-											<input placeholder="Masukan Email Anda" style=width:100%;>
+											<input placeholder="Masukan Email Anda" style=width:100%; id=validationData.email>
 										</div>
 									</div>
 									<div>
 										<div>Phone</div>
 										<div style=display:flex;>
-											<input placeholder="Masukan Phone Anda" style=width:100%;>
+											<input placeholder="Masukan Phone Anda" style=width:100%; id=validationData.phone type=number>
 										</div>
 									</div>
 								</div>
@@ -788,7 +788,7 @@ const app = {
 									width:100%;
 								"
 								>
-									<input placeholder="Masukan kode voucher anda" style=width:100%;>
+									<input placeholder="Masukan kode voucher anda" style=width:100%; id=targetData.voucher>
 								</div>
 							</div>
 						</div>
@@ -815,7 +815,7 @@ const app = {
 								font-weight: bold;
 							"
 							>0 Item, Total Rp. 0</div>
-							<div id=submitbutton
+							<div id=submitoncart
 							style="
 								background: #111340;
 								color: white;
@@ -862,16 +862,7 @@ const app = {
 					})
 				},
 				openUserInput(){
-					const toDelete = data[0]==='Games'?'pulsa':'topup';
-					this.find(`#userInput #${toDelete}`).remove();
-					//handling some cases.
-					if(toDelete==='pulsa'){
-						delete this.userData.targetData.hp;
-					}else{
-						delete this.userData.targetData.gameid;
-						delete this.userData.targetData.serverid;
-					}
-					this.findall('#userInput input').forEach(input=>{
+					this.findall('input').forEach(input=>{
 						input.oninput = ()=>{
 							const inputinfo = input.id.split('.');
 							this.userData[inputinfo[0]][inputinfo[1]] = input.value;
@@ -881,7 +872,6 @@ const app = {
 				openPriceList(){
 					const parentBox = this;
 					const products = app.db[data[0]][data[1]];
-					console.log(products);
 					for(let i=0;i<products.length;i+=2){
 						const outel = makeElement('div',{
 							style:`
@@ -894,12 +884,21 @@ const app = {
 
 							}
 						})
+						//getting markupPrice value.
+						let markupPrice;
+						if(!app.formatedPriceMarkup[data[0]])markupPrice = configaddition.itemmarkupprice;
+						else{
+							if(!app.formatedPriceMarkup[data[0]][data[1]])markupPrice = configaddition.itemmarkupprice;
+							else markupPrice = app.formatedPriceMarkup[data[0]][data[1]];
+						}
+						markupPrice = Number(markupPrice);
 						for(let j=0;j<2;j++){
 							if(products[i+j]){
-								outel.innerHTML += `
-								<div
-								style="
-									width: 48%;
+								const el = makeElement('div',{
+									data:products[i+j],selected:false,
+									markupPrice,
+									style:`
+										width: 48%;
 										position: relative;
 										display: flex;
 										border:2px solid #f1f1f1;
@@ -910,98 +909,95 @@ const app = {
 										cursor:pointer;
 										align-items:center;
 										gap:10px;
-								"
-								>
-									<img src=${uiinfo}
-									style="
-										width:32px;
-										height:32px;
-										border-radius:50%;
-										object-fit:cover;
-										padding-top:10px;
-									"
-									>
-									<div
-									style="
-										width: 90%;
-										/* padding: 10px; */
-										background: #ffffffbf;
-										/* position: absolute; */
-										color: black;
-										text-align: center;
-									"
-									>
-										<div>${products[i+j].category}</div>
-										<div>${products[i+j].product_name}</div>
-										<div>Rp ${getPrice(Number(products[i+j].price)+Number(configaddition.itemmarkupprice))}</div>
-									</div>
-								</div>
-								`
+									`,
+									innerHTML:`
+										<img src=${uiinfo}
+										style="
+											width:32px;
+											height:32px;
+											border-radius:50%;
+											object-fit:cover;
+											padding-top:10px;
+										"
+										>
+										<div
+										style="
+											width: 90%;
+											/* padding: 10px; */
+											/* position: absolute; */
+											color: black;
+											text-align: center;
+										"
+										>
+											<div>${products[i+j].category}</div>
+											<div>${products[i+j].product_name}</div>
+											<div>Rp ${getPrice(Number(products[i+j].price)+markupPrice)}</div>
+										</div>
+									`,
+									onclick(){
+										this.selected = !this.selected?true:false;
+										this.style.background = !this.selected?'white':'#f1f1f1';
+										const price = Number(this.data.price)+this.markupPrice;
+										if(this.selected){
+											parentBox.userData.products[this.data.buyer_sku_code] = Object.assign(this.data,{ref_id:`GMP${getTime()}`});
+											parentBox.userData.products.ammount += price;
+											parentBox.userData.products.len += 1;
+										}else{
+											delete parentBox.userData.products[this.data.buyer_sku_code];
+											parentBox.userData.products.ammount -= price;
+											parentBox.userData.products.len -= 1;
+										}
+										parentBox.showTotal();
+									},
+									checkForDataId(){
+										if(dataid && this.data.buyer_sku_code === dataid)this.click();
+									},
+									onadded(){
+										this.checkForDataId();
+									}
+								})
+								outel.addChild(el);
 							}
 						}
 						this.find('#productparents').addChild(outel);
 					}
 				},
-				openVoucherList(){
-					this.find('#voucherslistbox').addChild(app.template.vouchershop(app.userProfileData.vouchers,true,true));
-					if(objlen(app.userProfileData.vouchers)===0){
-						this.find('#voucherslistbox').addChild(makeElement('div',{
-							style:`
-							width: 100%;
-							height: 100%;
-							display: flex;
-							position: absolute;
-							align-items: center;
-							justify-content: center;
-							`,
-							innerHTML:'Tidak Ada Voucher Untuk Digunakan!'
-						}))
-					}
-				},
 				showTotal(){
-					let total = 0;let itemlen = 0;
-					for(let i in this.userData.products){
-						if(typeof this.userData.products[i]!='object')continue;
-						total += this.userData.products[i].price;
-						itemlen += 1;
-					}
-					this.userData.products.ammount = total;
-					this.find('#totaldisplay').innerHTML = `${itemlen} Item, Total Tagihan Rp. ${getPrice(this.userData.products.ammount)}. ${this.userData.payment?`Akan dibayar melalui ${this.userData.payment}.`:'Silahkan pilih metode pembayaran!'}`;
-				},
-				openPaymentMethod(){
-					const pm = this.findall('#valist div');
-					const parent = this;
-					let selected = null;
-					pm.forEach(button=>{
-						button.onclick = ()=>{
-							if(objlen(parent.userData.products)===0 || button.id==='gmarketsaldo'){
-								if(app.userProfileData){
-									parent.userData.userInfo = app.userProfileData.email;
-									parent.userData.gsaldopaybonus = app.tweaks.gsaldobonus;
-								}else return forceRecheck(app.main,'Silahkan Login Terlebih Dahulu!');
-							}else if(parent.userData.userInfo)delete parent.userData.userInfo;
-							if(selected){
-								selected.classList.remove('selectedprice');
-							}
-							selected = button;
-							selected.classList.add('selectedprice');
-							parent.userData.payment = button.id;
-							parent.showTotal();
-						}
-					})
+					this.find('#totaldisplay').innerHTML = `${this.userData.products.len} Item, Total Tagihan Rp. ${getPrice(this.userData.products.ammount)}. ${this.userData.payment?`Akan dibayar melalui ${this.userData.payment}.`:'Silahkan pilih metode pembayaran!'}`;
 				},
 				check(){
 					//user input handle.
 					for(let i in this.userData){
 						if(i==='validationData' || i==='targetData'){
 							for(let j in this.userData[i]){
-								if(this.userData[i][j]===null)return {status:false,msg:`Silahkan Lengkapi User Info Anda Terlebih Dahulu!`}
+								if(this.userData[i][j]===null)return {status:false,msg:`Silahkan Lengkapi ${i} ${j} Anda Terlebih Dahulu!`}
 							}
 						}
 					}
 					if(this.userData.products.ammount===0)return {status:false,msg:'Silahkan Pilih Produk Yang Anda Inginkan Terlebih Dahulu!'}
 					if(!this.userData.payment)return {status:false,msg:'Pilih metode pembayarannya dulu bang!'}
 					return {status:true}
+				},
+				putOnCart(){
+					this.find('#submitoncart').onclick = ()=>{
+						const validity = this.check();
+						if(validity.status){
+							const data = {
+								ammount:this.userData.products.ammount,
+								moredetails:this.userData,
+								products:[]
+							}
+							for(let i in this.userData.products){
+								if(i!=='ammount'&&i!=='len'){
+									data.products.push({title:this.userData.products[i].product_name,price:this.userData.products[i].price})
+								}
+							}
+							app.cartingData.push(data);
+							app.cartingDataSave();
+							forceRecheck(app.main,'Produk Dimasukan Kekeranjang!');
+							app.givemehome();
+						}else forceRecheck(app.main,validity.msg);
+					}
 				},
 				setupSubmitButton(){
 					this.find('#submitbutton').onclick = ()=>{
@@ -1013,24 +1009,25 @@ const app = {
 								const PaymentHandler = {
 									gmarket:{
 										orderType:'gmarketsaldopay',
-										onload(respdata){
-											if(!respdata.valid)forceRecheck(app.main,respdata.msg);
-											else{
-												forceRecheck(app.main,respdata.msg);
-												app.userProfileData.ballance = respdata.leftballance;
-												app.userProfileData.points = respdata.nowpoints;
-												app.userProfileData.Trxs = respdata.mystrxs;
-												app.saveSession(0,false);
-												app.givemehome();
-											}
+										onload(respdata,data){
+											if(!respdata.valid)return forceRecheck(app.main,respdata.msg);
+											forceRecheck(app.main,respdata.msg);
+											if(respdata.vouchermsg)forceRecheck(app.main,respdata.vouchermsg);
+											app.saveNewestTrxId(`GMTrx${JSON.parse(data).timestamp}`);
+											app.userProfileData.ballance = respdata.leftballance;
+											app.userProfileData.points = respdata.nowpoints;
+											app.userProfileData.Trxs = respdata.mystrxs;
+											app.saveSession(0,false);
+											app.givemehome();
 										}
 									},
 									pg:{
 										orderType:'orderPay',
 										onload(respdata,data){
 											if(!respdata.responseJson.Success){
-												return forceRecheck(app.main,respdata.Message);
+												return forceRecheck(app.main,respdata.responseJson.Message);
 											}
+											app.saveNewestTrxId(`GMTrx${JSON.parse(data).timestamp}`);
 											app.orderpaymentresponseSuccessHandler(respdata,JSON.parse(data).products);
 										}
 									}
@@ -1051,17 +1048,49 @@ const app = {
 									}
 								})
 							}))
-						}else{
-							forceRecheck(app.main,validity.msg);
-						}
+						}else forceRecheck(app.main,validity.msg);
 					}
 				},
+				formatUserData(){
+					if(data[0]==='Games'){
+						this.userData.type = 'games';
+						this.userData.targetData = {
+							gameid:null,serverid:null
+						}
+					}else{
+						this.userData.targetData = {hp:null};
+						this.userData.type = 'pulsa';
+					}
+				},
+				paymentEvents(){
+					let buttonselected = null;
+					this.findall('.payment').forEach(payment=>{
+						payment.onclick = ()=>{
+							//gmarket saldo check.
+							if(payment.id.split('.')[0]==='saldo'){
+								if(!app.userProfileData)return forceRecheck(app.main,'Harap Login Terlebih Dahulu!');
+								this.userData.userInfo = app.userProfileData.email;
+							}
+							this.userData.payment = payment.id;
+							payment.selected = !payment.selected?true:false;
+							payment.style.background = payment.selected?'#f1f1f1':'white';
+							if(buttonselected && buttonselected!=payment)buttonselected.style.background = 'white';
+							buttonselected = payment;
+
+							this.showTotal();
+						}
+					})
+				},
 				onadded(){
+					this.formatUserData();
 					this.find('#closebutton').onclick = ()=>{
 						this.remove();
 					}
-					//this.setCcEvent();
+					this.autoFillData();
+					this.paymentEvents();
+					this.openUserInput();
 					this.openPriceList();
+					this.putOnCart();
 					this.setupSubmitButton();
 				}
 			})
@@ -1517,7 +1546,7 @@ const app = {
 									this.showLoading();
 									this.saveDataRegis();
 								}else forceRecheck(app.main,'Tolong diperiksa kembali!');
-								
+
 							}
 						},
 						onadded(){
@@ -1568,8 +1597,158 @@ const app = {
 				}
 			})
 		},
+		topuppanel(){
+			return makeElement('div',{
+				userData:{
+					topupNominal:null,
+					payment:null
+				},
+				style:`
+					position: absolute;
+					width: 100%;
+					height: 100%;
+					display: flex;
+					align-items: flex-start;
+					justify-content: center;
+					background: #00000059;
+				`,
+				innerHTML:`
+					<div
+					style="
+						width: 95%;
+						/* height: 60%; */
+						background: white;
+						border-radius: 20px;
+						margin-top:20px;
+					"
+					>
+						<div
+						style="
+							border-bottom: 2px solid #f1f1f1;
+							height: 64px;
+							width: 100%;
+							display: flex;
+							align-items: center;
+						"
+						>
+							<div style="margin-left:18px;display:flex;" id=closepanel>
+								<img src=/file?fn=blackclose.png
+								style="
+									width:16px;
+									height:16px;
+								">
+							</div>
+							<div style=font-size:24px;margin-left:20px;>Topup Panel</div>
+						</div>
+						<div
+						style="
+							width: 90%;
+							padding: 0 5%;
+							overflow: auto;
+							height: 90%;
+							border-radius: 0 0 20px 20px;
+							display: flex;
+							flex-direction: column;
+							/* justify-content: center; */
+							padding-bottom: 20px;
+						"
+						>
+							<div style=margin-top:20px>
+								<div>Nominal Topup</div>
+								<div style=display:flex;>
+									<input id=topupNominal placeholder="Masukan Nominal Topup" type=number
+									style="
+										width:100%;
+									"
+									>
+								</div>
+							</div>
+							<div style=margin-top:10px;>
+								<div>Pilih Metode Pembayaran</div>
+								<div id=paymentinfo
+								style="
+									display:flex;
+									align-items:center;
+									gap:10px;
+									width:100%;
+									overflow:auto;
+								"
+								>
+									<select
+									style="
+										padding:10px;
+										width:100%;
+										outline:none;
+										border-radius:20px;
+										border:1px solid #f1f1f1;
+									"
+									>
+										<option>Pilih Metode Pembayaran</option>
+										<option id=qris.qris>Qris</option>
+										<option id=va.bri>Bri</option>
+										<option id=va.mandiri>Mandiri</option>
+										<option id=va.bni>Bni</option>
+										<option id=cstore.alfamart>Alfamart</option>
+									</select>
+								</div>
+							</div>
+							<div style="margin-top:20px;display:flex;justify-content:center;">
+								<div id=topupbutton
+								style="
+									background:#111340;
+									padding:10px;
+									border-radius:20px;
+									cursor:pointer;
+								"
+								>Proses Topup</div>
+							</div>
+						</div>
+					</div>
+				`,
+				paymentEvent(){
+					const payment = this.find('select');
+					payment.onchange = ()=>{
+						this.userData.payment = payment.options[payment.options.selectedIndex].id;
+					}
+				},
+				inputEvents(){
+					this.findall('input').forEach(input=>{
+						input.onchange = ()=>{
+							this.userData[input.id] = input.value;
+						}
+					})
+				},
+				topupbutton(){
+					this.find('#topupbutton').onclick = ()=>{
+						const dataCheckResult = nonull(this.userData);
+						const newdatapanel = this;
+						if(dataCheckResult.valid){
+							app.content.addChild(openLoading('Mohon Tunggu...',loading=>{
+								cOn.post({
+									url:'/topupuser',
+									data:jsonstr({userInfo:app.userProfileData.email,userData:this.userData,timestamp:getTimestamp()}),
+									onload(){
+										loading.remove();
+										const data = this.getJSONResponse();
+										if(!data.Success)return forceRecheck(app.main,data.Message);
+										const el = app.template.paythisman(data.Data);
+										app.hometodelete.push(el);
+										app.content.addChild(el);
+									}
+								})
+							}))
+						}else forceRecheck(app.main,`Tolong isi ${dataCheckResult.nullkeys.length} Data Lagi!`);
+					}
+				},
+				onadded(){
+					this.find('#closepanel').onclick = ()=>{this.remove()}
+					this.inputEvents();
+					this.paymentEvent();
+					this.topupbutton();
+				}
+			})
+		},
 		myProfilePage(){
-
 			return makeElement('div',{
 				style:`
 					position: absolute;
@@ -1603,7 +1782,7 @@ const app = {
 							padding-bottom:0;
 						"
 						>
-								<div id=opensettings style="
+								<div id=moresettings style="
 								display: flex;
 								align-items: center;
 								gap: 5px;
@@ -1719,18 +1898,27 @@ const app = {
 						</div>
 					</div>
 				`,
+				openMoreSettings(){
+					const el = app.template.changeUserData();
+					app.hometodelete.push(el);
+					app.content.addChild(el);
+				},
 				logout(){
 					app.userProfileData = null;
 					app.deleteSession();
 					app.givemehome();
 					forceRecheck(app.main,'Logout berhasil!');
 				},
-				processTopup(){},
-				openmoresettings(){},
+				processTopup(){
+					//ithinkimgonnasleep.
+					const el = app.template.topuppanel();
+					app.hometodelete.push(el);
+					app.content.addChild(el);
+				},
 				onadded(){
-					this.find('#opensettings').onclick = ()=>{this.openmoresettings()}
 					this.find('#logoutbutton').onclick = ()=>{this.logout()};
 					this.find('#topupbutton').onclick = ()=>{this.processTopup()};
+					this.find('#moresettings').onclick = ()=>{this.openMoreSettings()}
 				}
 			})
 		},
@@ -1755,7 +1943,7 @@ const app = {
 						gap:15px;
 					"
 					>
-						
+
 					</div>
 				`,
 				QRIS(){
@@ -1827,7 +2015,7 @@ const app = {
 								border-radius:10px;
 							"
 							>
-								
+
 							</div>
 						`,
 						initDetail(){
@@ -1851,8 +2039,8 @@ const app = {
 									<div style="
 										width:100%;
 									">${i}</div>
-									${i!='PaymentNo'?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<textarea style="width:100%;">'+datatodisplay[i]+'</textarea>'}
-									
+									${(i!='PaymentNo'&&i!='TransactionId')?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<input style="width:100%;" value='+datatodisplay[i]+'>'}
+
 								`
 							}))
 							}
@@ -1919,7 +2107,7 @@ const app = {
 								border-radius:10px;
 							"
 							>
-								
+
 							</div>
 						`,
 						initDetail(){
@@ -1944,8 +2132,8 @@ const app = {
 									<div style="
 										width:100%;
 									">${i}</div>
-									${i!='PaymentNo'?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<textarea style="width:100%;">'+datatodisplay[i]+'</textarea>'}
-									
+									${(i!='PaymentNo'&&i!='TransactionId')?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<input style="width:100%;" value='+datatodisplay[i]+'>'}
+
 								`
 							}))
 							}
@@ -2009,7 +2197,7 @@ const app = {
 								border-radius:10px;
 							"
 							>
-								
+
 							</div>
 						`,
 						initDetail(){
@@ -2034,8 +2222,8 @@ const app = {
 									<div style="
 										width:100%;
 									">${i}</div>
-									${i!='PaymentNo'?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<textarea style="width:100%;">'+datatodisplay[i]+'</textarea>'}
-									
+									${(i!='PaymentNo'&&i!='TransactionId')?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<input style="width:100%;" value='+datatodisplay[i]+'>'}
+
 								`
 							}))
 							}
@@ -2099,7 +2287,7 @@ const app = {
 								border-radius:10px;
 							"
 							>
-								
+
 							</div>
 						`,
 						initDetail(){
@@ -2123,8 +2311,8 @@ const app = {
 									<div style="
 										width:100%;
 									">${i}</div>
-									${i!='PaymentNo'?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<textarea style="width:100%;">'+datatodisplay[i]+'</textarea>'}
-									
+									${(i!='PaymentNo'&&i!='TransactionId')?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<input style="width:100%;" value='+datatodisplay[i]+'>'}
+
 								`
 							}))
 							}
@@ -2188,7 +2376,7 @@ const app = {
 								border-radius:10px;
 							"
 							>
-								
+
 							</div>
 						`,
 						initDetail(){
@@ -2212,8 +2400,8 @@ const app = {
 									<div style="
 										width:100%;
 									">${i}</div>
-									${i!='PaymentNo'?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<textarea style="width:100%;">'+datatodisplay[i]+'</textarea>'}
-									
+									${(i!='PaymentNo'&&i!='TransactionId')?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<input style="width:100%;" value='+datatodisplay[i]+'>'}
+
 								`
 							}))
 							}
@@ -2277,7 +2465,7 @@ const app = {
 								border-radius:10px;
 							"
 							>
-								
+
 							</div>
 						`,
 						initDetail(){
@@ -2301,8 +2489,8 @@ const app = {
 									<div style="
 										width:100%;
 									">${i}</div>
-									${i!='PaymentNo'?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<textarea style="width:100%;">'+datatodisplay[i]+'</textarea>'}
-									
+									${(i!='PaymentNo'&&i!='TransactionId')?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<input style="width:100%;" value='+datatodisplay[i]+'>'}
+
 								`
 							}))
 							}
@@ -2366,7 +2554,7 @@ const app = {
 								border-radius:10px;
 							"
 							>
-								
+
 							</div>
 						`,
 						initDetail(){
@@ -2390,8 +2578,8 @@ const app = {
 									<div style="
 										width:100%;
 									">${i}</div>
-									${i!='PaymentNo'?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<textarea style="width:100%;">'+datatodisplay[i]+'</textarea>'}
-									
+									${(i!='PaymentNo'&&i!='TransactionId')?'<div style="width:100%;overflow:auto;">'+datatodisplay[i]+'</div>':'<input style="width:100%;" value='+datatodisplay[i]+'>'}
+
 								`
 							}))
 							}
@@ -2456,7 +2644,7 @@ const app = {
 						align-content: flex-start;
 					"
 					>
-						
+
 					</div>
 				`,
 				generateVoucher(){
@@ -2562,10 +2750,10 @@ const app = {
 							border: 2px solid #f1f1f1;
 							background:white;
 						"
-						>	
+						>
 							<div style=margin-bottom:5px;>ID Pesanan</div>
 							<div style="display:flex;">
-								<input placeholder="Masukan ID Pesanan Anda"
+								<input placeholder="Masukan ID Pesanan Anda" value="${app.newesttrxid||''}"
 								style="
 									width:100%;
 								"
@@ -2575,7 +2763,7 @@ const app = {
 								display:flex;
 								margin-top:10px;
 							">
-								<div
+								<div id=submitbutton
 								style="
 									padding: 10px 30px;
 									background: #111340;
@@ -2588,7 +2776,589 @@ const app = {
 							</div>
 						</div>
 					</div>
-				`
+				`,
+				userInput:{
+					trxid:app.newesttrxid||null
+				},
+				inputEvent(){
+					this.find('input').onchange = ()=>{
+						this.userInput.trxid = this.find('input').value;
+					}
+				},
+				requestcheck(){
+					app.main.addChild(openLoading('Mengambil Info...',(loading)=>{
+						cOn.get({
+							url:`/check?trxid=${this.userInput.trxid}`,
+							onload(){
+								app.handleTrxCheckRequest(this.getJSONResponse(),loading);
+							}
+						})
+					}))
+				},
+				onadded(){
+					this.inputEvent();
+					this.find('#submitbutton').onclick = ()=>{
+						this.requestcheck();
+					}
+				}
+			})
+		},
+		openMyCart(){
+			let cartItems = app.cartingData;
+			return makeElement('div',{
+				userInput:{
+					selectedProducts:[],
+				},
+				style:`
+					position:absolute;
+					width:100%;
+					height:100%;
+					background:#edeef1;
+					display:flex;
+					align-items:center;
+					justify-content:center;
+					flex-direction:column;
+				`,
+				innerHTML:`
+					<div
+					style="
+						width:90%;
+						height:90%;
+						background:white;
+						border-radius:20px;
+					"
+					>
+						<div
+						style="
+							height:10%;
+							width:92%;
+							padding:0 4%;
+							font-size:18px;
+							display:flex;
+							align-items:center;
+							justify-content:space-between;
+							border-bottom:2px solid #f1f1f1;
+						"
+						>
+							KeranjangKu
+							<div style=cursor:pointer; id=deleteitems>
+								<img src=/file?fn=trash.png
+								style="
+									width:24px;
+									height:24px;
+								">
+							</div>
+						</div>
+						<div
+						style="
+							width:100%;
+							height:67%;
+							overflow:auto;
+						"
+						>
+							<div id=parentItems
+							style="
+								padding:15px;
+								display:flex;
+								flex-direction:column;
+								gap:10px;
+							"
+							>
+
+							</div>
+						</div>
+						<div
+						style="
+							height:8%;
+							width:96%;
+							padding:0 2%;
+							border-top:1px solid #f1f1f1;
+							display:flex;
+							align-items:center;
+							justify-content:center;
+						"
+						>
+							<div id=selectedlabel
+							style="width:100%;text-align:center;"
+							>
+								0 Item
+							</div>
+							<div id=priceselectedlabel
+							style="width:100%;text-align:center;"
+							>Rp 0</div>
+						</div>
+						<div
+						style="
+							height:15%;
+							width:100%;
+							font-size:18px;
+							display:flex;
+							align-items:center;
+							justify-content:center;
+							border-top:2px solid #f1f1f1;
+						"
+						>
+							<div
+							style="
+								padding:10px 64px;
+								background:#111340;
+								color:white;
+								border-radius:20px;
+								cursor:pointer;
+							"
+							>Beli</div>
+						</div>
+					</div>
+				`,
+				displayItems(){
+					this.find('#parentItems').clear();
+					const items = (data)=>{
+						return makeElement('div',{
+							parent:this,
+							data,
+							style:`
+								width:96%;
+								border:1px solid #f1f1f1;
+								padding:2%;
+								border-radius:10px;
+								cursor:pointer;
+							`,
+							innerHTML:`
+								<div
+								style="
+									display:flex;
+									gap:10px;
+									align-items:center;
+									justify-content:space-around;
+								"
+								>
+									<div style=width:10%;display:flex;justify-content:center; id=radios>
+										<div style="
+											width:16px;
+											height:16px;
+											border:1px solid #f1f1f1;
+											border-radius:50%;
+										">
+
+										</div>
+									</div>
+									<div style=width:80%;>
+										<div>Rp ${getPrice(data.ammount)}</div>
+										<div style="font-size:18px;">${data.products[0].title}${data.products.length>1?` Dan ${data.products.length-1} Lainnya`:''}</div>
+										<div id=moredata style="
+											margin-top:5px;
+											border-top:1px solid #f1f1f1;
+											padding:5px;
+											display:none;
+											flex-direction:column;
+											gap:2px;
+										">
+
+										</div>
+									</div>
+									<div style=width:10%;display:flex;align-items:center;justify-content:center; id=wannamores>
+										<img src=/file?fn=down.png
+										style="
+											width:16px;
+											height:16px;
+										">
+
+									</div>
+								</div>
+							`,
+							radiosSet(){
+								let selected = false;
+								const radios = this.find('#radios div');
+								let iindex;
+
+								radios.onclick = ()=>{
+									selected = !selected?true:false;
+									radios.style.background = !selected?'none':'#a5a5a7';
+									if(selected){
+										iindex = this.parent.userInput.selectedProducts.length;
+										this.parent.userInput.selectedProducts.push(this.data);
+									}else{
+										const newarr = [];
+										for(let i=0;i<this.parent.userInput.selectedProducts.length;i++){
+											if(i!=iindex)newarr.push(this.parent.userInput.selectedProducts[i]);
+										}
+										this.parent.userInput.selectedProducts = newarr;
+										iindex = null;
+									}
+									this.parent.showDetails();
+								}
+							},
+							arrowDown(){
+								let opened = false;
+								const img = this.find('#wannamores img');
+								this.find('#wannamores').onclick = ()=>{
+									opened?hideElement(this.find('#moredata')):showElement(this.find('#moredata'),'flex');
+									opened = !opened?true:false;
+									img.src = !opened?'/file?fn=down.png':'/file?fn=up-arrow.png';
+								}
+							},
+							displayMore(){
+								this.data.products.forEach(item=>{
+									this.find('#moredata').addChild(makeElement('div',{
+										innerHTML:`${item.title} Rp ${getPrice(item.price)}`
+									}))
+								})
+							},
+							onadded(){
+								this.radiosSet();
+								this.arrowDown();
+								this.displayMore();
+							}
+						})
+					}
+					cartItems.forEach(item=>{
+						this.find('#parentItems').addChild(items(item));
+					})
+					//zero data handling.
+					if(cartItems.length===0){
+						this.find('#parentItems').parentElement.appendChild(makeElement('div',{
+							style:`
+								width:100%;
+								text-align:center;
+								justify-content:center;
+							`,
+							innerHTML:`
+								Tidak ada data.
+							`
+						}));
+					}
+				},
+				showDetails(){
+					let prices = 0;
+					//getting the prices.
+					this.userInput.selectedProducts.forEach(product=>{
+						prices += product.ammount;
+					})
+					this.find('#selectedlabel').innerHTML = this.userInput.selectedProducts.length+' Items';
+					this.find('#priceselectedlabel').innerHTML = 'Rp '+getPrice(prices);
+				},
+				deleteItems(){
+					const newarr = [];
+					cartItems.forEach(item=>{
+						if(!this.userInput.selectedProducts.includes(item)){
+							newarr.push(item);
+						}
+					})
+					cartItems = newarr;
+					app.cartingData = newarr;
+					app.cartingDataSave();
+					this.userInput.selectedProducts = [];
+					this.displayItems();
+					this.showDetails();
+				},
+				onadded(){
+					this.find('#deleteitems').onclick = ()=>{
+						this.deleteItems();
+					}
+					this.displayItems();
+				}
+			})
+		},
+		checkTrx(data,loading){
+			return makeElement('div',{
+				style:`
+					position:absolute;
+					width:100%;
+					height:100%;
+					display:flex;
+					align-items:center;
+					justify-content:center;
+				`,
+				innerHTML:`
+					<div
+					style="
+						width:95%;
+						height:90%;
+						background:white;
+						border-radius:20px;
+					"
+					>
+						<div
+						style="
+							border-bottom:2px solid #f1f1f1;
+							height:10%;
+							width:100%;
+							display:flex;
+							align-items:center;
+						"
+						>
+							<div style="margin-left:18px;display:flex;" id=closepanel>
+								<img src=/file?fn=blackclose.png
+								style="
+									width:16px;
+									height:16px;
+								">
+							</div>
+							<div style=font-size:24px;margin-left:20px;>Panel Informasi</div>
+						</div>
+						<div
+						style="
+							width:90%;
+							padding:0 5%;
+							overflow:auto;
+							height:90%;
+							border-radius:0 0 20px 20px;
+							display:flex;
+							flex-direction:column;
+						"
+						>
+							<div
+							style="
+								width:100%;
+								height:40%;
+								font-size:32px;
+								display:flex;
+								align-items:center;
+								justify-content:center;
+							"
+							>
+								Rp. ${getPrice(data.moredetails.products.ammount)}
+							</div>
+							<div
+							style="
+								font-size:18px;
+								overflow:auto;
+								padding:5%;
+								border:2px solid #f1f1f1;
+								max-height:40%;
+								border-radius:20px;
+							"
+							>
+								<div style="
+									display:flex;
+									gap:10px;
+									align-items:center;
+									justify-content:space-between;
+								">
+									<div>Pembayaran</div>
+									<div>${data.payment}</div>
+								</div>
+								<div style="
+									display:flex;
+									gap:10px;
+									align-items:center;
+									justify-content:space-between;
+								">
+									<div>Status</div>
+									<div>${data.status}</div>
+								</div>
+								<div style="
+									display:flex;
+									gap:10px;
+									align-items:center;
+									justify-content:space-between;
+								">
+									<div>Expired</div>
+									<div>${data.expired||'-'}</div>
+								</div>
+								<div style="
+									display:flex;
+									gap:10px;
+									align-items:center;
+									justify-content:space-between;
+								">
+									<div>Kode Pembayaran</div>
+									<input value=${data.paymentCode||'-'}>
+								</div>
+								<div style="
+									display:flex;
+									gap:10px;
+									align-items:center;
+									justify-content:space-between;
+								">
+									<div>Tipe Produk</div>
+									<div>${data.moredetails.type}</div>
+								</div>
+								<div style="
+									display:flex;
+									gap:10px;
+									align-items:center;
+									justify-content:space-between;
+								">
+									<div>Banyak Produk</div>
+									<div>${data.moredetails.products.len}</div>
+								</div>
+								<div style="
+									display:flex;
+									gap:10px;
+									align-items:center;
+									justify-content:space-between;
+								">
+									<div>Status</div>
+									<div>${data.status==='pending'?'Menunggu Pembayaran':data.statusproduct||'Sedang Diproses'}</div>
+								</div>
+						</div>
+						</div>
+					</div>
+				`,
+				onadded(){
+					loading.remove();
+					this.find('#closepanel').onclick = ()=>{this.remove()}
+					console.log(data);
+				}
+			})
+		},
+		changeUserData(){
+			return makeElement('div',{
+				userData:{
+					name:app.userProfileData.name,
+					email:app.userProfileData.email,
+					hp:app.userProfileData.hp,
+					confirmpassword:null
+				},
+				style:`
+					position: absolute;
+					width: 100%;
+					height: 100%;
+					display: flex;
+					align-items: flex-start;
+					justify-content: center;
+					background: #00000059;
+				`,
+				innerHTML:`
+					<div
+					style="
+						width: 95%;
+						/* height: 60%; */
+						background: white;
+						border-radius: 20px;
+						margin-top:20px;
+					"
+					>
+						<div
+						style="
+							border-bottom: 2px solid #f1f1f1;
+							height: 64px;
+							width: 100%;
+							display: flex;
+							align-items: center;
+						"
+						>
+							<div style="margin-left:18px;display:flex;" id=closepanel>
+								<img src=/file?fn=blackclose.png
+								style="
+									width:16px;
+									height:16px;
+								">
+							</div>
+							<div style=font-size:24px;margin-left:20px;>User Settings</div>
+						</div>
+						<div
+						style="
+							width: 90%;
+							padding: 0 5%;
+							overflow: auto;
+							height: 90%;
+							border-radius: 0 0 20px 20px;
+							display: flex;
+							flex-direction: column;
+							/* justify-content: center; */
+							padding-bottom: 20px;
+						"
+						>
+							<div style=margin-top:20px>
+								<div>Username</div>
+								<div style=display:flex;>
+									<input id=name value=${app.userProfileData.name}
+									style="
+										width:100%;
+									"
+									>
+								</div>
+							</div>
+							<div>
+								<div>Email</div>
+								<div style=display:flex;>
+									<input value=${app.userProfileData.email} readonly
+									style="
+										width:100%;
+									"
+									>
+								</div>
+							</div>
+							<div>
+								<div>Hp</div>
+								<div style=display:flex;>
+									<input id=hp value=${app.userProfileData.hp}
+									style="
+										width:100%;
+									"
+									>
+								</div>
+							</div>
+							<div>
+								<div>New Password</div>
+								<div style=display:flex;>
+									<input id=newpassword value=Hidden
+									style="
+										width:100%;
+									"
+									>
+								</div>
+							</div>
+							<div>
+								<div>Komfirmasi Password</div>
+								<div style=display:flex;>
+									<input id=confirmpassword type=password placeholder='Konfirmasi Untuk Melakukan Perubahan'
+									style="
+										width:100%;
+									"
+									>
+								</div>
+							</div>
+							<div style="margin-top:20px;display:flex;">
+								<div id=savebutton
+								style="
+									background:#111340;
+									padding:10px;
+									border-radius:20px;
+								"
+								>Save Changes</div>
+							</div>
+						</div>
+					</div>
+				`,
+				inputEvents(){
+					this.findall('input').forEach(input=>{
+						input.onchange = ()=>{
+							this.userData[input.id] = input.value;
+						}
+					})
+				},
+				saveButton(){
+					this.find('#savebutton').onclick = ()=>{
+						const dataCheckResult = nonull(this.userData);
+						const newdatapanel = this;
+						if(dataCheckResult.valid){
+							app.content.addChild(openLoading('Mohon Tunggu Melakukan Perubahan!',(loading)=>{
+								cOn.post({
+									url:'/newuserdata',
+									data:jsonstr(this.userData),
+									onload(){
+										const respdata = this.getJSONResponse();
+										loading.remove();
+										if(respdata.valid){
+											forceRecheck(app.main,respdata.msg);
+											Object.assign(app.userProfileData,respdata.newsettingdata);
+											app.saveSession(0,false);
+											app.generateMyProfile();
+										}else forceRecheck(app.main,respdata.msg);
+									}
+								})
+							}))
+						}else forceRecheck(app.main,`Tolong isi ${dataCheckResult.nullkeys.length} Data Lagi!`);
+					}
+				},
+				onadded(){
+					this.find('#closepanel').onclick = ()=>{this.remove()}
+					this.inputEvents();
+					this.saveButton();
+				}
 			})
 		}
   },
@@ -2624,13 +3394,13 @@ const app = {
 			grabbingme=false;
 			letscheck();
 		}
-		
+
 		imglabel.onmousedown = ()=>{grabbingme=true}
 		imglabel.onmouseup = ()=>{
 			grabbingme=false;
 			letscheck();
 		}
-		
+
 		imglabel.onmousemove = (e)=>{
 			if(topme && grabbingme){
 				if(e.movementX===0)return;
@@ -2686,7 +3456,8 @@ const app = {
 		this.requestData();
 		//this.generateMyProfile();
 		//this.openTrackTrxPanel();
-  },
+		//this.openMyCart();
+	},
 	processDb(){
 		// this.basedata.forEach(data=>{
 		// 	if(this.db[data.category_name]){
@@ -2715,15 +3486,32 @@ const app = {
 			}
 		})
 	},
+	processMarkupPriceList(){
+		const newFormat = {};
+		for(let i in this.markupPriceList){
+			const category = this.markupPriceList[i].category;
+			const type = this.markupPriceList[i].type;
+			const price = Number(this.markupPriceList[i].markupPrice);
+			if(!newFormat[category]){
+				newFormat[category] = {};
+			}
+			newFormat[category][type] = price;
+		}
+		this.formatedPriceMarkup = newFormat;
+	},
 	requestData(){
 		cOn.get({
 			url:'/info?type=all',
 			onload(){
-				app.basedata = this.getJSONResponse().base.data;
-				app.tweaks = this.getJSONResponse().tweaks;
+				const dataResponse = this.getJSONResponse();
+				app.basedata = dataResponse.base.data;
+				app.tweaks = dataResponse.tweaks;
+				app.markupPriceList = dataResponse.markupPriceList;
 				app.processDb();
+				app.processMarkupPriceList();
+				app.getCartingData();
+				app.getNewestLocalTrx();
 				app.setupGlobalNav();
-				app.openSearchBar();
 				app.scrollTheImg();
 				app.setCategory();
 				app.forceLoginSystem(true);
@@ -2783,8 +3571,8 @@ const app = {
 		this.categoryState = state;
 		this.displayContent(state);
 	},
-	openCashier(info,filterBase=false,uiinfo){
-		let el = this.template.buyMenu(info,filterBase,this.tweaks,uiinfo);
+	openCashier(info,filterBase=false,uiinfo,dataid){
+		let el = this.template.buyMenu(info,filterBase,this.tweaks,uiinfo,dataid);
 		this.hometodelete.push(el);
 		this.content.addChild(el);
 	},
@@ -2799,7 +3587,9 @@ const app = {
 			account:'forceLoginSystem',
 			home:'givemehome',
 			gtovoucher:'iwannavoucher',
-			openhistorypanel:'openTrackTrxPanel'
+			openhistorypanel:'openTrackTrxPanel',
+			cart:'openMyCart',
+			searchBar:'openSearchBar'
 		}
 		this.main.findall('.gnavbutton').forEach(button=>{
 			button.onclick = ()=>{
@@ -2829,8 +3619,7 @@ const app = {
 			validdata[i].forEach(data=>{
 				const boxin = this.template.boxItem(data,this.categoryState+','+data.brand,'product_name');
 				boxin.onclick = ()=>{
-					console.log(boxin.dataid);
-					this.openCashier(boxin.info,boxin.dataid);
+					this.openCashier(boxin.info,true,boxin.find('img').src,boxin.dataid);
 				}
 				boxdiv.addChild(boxin);
 				datalen += 1;
@@ -2842,16 +3631,16 @@ const app = {
 	},
 	openSearchBar(button){
 		const scb = this.content.find('#searchBarInput');
-		//const imglabel = this.content.find('#imglabel');
+		const imglabel = this.content.find('#imglabel');
 		if(this.scbopened){
-			//hideElement(scb);
-			//showElement(imglabel,'flex');
+			hideElement(scb);
+			showElement(imglabel,'flex');
 			this.scbopened = false;
-			//button.find('img').src = '/file?fn=whitefinder.png';
+			button.find('img').src = '/file?fn=whitefinder.png';
 			scb.find('input').value = '';
 		}else{
-			//showElement(scb,'flex');
-			//scb.find('input').focus();
+			showElement(scb,'flex');
+			scb.find('input').focus();
 			if(!scb.find('input').onkeydown){
 				scb.find('input').onkeydown = (e)=>{
 					if(e.code==='Enter' && scb.find('input').value.length>0){
@@ -2866,9 +3655,9 @@ const app = {
 					}
 				}
 			}
-			//hideElement(imglabel);
+			hideElement(imglabel);
 			this.scbopened = true;
-			//button.find('img').src = '/file?fn=closex.png';
+			button.find('img').src = '/file?fn=closex.png';
 		}
 	},
 	forceLoginSystem(init=false){
@@ -2885,8 +3674,10 @@ const app = {
 		this.content.addChild(el);
 	},
 	orderpaymentresponseSuccessHandler(ipaymuresponse,databefore){
-		app.userProfileData.Trxs = ipaymuresponse.trxdata;
-		app.saveSession(0,false);
+		if(this.userProfileData){
+			this.userProfileData.Trxs = ipaymuresponse.trxdata;
+			this.saveSession(0,false)
+		}
 		ipaymuresponse = ipaymuresponse.responseJson.Data;
 		this.content.find('#buymenuwhitebox').parentElement.remove();
 		const el = app.template.paythisman(ipaymuresponse,databefore);
@@ -2925,7 +3716,7 @@ const app = {
 		const onload = (data)=>{
 			const voucherpanel = this.template.vouchershop(data);
 			this.hometodelete.push(voucherpanel);
-			this.content.addChild(voucherpanel);	
+			this.content.addChild(voucherpanel);
 		}
 		cOn.post({
 			url:'/admin',
@@ -2968,8 +3759,39 @@ const app = {
 		const el = app.template.trackTrxPanel();
 		this.hometodelete.push(el);
 		this.content.addChild(el);
+	},
+	openMyCart(){
+		this.hometodelete.forEach(el=>{
+			el.remove();
+		})
+		const el = app.template.openMyCart();
+		this.hometodelete.push(el);
+		this.content.addChild(el);
+	},
+	getCartingData(){
+		this.cartingData = JSON.parse(localStorage.getItem('cartinggemastore')||'[]');
+		return this.cartingData;
+	},
+	handleTrxCheckRequest(data,loading){
+		if(!data.status){
+			loading.remove();
+			return forceRecheck(app.main,'Transaksi Tidak Ditemukan!');
+		}
+		const el = this.template.checkTrx(data,loading);
+		this.hometodelete.push(el);
+		this.content.addChild(el);
+	},
+	cartingDataSave(){
+		localStorage.setItem('cartinggemastore',jsonstr(this.cartingData));
+	},
+	getNewestLocalTrx(){
+		this.newesttrxid = localStorage.getItem('newesttrxid');
+	},
+	saveNewestTrxId(id){
+		localStorage.setItem('newesttrxid',id);
+		this.newesttrxid = id;
 	}
 }
 
 //iamtheonlyonepersonhere.
-app.init();  
+app.init();
