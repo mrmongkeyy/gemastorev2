@@ -7,7 +7,6 @@ const mailerTransforter = nodemailer.createTransport({
   }
 })
 module.exports = function(onfine,onerror,details){
-	let mailDetails = details;
 	mailerTransforter.sendMail(details, function(err) {
 		if(err) {
 			onerror();
