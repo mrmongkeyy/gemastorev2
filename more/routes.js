@@ -12,6 +12,7 @@ const transactionChecker = require('./transactionchecker');
 const changedatauserhandler = require('./datauserchanger');
 const topupuserhandler = require('./topupuserhandler');
 const handlepaymentcallbackdeposit = require('./paymentcallbackhandlerdeposit');
+const sessionUpdater = require('./updateSession');
 module.exports = [
 	{
 		mM:'get',
@@ -64,7 +65,6 @@ module.exports = [
 	{
 		mM:'post',
 		'/order'(req,res){
-			console.log(req);
 			moreinfo('order',req,res,db);
 		}
 	},
@@ -120,6 +120,12 @@ module.exports = [
 		mM:'post',
 		'/topupuser'(req,res){
 			topupuserhandler(req,res,db);
+		}
+	},
+	{
+		mM:'post',
+		'/updateSession'(req,res){
+			sessionUpdater(req,res,db);
 		}
 	}
 ];

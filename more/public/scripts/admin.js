@@ -567,6 +567,7 @@ const admin = {
               width: 100%;
               display: flex;
               overflow: auto;
+              align-items:center;
               `,
               innerHTML:`
               <div
@@ -583,7 +584,8 @@ const admin = {
                 width: 200px;
                 overflow: auto;
                 text-align: center;
-              ">${trxid}</div>
+                display:flex;
+              "><input value=${trxid} style="width:100%"></div>
               <div
               style="
                 width: 200px;
@@ -1036,6 +1038,11 @@ const admin = {
               style="
                 width:200px;
                 text-align:center;
+              ">Produk</div>
+              <div
+              style="
+                width:200px;
+                text-align:center;
               ">Harga</div>
             </div>
             <div id=body
@@ -1138,6 +1145,15 @@ const admin = {
               style="
                 width:200px;
                 text-align:center;
+              ">
+                <select id=products>
+                  <option>Pilih Produk</option>
+                </select>
+              </div>
+              <div
+              style="
+                width:200px;
+                text-align:center;
               "><input type=number id=markupPrice placeholder="Set Harga Markup"></div>
             `,
             processDb(){
@@ -1155,6 +1171,7 @@ const admin = {
               // 	}
               // })
               this.basedata.forEach(item=>{
+                console.log(item);
                 if(this.db[item.category]){
                   if(this.db[item.category][item.brand]){
                     this.db[item.category][item.brand].push(item);
@@ -1196,16 +1213,28 @@ const admin = {
                     innerHTML:i
                   }))
                 }
+              },
+              products(select,db,category,type){
+                for(let i of db[category][type]){
+                  console.log(i);
+                  select.addChild(makeElement('option',{
+                    innerHTML:i.product_name
+                  }))
+                }
               }
             },
             selectEvent(){
+              const selectedSelect = {};
               this.findall('select').forEach(select=>{
                 select.onchange = ()=>{
                   this.parent.vouchers[this.id][select.id] = select.value;
-                  this.category = select.value;
+                  this[select.id] = select.value;
                 }
                 select.onclick = ()=>{
-                  this.selectEvents[select.id](select,this.db,this.category);
+                  if(select.id==='type' && !selectedSelect['category'])return;
+                  if(selectedSelect[select.id])return;
+                  this.selectEvents[select.id](select,this.db,this.category,this.type);
+                  selectedSelect[select.id] = true;
                 }
               })
               this.findall('input').forEach(input=>{
@@ -1303,6 +1332,12 @@ const admin = {
           width: 200px;
           overflow: auto;
           text-align: center;
+        ">Produk</div>
+        <div
+        style="
+          width: 200px;
+          overflow: auto;
+          text-align: center;
         ">Markup Harga</div>
         <div
         style="
@@ -1363,6 +1398,12 @@ const admin = {
                 overflow: auto;
                 text-align: center;
               ">${data.type}</div>
+              <div
+              style="
+                width: 200px;
+                overflow: auto;
+                text-align: center;
+              ">${data.products}</div>
               <div
               style="
                 width: 200px;

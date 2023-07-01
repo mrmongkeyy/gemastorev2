@@ -128,21 +128,28 @@ module.exports = function(type,req,res,db){
 						let vouchermsg;
 						const doprocess = (voucherdata)=>{
 							if(voucherdata){
-								let productsInfo;
-								for(let i in req.body.products){
-									if(i!=='ammount' && i!=='len'){
-										productsInfo = req.body.products[i].category+req.body.products[i].brand;
-										break;
+								if(voucherdata.category){
+									if(data.myvoucherusedlist && data.myvoucherusedlist.includes(voucherdata.id))vouchermsg = 'Voucher Sudah digunakan!';
+									else{
+										let productsInfo;
+										for(let i in req.body.products){
+											if(i!=='ammount' && i!=='len'){
+												productsInfo = req.body.products[i].category+req.body.products[i].brand;
+												break;
+											}
+										}
+										if(productsInfo === voucherdata.category+voucherdata.type){
+											if(Date.parse(voucherdata.expired)>=new Date().getTime()){
+												vouchermsg = 'Voucher Berhasil Digunakan!';
+												req.body.products.ammount = req.body.products.ammount - req.body.products.ammount*Number(voucherdata.pricecutter)/100;
+												if(data.myvoucherusedlist)data.myvoucherusedlist.push(voucherdata.id);
+												else data.myvoucherusedlist = [voucherdata.id];
+											}else vouchermsg = 'Voucher Kadaluarsa!';
+										}else vouchermsg = 'Voucher tidak support';
 									}
-								}
-								if(productsInfo === voucherdata.category+voucherdata.type){
-									if(Date.parse(voucherdata.expired)>=new Date().getTime()){
-										vouchermsg = 'Voucher Berhasil Digunakan!';
-										req.body.products.ammount *= Number(voucherdata.pricecutter)/100;
-									}else vouchermsg = 'Voucher Kadaluarsa!';
-								}else vouchermsg = 'Voucher tidak support';
-							}else vouchermsg = 'Tidak Ada Voucher';
-							console.log(req.body.products.ammount);
+								}else vouchermsg = 'Voucher tidak ditemukan!';
+							}
+							
 							if(data.ballance >= req.body.products.ammount){
 								const leftballance = data.ballance-req.body.products.ammount;
 								if(!data.Trxs)data.Trxs = [{
@@ -155,14 +162,15 @@ module.exports = function(type,req,res,db){
 									details:req.body,
 									status:'done'
 								});
-								db.ref(`users/${userid}`).update({ballance:leftballance,Trxs:data.Trxs}).then(()=>{
-									db.ref(`history/GMTrx${req.body.timestamp}`).set({
-										payment:'GMarketSaldo',
-										moredetails:req.body,
-										status:'done',
-										ammount:req.body.products.ammount,
-										vouchermsg
-									}).then(()=>{
+								const updatePaymentInfo = {
+									payment:'GMarketSaldo',
+									moredetails:req.body,
+									status:'done',
+									ammount:req.body.products.ammount
+								}
+								if(vouchermsg)updatePaymentInfo.vouchermsg = vouchermsg;
+								db.ref(`users/${userid}`).update({ballance:leftballance,Trxs:data.Trxs,myvoucherusedlist:data.myvoucherusedlist}).then(()=>{
+									db.ref(`history/GMTrx${req.body.timestamp}`).set(updatePaymentInfo).then(()=>{
 										//schema.pricelist.order(req,res,db);
 										res.json({valid:true,vouchermsg,msg:'Pembayaran Berhasil, sedang memproses pesanan anda!',leftballance,mystrxs:data.Trxs})
 									})
@@ -171,7 +179,7 @@ module.exports = function(type,req,res,db){
 						}
 						if(req.body.targetData.voucher){
 							db.ref(`vouchers/${req.body.targetData.voucher}`).get().then(voucherdata=>{
-								voucherdata = voucherdata.val();
+								voucherdata = voucherdata.val()||{};
 								doprocess(voucherdata);
 							}); 
 						}else doprocess();

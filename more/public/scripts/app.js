@@ -294,9 +294,9 @@ const app = {
 						len:0
 					},
 					validationData:{
-						name:null,
+						name:'gema',
 						email:null,
-						phone:null
+						phone:'0895605801484'
 					},
 					payment:null
 				},
@@ -741,24 +741,12 @@ const app = {
 									padding-bottom: 5px;
 									font-weight:bold;
 								"
-								>Masukan Data Validasi Anda</div>
+								>Masukan Data Invoice Anda</div>
 								<div style="margin-bottom:10px;">
-									<div>
-										<div>Nama</div>
-										<div style=display:flex;>
-											<input placeholder="Masukan Nama Anda" style=width:100%; id=validationData.name>
-										</div>
-									</div>
 									<div>
 										<div>Email</div>
 										<div style=display:flex;>
 											<input placeholder="Masukan Email Anda" style=width:100%; id=validationData.email>
-										</div>
-									</div>
-									<div>
-										<div>Phone</div>
-										<div style=display:flex;>
-											<input placeholder="Masukan Phone Anda" style=width:100%; id=validationData.phone type=number>
 										</div>
 									</div>
 								</div>
@@ -794,7 +782,6 @@ const app = {
 						</div>
 						<div
 						style="
-							height: 32px;
 							display: flex;
 							justify-content: flex-start;
 							align-items: center;
@@ -822,7 +809,7 @@ const app = {
 								padding: 5px 10px;
 								display: flex;
 								align-items: center;
-								height: 100%;
+								height: 32px;
 								font-size: 16px;
 								border-radius: 10px;
 								gap:10px;
@@ -841,7 +828,7 @@ const app = {
 								padding: 5px 10px;
 								display: flex;
 								align-items: center;
-								height: 100%;
+								height: 32px;
 								font-size: 16px;
 								border-radius: 10px;
 							"
@@ -894,9 +881,10 @@ const app = {
 						markupPrice = Number(markupPrice);
 						for(let j=0;j<2;j++){
 							if(products[i+j]){
+								const specialMarkup = !app.formatedPriceMarkup[data[0]][products[i+j].product_name]?markupPrice:app.formatedPriceMarkup[data[0]][products[i+j].product_name];
 								const el = makeElement('div',{
 									data:products[i+j],selected:false,
-									markupPrice,
+									markupPrice:specialMarkup,
 									style:`
 										width: 48%;
 										position: relative;
@@ -931,7 +919,7 @@ const app = {
 										>
 											<div>${products[i+j].category}</div>
 											<div>${products[i+j].product_name}</div>
-											<div>Rp ${getPrice(Number(products[i+j].price)+markupPrice)}</div>
+											<div>Rp ${getPrice(Number(products[i+j].price)+specialMarkup)}</div>
 										</div>
 									`,
 									onclick(){
@@ -1004,7 +992,7 @@ const app = {
 						const validity = this.check();
 						if(validity.status){
 							forceRecheck(app.main,'Semua data valid, mohon tunggu GMarket sedang memproses permintaaan.');
-							this.userData.timestamp = getTimestamp();
+							this.userData.timestamp = getTime();
 							app.content.addChild(openLoading('Mohon Tunggu...',(loading)=>{
 								const PaymentHandler = {
 									gmarket:{
@@ -1055,7 +1043,7 @@ const app = {
 					if(data[0]==='Games'){
 						this.userData.type = 'games';
 						this.userData.targetData = {
-							gameid:null,serverid:null
+							gameid:null,serverid:''
 						}
 					}else{
 						this.userData.targetData = {hp:null};
@@ -1755,19 +1743,25 @@ const app = {
 					width: 100%;
 					height: 100%;
 					display: flex;
-					align-items: flex-start;
-					justify-content: center;
+					align-items: center;
+					justify-content: flex-start;
 					background: rgb(237 238 241);
+					flex-direction:column;
+					gap:10px;
+					overflow:hidden;
 				`,
 				innerHTML:`
 					<div
 					style="
-						width: 80%;
+						width: 100%;
 						min-height: 100px;
 						border: 2px solid #f1f1f1;
-						border-radius: 10px;
+						/* border-radius: 10px; */
 						background: white;
-						margin-top:10px;
+						margin-top: 10px;
+						margin: 0;
+						border-radius: 0 0 15px 15px;
+						height: 50%;
 					"
 					>
 						<div
@@ -1859,7 +1853,7 @@ const app = {
 									padding:5px;
 									border:1px solid #f1f1f1;
 									border-radius:20px;
-								">${getPrice(app.userProfileData.Trxs.length)} Transaksi</span>
+								">${!app.userProfileData.Trxs?0:getPrice(app.userProfileData.Trxs.length)} Transaksi</span>
 							</div>
 							<div
 							style="
@@ -1897,6 +1891,42 @@ const app = {
 							</div>
 						</div>
 					</div>
+					<div id=historypanel
+					style="
+						background:white;
+						width:100%;
+						height:50%;
+						border-radius:15px 15px 0 0;
+						display:flex;
+					"
+					>
+						<div style="
+							padding: 32px;
+							width: 100%;
+							/* height: 100%; */
+							overflow: auto;
+							padding-top:0;
+							display:flex;
+							flex-direction:column;
+						">
+							<div
+							style="
+								font-size: 18px;
+								/* margin-top: 10px; */
+								border-bottom: 2px solid #f1f1f1;
+								padding: 25px 0 10px 0;
+							"
+							>Riwayat Transaksi</div>
+							<div id=dataparent
+							style="
+								overflow: auto;
+								height: 100%;
+							"
+							>
+
+							</div>
+						</div>
+					</div>
 				`,
 				openMoreSettings(){
 					const el = app.template.changeUserData();
@@ -1919,6 +1949,53 @@ const app = {
 					this.find('#logoutbutton').onclick = ()=>{this.logout()};
 					this.find('#topupbutton').onclick = ()=>{this.processTopup()};
 					this.find('#moresettings').onclick = ()=>{this.openMoreSettings()}
+					this.generateHistory();
+				},
+				generateHistory(){
+					const dataparent = this.find('#dataparent');
+					let index = 1;
+					for(let data of app.userProfileData.Trxs){
+						dataparent.addChild(makeElement('div',{
+							data,
+							style:`
+								display:flex;
+								gap:10px;
+								padding:10px;
+								font-size:18px;
+								border-bottom:1px solid #f1f1f1;
+								align-items:center;
+							`,
+							innerHTML:`
+								<div>${index}.</div>
+								<div>${data.id}</div>
+								<div>${data.status}</div>
+								<div style="width:100%;display:flex;justify-content:flex-end;">
+									<div id=moreinfobutton
+									style="
+										padding:5px;
+										background:#111340;
+										color:white;
+										border-radius:10px;
+										cursor:pointer;
+									"
+									>Info</div>
+								</div>
+							`,
+							onadded(){
+								this.find('#moreinfobutton').onclick = ()=>{
+									app.main.addChild(openLoading('Mengambil Info...',(loading)=>{
+										cOn.get({
+											url:`/check?trxid=${this.data.id}`,
+											onload(){
+												app.handleTrxCheckRequest(this.getJSONResponse(),loading);
+											}
+										})
+									}))
+								}
+							}
+						}))
+						index += 1;
+					}
 				}
 			})
 		},
@@ -3068,6 +3145,7 @@ const app = {
 					display:flex;
 					align-items:center;
 					justify-content:center;
+					background:#00000040;
 				`,
 				innerHTML:`
 					<div
@@ -3302,9 +3380,9 @@ const app = {
 								</div>
 							</div>
 							<div>
-								<div>Komfirmasi Password</div>
+								<div>Masukan Password Akun Sebelumnya</div>
 								<div style=display:flex;>
-									<input id=confirmpassword type=password placeholder='Konfirmasi Untuk Melakukan Perubahan'
+									<input id=confirmpassword type=password placeholder='Konfirmasi Password Untuk Melakukan Perubahan'
 									style="
 										width:100%;
 									"
@@ -3487,16 +3565,21 @@ const app = {
 		})
 	},
 	processMarkupPriceList(){
+		console.log(this.markupPriceList);
 		const newFormat = {};
 		for(let i in this.markupPriceList){
 			const category = this.markupPriceList[i].category;
 			const type = this.markupPriceList[i].type;
+			const product = this.markupPriceList[i].products;
 			const price = Number(this.markupPriceList[i].markupPrice);
 			if(!newFormat[category]){
 				newFormat[category] = {};
 			}
-			newFormat[category][type] = price;
+			if(!product){
+				newFormat[category][type] = price;
+			}else newFormat[category][product] = price;
 		}
+		console.log(newFormat);
 		this.formatedPriceMarkup = newFormat;
 	},
 	requestData(){
@@ -3662,7 +3745,9 @@ const app = {
 	},
 	forceLoginSystem(init=false){
 		if(this.userProfileData||this.userLogCheck()){
-			if(!init)this.generateMyProfile();
+			if(!init){
+				this.generateMyProfile();
+			}else this.updateDataSession();
 		}else this.main.addChild(app.template.loginSystem());
 	},
 	generateMyProfile(){
@@ -3691,6 +3776,15 @@ const app = {
 			return true;
 		}
 		return false;
+	},
+	updateDataSession(next){
+		cOn.post({
+			url:'/updateSession',
+			data:jsonstr(this.userProfileData),
+			onload(){
+				app.userProfileData = this.getJSONResponse();
+			}
+		})
 	},
 	getSession(){
 		return JSON.parse(localStorage.getItem(this.lsName));

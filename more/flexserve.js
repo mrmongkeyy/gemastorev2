@@ -7,7 +7,7 @@ module.exports = {
 	Routes:{
 		get:{
 			'/'(req,res){
-				res.end('Welcome to this web!');
+				res.end('Welcome to the web!');
 			}
 		},
 		post:{},
