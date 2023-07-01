@@ -169,7 +169,11 @@ module.exports = function(type,req,res,db){
 									ammount:req.body.products.ammount
 								}
 								if(vouchermsg)updatePaymentInfo.vouchermsg = vouchermsg;
-								db.ref(`users/${userid}`).update({ballance:leftballance,Trxs:data.Trxs,myvoucherusedlist:data.myvoucherusedlist}).then(()=>{
+								const forUpdate = {ballance:leftballance,Trxs:data.Trxs};
+								if(data.myvoucherusedlist){
+									forUpdate.myvoucherusedlist = data.myvoucherusedlist;
+								}
+								db.ref(`users/${userid}`).update(forUpdate).then(()=>{
 									db.ref(`history/GMTrx${req.body.timestamp}`).set(updatePaymentInfo).then(()=>{
 										//schema.pricelist.order(req,res,db);
 										res.json({valid:true,vouchermsg,msg:'Pembayaran Berhasil, sedang memproses pesanan anda!',leftballance,mystrxs:data.Trxs})

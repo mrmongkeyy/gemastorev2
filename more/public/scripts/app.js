@@ -1954,6 +1954,11 @@ const app = {
 				generateHistory(){
 					const dataparent = this.find('#dataparent');
 					let index = 1;
+					if(!app.userProfileData.Trxs || app.userProfileData.Trxs.length === 0){
+						return dataparent.addChild(makeElement('div',{
+							innerHTML:'Tidak Ada History!'
+						}))
+					}
 					for(let data of app.userProfileData.Trxs){
 						dataparent.addChild(makeElement('div',{
 							data,
